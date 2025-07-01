@@ -14,18 +14,18 @@
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>
-                    <i class="fas fa-user-circle me-2"></i>
+                    <i class="bi bi-person-circle me-2"></i>
                     <?= $data['title']; ?>
                 </h1>
                 <a href="<?= URLROOT; ?>/klanten" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i>
+                    <i class="bi bi-arrow-left me-1"></i>
                     Terug naar overzicht
                 </a>
             </div>
 
             <?php if (empty($data['klant'])): ?>
                 <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <i class="bi bi-exclamation-triangle me-2"></i>
                     Klant niet gevonden.
                 </div>
             <?php else: ?>
@@ -37,7 +37,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <i class="fas fa-home me-2"></i>
+                                    <i class="bi bi-house me-2"></i>
                                     Gezin Informatie
                                 </h5>
                             </div>
@@ -66,7 +66,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <i class="fas fa-address-card me-2"></i>
+                                    <i class="bi bi-person-vcard me-2"></i>
                                     Contact Informatie
                                 </h5>
                             </div>
@@ -105,7 +105,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="fas fa-users me-2"></i>
+                            <i class="bi bi-people me-2"></i>
                             Gezinsleden
                         </h5>
                     </div>
@@ -141,7 +141,7 @@
                                             <td>
                                                 <?php if ($persoon->IsVertegenwoordiger): ?>
                                                     <span class="badge bg-success">
-                                                        <i class="fas fa-check"></i> Ja
+                                                        <i class="bi bi-check"></i> Ja
                                                     </span>
                                                 <?php else: ?>
                                                     <span class="badge bg-secondary">Nee</span>
@@ -150,11 +150,11 @@
                                             <td>
                                                 <?= $leeftijd; ?> jaar
                                                 <?php if ($leeftijd < 2): ?>
-                                                    <i class="fas fa-baby text-warning" title="Baby"></i>
+                                                    <i class="bi bi-heart-fill text-warning" title="Baby"></i>
                                                 <?php elseif ($leeftijd < 18): ?>
-                                                    <i class="fas fa-child text-info" title="Kind"></i>
+                                                    <i class="bi bi-person text-info" title="Kind"></i>
                                                 <?php else: ?>
-                                                    <i class="fas fa-user text-success" title="Volwassene"></i>
+                                                    <i class="bi bi-person-fill text-success" title="Volwassene"></i>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -169,7 +169,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">
-                            <i class="fas fa-cogs me-2"></i>
+                            <i class="bi bi-gear me-2"></i>
                             Acties
                         </h5>
                     </div>
@@ -177,16 +177,16 @@
                         <div class="btn-group" role="group">
                             <a href="<?= URLROOT; ?>/voedselpakketten/gezin/<?= $hoofdklant->GezinId; ?>" 
                                class="btn btn-success">
-                                <i class="fas fa-box me-1"></i>
+                                <i class="bi bi-box me-1"></i>
                                 Voedselpakketten
                             </a>
                             <a href="<?= URLROOT; ?>/klanten/edit/<?= $hoofdklant->GezinId; ?>" 
                                class="btn btn-warning">
-                                <i class="fas fa-edit me-1"></i>
+                                <i class="bi bi-pencil me-1"></i>
                                 Bewerken
                             </a>
                             <button class="btn btn-info" onclick="window.print()">
-                                <i class="fas fa-print me-1"></i>
+                                <i class="bi bi-printer me-1"></i>
                                 Print Details
                             </button>
                         </div>
