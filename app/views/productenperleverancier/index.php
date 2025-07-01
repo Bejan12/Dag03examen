@@ -1,6 +1,12 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
-<h3>Overzicht producten van leverancier <?= htmlspecialchars($data['leverancierNummer']) ?></h3>
+<h1>
+    <?php
+    echo htmlspecialchars($titel ?? '', ENT_QUOTES, 'UTF-8');
+    ?>
+</h1>
+
+<h3>Overzicht producten van leverancier <?= htmlspecialchars($data['leverancierNummer'] ?? '', ENT_QUOTES, 'UTF-8') ?></h3>
 
 <table class="table table-bordered table-striped">
     <thead>

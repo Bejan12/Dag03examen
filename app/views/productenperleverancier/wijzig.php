@@ -16,7 +16,7 @@
         <input type="date" class="form-control" id="houdbaarheidsdatum" name="houdbaarheidsdatum" value="<?= htmlspecialchars($data['product']->Houdbaarheidsdatum) ?>" required>
     </div>
     <button type="submit" class="btn btn-primary">Wijzig Houdbaarheidsdatum</button>
-    <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= htmlspecialchars($_GET['leverancierNummer'] ?? '') ?>" class="btn btn-secondary">Annuleren</a>
+    <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= htmlspecialchars($data['leverancierNummer'] ?? '') ?>" class="btn btn-secondary">Annuleren</a>
 </form>
 
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>

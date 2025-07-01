@@ -53,4 +53,18 @@ class Leverancier
         $this->db->bind(':id', $productId);
         return $this->db->execute();
     }
+
+    public function getLeverancierNummerByProductId($productId)
+    {
+        $this->db->query(
+            "SELECT l.LeverancierNummer
+             FROM ProductPerLeverancier ppl
+             JOIN Leverancier l ON l.Id = ppl.LeverancierId
+             WHERE ppl.ProductId = :productId
+             LIMIT 1"
+        );
+        $this->db->bind(':productId', $productId);
+        $result = $this->db->single();
+        return $result ? $result->LeverancierNummer : null;
+    }
 }
