@@ -58,7 +58,10 @@ if ($melding):
     </tbody>
 </table>
 
-<a href="<?= URLROOT ?>/leveranciers" class="btn btn-secondary">Terug naar leveranciers</a>
+<div class="d-flex justify-content-end mt-4">
+    <a href="<?= URLROOT ?>/leveranciers" class="btn btn-primary me-2">Terug</a>
+    <a href="<?= URLROOT ?>" class="btn btn-primary">Home</a>
+</div>
 
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>
 
