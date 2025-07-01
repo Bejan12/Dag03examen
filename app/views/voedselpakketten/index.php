@@ -4,21 +4,39 @@
     <div class="row mt-3">
         <div class="col-12">
             
-            <!-- Header section with green background -->
+            <!-- Success/Error messages -->
+            <?php if (isset($data['success_message']) && !empty($data['success_message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= htmlspecialchars($data['success_message']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($data['error_message']) && !empty($data['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= htmlspecialchars($data['error_message']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <!-- Header section -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h3 class="text-success"><?php echo $data['title']; ?></h3>
+                    <h3 class="text-success">Overzicht gezinnen</h3>
                 </div>
                 <div class="col-md-6">
-                    <form method="GET" action="<?= URLROOT; ?>voedselpakketten/filterByEetwens" class="d-flex justify-content-end">
-                        <select name="eetwens" class="form-select me-2" style="width: auto;">
+                    <form method="GET" action="<?= URLROOT; ?>voedselpakketten/filterByEetwens" 
+                          class="d-flex justify-content-end" id="eetwensForm">
+                        <select name="eetwens" class="form-select me-2" style="width: auto;" id="eetwensSelect">
                             <option value="">Selecteer eetwens</option>
-                            <?php foreach($data['eetwensen'] as $eetwens): ?>
-                                <option value="<?= $eetwens->Id; ?>" 
-                                    <?= (isset($data['selectedEetwens']) && $data['selectedEetwens'] == $eetwens->Id) ? 'selected' : ''; ?>>
-                                    <?= $eetwens->EetwensNaam; ?>
-                                </option>
-                            <?php endforeach; ?>
+                            <?php if (isset($data['eetwensen']) && is_array($data['eetwensen'])): ?>
+                                <?php foreach($data['eetwensen'] as $eetwens): ?>
+                                    <option value="<?= (int)$eetwens->Id; ?>" 
+                                        <?= (isset($data['selectedEetwens']) && $data['selectedEetwens'] == $eetwens->Id) ? 'selected' : ''; ?>>
+                                        <?= htmlspecialchars($eetwens->EetwensNaam); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                         <button type="submit" class="btn btn-primary">Toon gezinnen</button>
                     </form>
@@ -27,8 +45,8 @@
 
             <!-- Table overview -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
                             <th>Gezinsnaam</th>
                             <th>Omschrijving</th>
@@ -40,19 +58,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($data['gezinnen'])): ?>
+                        <?php if (isset($data['gezinnen']) && !empty($data['gezinnen'])): ?>
                             <?php foreach($data['gezinnen'] as $gezin): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($gezin->GezinNaam); ?></td>
-                                    <td><?= htmlspecialchars($gezin->Adres . ', ' . $gezin->Postcode . ' ' . $gezin->Woonplaats); ?></td>
-                                    <td><?= $gezin->AantalVolwassenen; ?></td>
-                                    <td><?= $gezin->AantalKinderen; ?></td>
-                                    <td><?= $gezin->AantalBabys; ?></td>
+                                    <td><?= htmlspecialchars($gezin->GezinNaam ?? ''); ?></td>
+                                    <td><?= htmlspecialchars($gezin->Omschrijving ?? ''); ?></td>
+                                    <td><?= (int)($gezin->AantalVolwassenen ?? 0); ?></td>
+                                    <td><?= (int)($gezin->AantalKinderen ?? 0); ?></td>
+                                    <td><?= (int)($gezin->AantalBabys ?? 0); ?></td>
                                     <td><?= htmlspecialchars($gezin->Vertegenwoordiger ?? 'Niet ingesteld'); ?></td>
                                     <td>
-                                        <a href="<?= URLROOT; ?>voedselpakketten/details/<?= $gezin->Id; ?>" class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i> Details
-                                        </a>
+                                        <a href="<?= URLROOT; ?>voedselpakketten/details/<?= (int)$gezin->Id; ?>" 
+                                           class="btn btn-sm btn-primary">Details</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -65,15 +82,28 @@
                 </table>
             </div>
 
-            <!-- Back button -->
+            <!-- Home button -->
             <div class="mt-3">
-                <a href="<?= URLROOT; ?>homepages/index" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Terug naar home
-                </a>
+                <a href="<?= URLROOT; ?>homepages/index" class="btn btn-secondary">Home</a>
             </div>
 
         </div>
     </div>
 </div>
+
+<!-- Client-side validatie JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eetwensForm = document.getElementById('eetwensForm');
+    const eetwensSelect = document.getElementById('eetwensSelect');
+    
+    // Auto-submit bij selectie wijziging (optioneel)
+    eetwensSelect.addEventListener('change', function() {
+        if (this.value !== '') {
+            eetwensForm.submit();
+        }
+    });
+});
+</script>
 
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>

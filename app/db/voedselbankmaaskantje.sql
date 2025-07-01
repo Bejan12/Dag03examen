@@ -1,394 +1,658 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Gegenereerd op: 01 jul 2025 om 07:57
--- Serverversie: 8.2.0
--- PHP-versie: 8.3.11
+-- Step: 01
+     -- ***************************************************************
+     -- Doel : Maak een nieuwe database aan met de naam VoedselbankMaaskantje
+     -- ***************************************************************
+     -- Versie       Datum           Auteur              Omschrijving
+     -- ******       *****           ******              ************
+     -- 01           01-07-2025      Bejan Afkar         VoedselbankMaaskantje
+     -- ***************************************************************
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+     -- Verwijder database VoedselbankMaaskantje
+     DROP DATABASE IF EXISTS `VoedselbankMaaskantje`;
 
+     -- Maak een nieuwe database aan VoedselbankMaaskantje
+     CREATE DATABASE `VoedselbankMaaskantje`;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+     -- Gebruik database VoedselbankMaaskantje
+     USE `VoedselbankMaaskantje`;
 
---
--- Database: `voedselbankmaaskantje`
---
-CREATE DATABASE IF NOT EXISTS `voedselbankmaaskantje` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE `voedselbankmaaskantje`;
+     -- Step: 02
+     -- ***************************************************************
+     -- Doel : Maak alle tabellen aan voor VoedselbankMaaskantje
+     -- ***************************************************************
 
--- --------------------------------------------------------
+     -- Tabel: Rol
+     CREATE TABLE Rol
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Naam              VARCHAR(50)                 NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Rol_Id       PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
---
--- Tabelstructuur voor tabel `allergie`
---
+     -- Tabel: Categorie
+     CREATE TABLE Categorie
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Naam              VARCHAR(50)                 NOT NULL
+          ,Omschrijving      VARCHAR(255)                NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Categorie_Id PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `allergie`;
-CREATE TABLE IF NOT EXISTS `allergie` (
-  `Id` int NOT NULL,
-  `Naam` varchar(50) NOT NULL,
-  `Omschrijving` varchar(255) DEFAULT NULL,
-  `AnafylactischRisico` varchar(50) DEFAULT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Tabel: Contact
+     CREATE TABLE Contact
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Straat            VARCHAR(100)                NOT NULL
+          ,Huisnummer        VARCHAR(10)                 NOT NULL
+          ,Toevoeging        VARCHAR(10)                     NULL
+          ,Postcode          VARCHAR(10)                 NOT NULL
+          ,Woonplaats        VARCHAR(50)                 NOT NULL
+          ,Email             VARCHAR(100)                NOT NULL
+          ,Mobiel            VARCHAR(20)                 NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Contact_Id   PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
---
--- Gegevens worden geëxporteerd voor tabel `allergie`
---
+     -- Tabel: Eetwens
+     CREATE TABLE Eetwens
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Naam              VARCHAR(50)                 NOT NULL
+          ,Omschrijving      VARCHAR(255)                NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Eetwens_Id   PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
-INSERT INTO `allergie` (`Id`, `Naam`, `Omschrijving`, `AnafylactischRisico`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 'Gluten', 'Allergisch voor gluten', 'zeerlaag', b'1', NULL, '2025-07-01 09:56:41.718578', NULL),
-(2, 'Pindas', 'Allergisch voor pindas', 'Hoog', b'1', NULL, '2025-07-01 09:56:41.718578', NULL),
-(3, 'Schaaldieren', 'Allergisch voor schaaldieren', 'RedelijkHoog', b'1', NULL, '2025-07-01 09:56:41.718578', NULL),
-(4, 'Hazelnoten', 'Allergisch voor hazelnoten', 'laag', b'1', NULL, '2025-07-01 09:56:41.718578', NULL),
-(5, 'Lactose', 'Allergisch voor lactose', 'Zeerlaag', b'1', NULL, '2025-07-01 09:56:41.718578', NULL),
-(6, 'Soja', 'Allergisch voor soja', 'Zeerlaag', b'1', NULL, '2025-07-01 09:56:41.718578', NULL);
+     -- Tabel: Allergie
+     CREATE TABLE Allergie
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Naam              VARCHAR(50)                 NOT NULL
+          ,Omschrijving      VARCHAR(255)                NOT NULL
+          ,AnafylactischRisico VARCHAR(50)               NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Allergie_Id  PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
--- --------------------------------------------------------
+     -- Tabel: Gezin
+     CREATE TABLE Gezin
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Naam              VARCHAR(100)                NOT NULL
+          ,Code              VARCHAR(10)                 NOT NULL        UNIQUE
+          ,Omschrijving      VARCHAR(255)                NOT NULL
+          ,AantalVolwassenen TINYINT         UNSIGNED    NOT NULL
+          ,AantalKinderen    TINYINT         UNSIGNED    NOT NULL
+          ,AantalBabys       TINYINT         UNSIGNED    NOT NULL
+          ,TotaalAantalPersonen TINYINT      UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Gezin_Id     PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
---
--- Tabelstructuur voor tabel `allergieperpersoon`
---
+     -- Tabel: Leverancier
+     CREATE TABLE Leverancier
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Naam              VARCHAR(100)                NOT NULL
+          ,ContactPersoon    VARCHAR(100)                NOT NULL
+          ,LeverancierNummer VARCHAR(20)                 NOT NULL        UNIQUE
+          ,LeverancierType   VARCHAR(50)                 NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Leverancier_Id PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `allergieperpersoon`;
-CREATE TABLE IF NOT EXISTS `allergieperpersoon` (
-  `Id` int NOT NULL,
-  `PersoonId` int NOT NULL,
-  `AllergieId` int NOT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`),
-  KEY `PersoonId` (`PersoonId`),
-  KEY `AllergieId` (`AllergieId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Tabel: Magazijn
+     CREATE TABLE Magazijn
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,Ontvangstdatum    DATE                        NOT NULL
+          ,Uitleveringsdatum DATE                            NULL
+          ,VerpakkingsEenheid VARCHAR(50)                NOT NULL
+          ,Aantal            INT             UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Magazijn_Id  PRIMARY KEY CLUSTERED(Id)
+     ) ENGINE=InnoDB;
 
---
--- Gegevens worden geëxporteerd voor tabel `allergieperpersoon`
---
+     -- Tabel: Persoon
+     CREATE TABLE Persoon
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,GezinId           SMALLINT        UNSIGNED        NULL
+          ,Voornaam          VARCHAR(50)                 NOT NULL
+          ,Tussenvoegsel     VARCHAR(20)                     NULL
+          ,Achternaam        VARCHAR(50)                 NOT NULL
+          ,Geboortedatum     DATE                        NOT NULL
+          ,TypePersoon       VARCHAR(50)                 NOT NULL
+          ,IsVertegenwoordiger BIT                       NOT NULL        DEFAULT 0
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Persoon_Id   PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_Persoon_GezinId FOREIGN KEY (GezinId) REFERENCES Gezin(Id)
+     ) ENGINE=InnoDB;
 
-INSERT INTO `allergieperpersoon` (`Id`, `PersoonId`, `AllergieId`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 4, 1, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(2, 5, 2, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(3, 6, 3, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(4, 7, 4, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(5, 8, 3, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(6, 9, 2, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(7, 10, 5, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(8, 12, 2, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(9, 13, 4, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(10, 14, 1, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(11, 15, 3, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(12, 16, 5, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(13, 17, 1, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(14, 17, 2, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(15, 18, 4, b'1', NULL, '2025-07-01 09:56:41.801810', NULL),
-(16, 19, 4, b'1', NULL, '2025-07-01 09:56:41.801810', NULL);
+     -- Tabel: Gebruiker
+     CREATE TABLE Gebruiker
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,PersoonId         SMALLINT        UNSIGNED    NOT NULL
+          ,InlogNaam         VARCHAR(50)                 NOT NULL        UNIQUE
+          ,Gebruikersnaam    VARCHAR(100)                NOT NULL
+          ,Wachtwoord        VARCHAR(255)                NOT NULL
+          ,IsIngelogd        BIT                         NOT NULL        DEFAULT 0
+          ,Ingelogd          DATETIME(6)                     NULL
+          ,Uitgelogd         DATETIME(6)                     NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Gebruiker_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_Gebruiker_PersoonId FOREIGN KEY (PersoonId) REFERENCES Persoon(Id)
+     ) ENGINE=InnoDB;
 
--- --------------------------------------------------------
+     -- Tabel: Product
+     CREATE TABLE Product
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,CategorieId       SMALLINT        UNSIGNED    NOT NULL
+          ,Naam              VARCHAR(100)                NOT NULL
+          ,SoortAllergie     VARCHAR(100)                    NULL
+          ,Barcode           VARCHAR(50)                 NOT NULL
+          ,Houdbaarheidsdatum DATE                       NOT NULL
+          ,Omschrijving      VARCHAR(255)                NOT NULL
+          ,Status            VARCHAR(50)                 NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Product_Id   PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_Product_CategorieId FOREIGN KEY (CategorieId) REFERENCES Categorie(Id)
+     ) ENGINE=InnoDB;
 
---
--- Tabelstructuur voor tabel `categorie`
---
+     -- Tabel: Voedselpakket
+     CREATE TABLE Voedselpakket
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,GezinId           SMALLINT        UNSIGNED    NOT NULL
+          ,PakketNummer      INT             UNSIGNED    NOT NULL
+          ,DatumSamenstelling DATE                       NOT NULL
+          ,DatumUitgifte     DATE                            NULL
+          ,Status            VARCHAR(50)                 NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_Voedselpakket_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_Voedselpakket_GezinId FOREIGN KEY (GezinId) REFERENCES Gezin(Id)
+     ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `categorie`;
-CREATE TABLE IF NOT EXISTS `categorie` (
-  `Id` int NOT NULL,
-  `Naam` varchar(50) NOT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Tabel: AllergiePerPersoon
+     CREATE TABLE AllergiePerPersoon
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,PersoonId         SMALLINT        UNSIGNED    NOT NULL
+          ,AllergieId        SMALLINT        UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_AllergiePerPersoon_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_AllergiePerPersoon_PersoonId FOREIGN KEY (PersoonId) REFERENCES Persoon(Id)
+          ,CONSTRAINT        FK_AllergiePerPersoon_AllergieId FOREIGN KEY (AllergieId) REFERENCES Allergie(Id)
+     ) ENGINE=InnoDB;
 
---
--- Gegevens worden geëxporteerd voor tabel `categorie`
---
+     -- Tabel: RolPerGebruiker
+     CREATE TABLE RolPerGebruiker
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,GebruikerId       SMALLINT        UNSIGNED    NOT NULL
+          ,RolId             SMALLINT        UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_RolPerGebruiker_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_RolPerGebruiker_GebruikerId FOREIGN KEY (GebruikerId) REFERENCES Gebruiker(Id)
+          ,CONSTRAINT        FK_RolPerGebruiker_RolId FOREIGN KEY (RolId) REFERENCES Rol(Id)
+     ) ENGINE=InnoDB;
 
-INSERT INTO `categorie` (`Id`, `Naam`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 'Brood', b'1', NULL, '2025-07-01 09:56:41.879820', NULL),
-(2, 'Groente', b'1', NULL, '2025-07-01 09:56:41.879820', NULL),
-(3, 'Fruit', b'1', NULL, '2025-07-01 09:56:41.879820', NULL),
-(4, 'Zuivel', b'1', NULL, '2025-07-01 09:56:41.879820', NULL),
-(5, 'Vlees', b'1', NULL, '2025-07-01 09:56:41.879820', NULL),
-(6, 'Overige', b'1', NULL, '2025-07-01 09:56:41.879820', NULL);
+     -- Tabel: EetwensPerGezin
+     CREATE TABLE EetwensPerGezin
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,GezinId           SMALLINT        UNSIGNED    NOT NULL
+          ,EetwensId         SMALLINT        UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_EetwensPerGezin_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_EetwensPerGezin_GezinId FOREIGN KEY (GezinId) REFERENCES Gezin(Id)
+          ,CONSTRAINT        FK_EetwensPerGezin_EetwensId FOREIGN KEY (EetwensId) REFERENCES Eetwens(Id)
+     ) ENGINE=InnoDB;
 
--- --------------------------------------------------------
+     -- Tabel: ContactPerLeverancier
+     CREATE TABLE ContactPerLeverancier
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,LeverancierId     SMALLINT        UNSIGNED    NOT NULL
+          ,ContactId         SMALLINT        UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_ContactPerLeverancier_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_ContactPerLeverancier_LeverancierId FOREIGN KEY (LeverancierId) REFERENCES Leverancier(Id)
+          ,CONSTRAINT        FK_ContactPerLeverancier_ContactId FOREIGN KEY (ContactId) REFERENCES Contact(Id)
+     ) ENGINE=InnoDB;
 
---
--- Tabelstructuur voor tabel `gebruiker`
---
+     -- Tabel: ContactPerGezin
+     CREATE TABLE ContactPerGezin
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,GezinId           SMALLINT        UNSIGNED    NOT NULL
+          ,ContactId         SMALLINT        UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_ContactPerGezin_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_ContactPerGezin_GezinId FOREIGN KEY (GezinId) REFERENCES Gezin(Id)
+          ,CONSTRAINT        FK_ContactPerGezin_ContactId FOREIGN KEY (ContactId) REFERENCES Contact(Id)
+     ) ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS `gebruiker`;
-CREATE TABLE IF NOT EXISTS `gebruiker` (
-  `Id` int NOT NULL,
-  `PersoonId` int NOT NULL,
-  `InlogNaam` varchar(100) DEFAULT NULL,
-  `Gebruikersnaam` varchar(100) DEFAULT NULL,
-  `Wachtwoord` varchar(255) DEFAULT NULL,
-  `IsIngelogd` bit(1) DEFAULT b'0',
-  `Ingelogd` datetime(6) DEFAULT NULL,
-  `Uitgelogd` datetime(6) DEFAULT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`),
-  KEY `PersoonId` (`PersoonId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Tabel: ProductPerVoedselpakket
+     CREATE TABLE ProductPerVoedselpakket
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,VoedselpakketId   SMALLINT        UNSIGNED    NOT NULL
+          ,ProductId         SMALLINT        UNSIGNED    NOT NULL
+          ,AantalProductEenheden INT          UNSIGNED    NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_ProductPerVoedselpakket_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_ProductPerVoedselpakket_VoedselpakketId FOREIGN KEY (VoedselpakketId) REFERENCES Voedselpakket(Id)
+          ,CONSTRAINT        FK_ProductPerVoedselpakket_ProductId FOREIGN KEY (ProductId) REFERENCES Product(Id)
+     ) ENGINE=InnoDB;
 
---
--- Gegevens worden geëxporteerd voor tabel `gebruiker`
---
+     -- Tabel: ProductPerLeverancier
+     CREATE TABLE ProductPerLeverancier
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,LeverancierId     SMALLINT        UNSIGNED    NOT NULL
+          ,ProductId         SMALLINT        UNSIGNED    NOT NULL
+          ,DatumAangeleverd  DATE                        NOT NULL
+          ,DatumEerstVolgendeLevering DATE               NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_ProductPerLeverancier_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_ProductPerLeverancier_LeverancierId FOREIGN KEY (LeverancierId) REFERENCES Leverancier(Id)
+          ,CONSTRAINT        FK_ProductPerLeverancier_ProductId FOREIGN KEY (ProductId) REFERENCES Product(Id)
+     ) ENGINE=InnoDB;
 
-INSERT INTO `gebruiker` (`Id`, `PersoonId`, `InlogNaam`, `Gebruikersnaam`, `Wachtwoord`, `IsIngelogd`, `Ingelogd`, `Uitgelogd`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 1, 'Hans', 'hans@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVowCp/DL6zKiF0i', b'1', '2024-03-13 17:03:06.000000', NULL, b'1', NULL, '2025-07-01 09:56:41.841625', NULL),
-(2, 2, 'Jan', 'jan@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVowCp/DL3zKiF6i', b'0', '2024-03-13 15:13:23.000000', '2024-03-13 15:23:46.000000', b'1', NULL, '2025-07-01 09:56:41.841625', NULL),
-(3, 3, 'Herman', 'herman@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVuwCp/DL9zKiF2i', b'1', '2024-06-20 12:05:20.000000', NULL, b'1', NULL, '2025-07-01 09:56:41.841625', NULL);
+     -- Tabel: ProductPerMagazijn
+     CREATE TABLE ProductPerMagazijn
+     (
+          Id                 SMALLINT        UNSIGNED    NOT NULL        AUTO_INCREMENT
+          ,ProductId         SMALLINT        UNSIGNED    NOT NULL
+          ,MagazijnId        SMALLINT        UNSIGNED    NOT NULL
+          ,Locatie           VARCHAR(50)                 NOT NULL
+          ,IsActief          BIT                         NOT NULL        DEFAULT 1
+          ,Opmerking         VARCHAR(255)                    NULL        DEFAULT NULL
+          ,DatumAangemaakt   DATETIME(6)                 NOT NULL
+          ,DatumGewijzigd    DATETIME(6)                 NOT NULL
+          ,CONSTRAINT        PK_ProductPerMagazijn_Id PRIMARY KEY CLUSTERED(Id)
+          ,CONSTRAINT        FK_ProductPerMagazijn_ProductId FOREIGN KEY (ProductId) REFERENCES Product(Id)
+          ,CONSTRAINT        FK_ProductPerMagazijn_MagazijnId FOREIGN KEY (MagazijnId) REFERENCES Magazijn(Id)
+     ) ENGINE=InnoDB;
 
--- --------------------------------------------------------
+     -- Step: 03
+     -- ***************************************************************
+     -- Doel : Vul alle tabellen met dummy data
+     -- ***************************************************************
 
---
--- Tabelstructuur voor tabel `gezin`
---
+     -- Vul tabel Rol
+     INSERT INTO Rol (Naam, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('Manager', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Medewerker', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Vrijwilliger', 1, NULL, SYSDATE(6), SYSDATE(6));
 
-DROP TABLE IF EXISTS `gezin`;
-CREATE TABLE IF NOT EXISTS `gezin` (
-  `Id` int NOT NULL,
-  `Naam` varchar(100) NOT NULL,
-  `Adres` varchar(255) DEFAULT NULL,
-  `Postcode` varchar(20) DEFAULT NULL,
-  `Woonplaats` varchar(100) DEFAULT NULL,
-  `Telefoon` varchar(50) DEFAULT NULL,
-  `Email` varchar(100) DEFAULT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Vul tabel Categorie
+     INSERT INTO Categorie (Naam, Omschrijving, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('AGF', 'Aardappelen groente en fruit', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('KV', 'Kaas en vleeswaren', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('ZPE', 'Zuivel plantaardig en eieren', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('BB', 'Bakkerij en Banket', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('FSKT', 'Frisdranken, sappen, koffie en thee', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('PRW', 'Pasta, rijst en wereldkeuken', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('SSKO', 'Soepen, sauzen, kruiden en olie', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('SKCC', 'Snoep, koek, chips en chocolade', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('BVH', 'Baby, verzorging en hygiëne', 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Gegevens worden geëxporteerd voor tabel `gezin`
---
+     -- Vul tabel Contact
+     INSERT INTO Contact (Straat, Huisnummer, Toevoeging, Postcode, Woonplaats, Email, Mobiel, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('Prinses Irenestraat', '12', 'A', '5271TH', 'Maaskantje', 'j.van.zevenhuizen@gmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Gibraltarstraat', '234', NULL, '5271TJ', 'Maaskantje', 'a.bergkamp@hotmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Der Kinderenstraat', '456', 'Bis', '5271TH', 'Maaskantje', 's.van.de.heuvel@gmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Nachtegaalstraat', '233', 'A', '5271TJ', 'Maaskantje', 'e.scherder@gmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Bertram Russellstraat', '45', NULL, '5271TH', 'Maaskantje', 'f.de.jong@hotmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Leonardo Da VinciHof', '34', NULL, '5271ZE', 'Maaskantje', 'h.van.der.berg@gmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Siegfried Knutsenlaan', '234', NULL, '5271ZE', 'Maaskantje', 'r.ter.weijden@ah.nl', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Theo de Bokstraat', '256', NULL, '5271ZH', 'Maaskantje', 'l.pastoor@gmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Meester van Leerhof', '2', 'A', '5271ZH', 'Maaskantje', 'm.yazidi@gemeenteutrecht.nl', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Van Wemelenplantsoen', '300', NULL, '5271TH', 'Maaskantje', 'b.van.driel@gmail.com', '+31 623456123', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Terlingenhof', '20', NULL, '5271TH', 'Maaskantje', 'j.pastorius@gmail.com', '+31 623456356', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Veldhoen', '31', NULL, '5271ZE', 'Maaskantje', 's.dollaard@gmail.com', '+31 623452314', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('ScheringaDreef', '37', NULL, '5271ZE', 'Vught', 'j.blokker@gemeentevught.nl', '+31 623452314', 1, NULL, SYSDATE(6), SYSDATE(6));
 
-INSERT INTO `gezin` (`Id`, `Naam`, `Adres`, `Postcode`, `Woonplaats`, `Telefoon`, `Email`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 'Gezin van Zevenhuizen', 'Dorpsstraat 1', '5431 AB', 'Maaskantje', '0411-111111', 'zevenhuizen@maaskantje.nl', b'1', NULL, '2025-07-01 09:56:41.959485', NULL),
-(2, 'Gezin Bergkamp', 'Dorpsstraat 2', '5431 AB', 'Maaskantje', '0411-222222', 'bergkamp@maaskantje.nl', b'1', NULL, '2025-07-01 09:56:41.959485', NULL),
-(3, 'Gezin van Vliet', 'Dorpsstraat 3', '5431 AB', 'Maaskantje', '0411-333333', 'vliet@maaskantje.nl', b'1', NULL, '2025-07-01 09:56:41.959485', NULL),
-(4, 'Gezin Scherder', 'Dorpsstraat 4', '5431 AB', 'Maaskantje', '0411-444444', 'scherder@maaskantje.nl', b'1', NULL, '2025-07-01 09:56:41.959485', NULL),
-(5, 'Gezin de Jong', 'Dorpsstraat 5', '5431 AB', 'Maaskantje', '0411-555555', 'dejong@maaskantje.nl', b'1', NULL, '2025-07-01 09:56:41.959485', NULL),
-(6, 'Gezin van der Berg', 'Dorpsstraat 6', '5431 AB', 'Maaskantje', '0411-666666', 'vanderberg@maaskantje.nl', b'1', NULL, '2025-07-01 09:56:41.959485', NULL);
+     -- Vul tabel Eetwens
+     INSERT INTO Eetwens (Naam, Omschrijving, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('GeenVarken', 'Geen Varkensvlees', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Veganistisch', 'Geen zuivelproducten en vlees', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Vegetarisch', 'Geen vlees', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Omnivoor', 'Geen beperkingen', 1, NULL, SYSDATE(6), SYSDATE(6));
 
--- --------------------------------------------------------
+     -- Vul tabel Allergie
+     INSERT INTO Allergie (Naam, Omschrijving, AnafylactischRisico, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('Gluten', 'Allergisch voor gluten', 'zeerlaag', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Pindas', 'Allergisch voor pindas', 'Hoog', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Schaaldieren', 'Allergisch voor schaaldieren', 'RedelijkHoog', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Hazelnoten', 'Allergisch voor hazelnoten', 'laag', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Lactose', 'Allergisch voor lactose', 'Zeerlaag', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Soja', 'Allergisch voor soja', 'Zeerlaag', 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Tabelstructuur voor tabel `leverancier`
---
+     -- Vul tabel Gezin
+     INSERT INTO Gezin (Naam, Code, Omschrijving, AantalVolwassenen, AantalKinderen, AantalBabys, TotaalAantalPersonen, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('ZevenhuizenGezin', 'G0001', 'Bijstandsgezin', 2, 2, 0, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('BergkampGezin', 'G0002', 'Bijstandsgezin', 2, 1, 1, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('HeuvelGezin', 'G0003', 'Bijstandsgezin', 2, 0, 0, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('ScherderGezin', 'G0004', 'Bijstandsgezin', 1, 0, 2, 3, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('DeJongGezin', 'G0005', 'Bijstandsgezin', 1, 1, 0, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('VanderBergGezin', 'G0006', 'AlleenGaande', 1, 0, 0, 1, 1, NULL, SYSDATE(6), SYSDATE(6));
 
-DROP TABLE IF EXISTS `leverancier`;
-CREATE TABLE IF NOT EXISTS `leverancier` (
-  `Id` int NOT NULL,
-  `Naam` varchar(100) NOT NULL,
-  `ContactPersoon` varchar(100) DEFAULT NULL,
-  `Telefoon` varchar(50) DEFAULT NULL,
-  `Email` varchar(100) DEFAULT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Vul tabel Leverancier
+     INSERT INTO Leverancier (Naam, ContactPersoon, LeverancierNummer, LeverancierType, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('Albert Heijn', 'Ruud ter Weijden', 'L0001', 'Bedrijf', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Albertus Kerk', 'Leo Pastoor', 'L0002', 'Instelling', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Gemeente Utrecht', 'Mohammed Yazidi', 'L0003', 'Overheid', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Boerderij Meerhoven', 'Bertus van Driel', 'L0004', 'Particulier', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Jan van der Heijden', 'Jan van der Heijden', 'L0005', 'Donor', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Vomar', 'Jaco Pastorius', 'L0006', 'Bedrijf', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('DekaMarkt', 'Sil den Dollaard', 'L0007', 'Bedrijf', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('Gemeente Vught', 'Jan Blokker', 'L0008', 'Overheid', 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Gegevens worden geëxporteerd voor tabel `leverancier`
---
+     -- Vul tabel Magazijn
+     INSERT INTO Magazijn (Ontvangstdatum, Uitleveringsdatum, VerpakkingsEenheid, Aantal, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     ('2024-05-12', NULL, '5 kg', 20, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-05-26', NULL, '2.5 kg', 40, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-02', NULL, '1 kg', 30, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-05-16', NULL, '1.5 kg', 25, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-05-23', NULL, '4 stuks', 75, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-03-12', NULL, '1 kg/tros', 60, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-03-19', NULL, '2 kg/tros', 200, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-06-19', NULL, '200 g', 45, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-07-23', NULL, '100 g', 60, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-07-23', NULL, '1 liter', 120, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-06-02', NULL, '250 g', 80, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-01-04', NULL, '6 stuks', 120, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-07', NULL, '800 g', 220, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-04', NULL, '1 stuk', 130, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-28', NULL, '150 ml', 72, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-19', NULL, '1 l', 12, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-23', NULL, '250 g', 300, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-03-02', NULL, '25 zakjes', 280, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-16', NULL, '500 g', 330, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-25', NULL, '1 kg', 34, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-13', NULL, '50 g', 23, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-23', NULL, '1 l', 46, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-21', NULL, '250 ml', 98, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-30', NULL, '1 potje', 56, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-27', NULL, '1 l', 210, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-01', NULL, '4 stuks', 24, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-07', NULL, '300 g', 87, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-22', NULL, '200 g', 230, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     ('2024-04-21', NULL, '80 g', 30, 1, NULL, SYSDATE(6), SYSDATE(6));
 
-INSERT INTO `leverancier` (`Id`, `Naam`, `ContactPersoon`, `Telefoon`, `Email`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 'Bakkerij De Molen', 'Piet de Bakker', '0411-123456', 'bakker@molen.nl', b'1', NULL, '2025-07-01 09:56:41.918683', NULL),
-(2, 'Groentehandel Van Dijk', 'Jan van Dijk', '0411-654321', 'groente@vandijk.nl', b'1', NULL, '2025-07-01 09:56:41.918683', NULL);
+     -- Vul tabel Persoon
+     INSERT INTO Persoon (GezinId, Voornaam, Tussenvoegsel, Achternaam, Geboortedatum, TypePersoon, IsVertegenwoordiger, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (NULL, 'Hans', 'van', 'Leeuwen', '1958-02-12', 'Manager', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (NULL, 'Jan', 'van der', 'Sluijs', '1993-04-30', 'Medewerker', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (NULL, 'Herman', 'den', 'Duiker', '1989-08-30', 'Vrijwilliger', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Johan', 'van', 'Zevenhuizen', '1990-05-20', 'Klant', 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Sarah', 'den', 'Dolder', '1985-03-23', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Theo', 'van', 'Zevenhuizen', '2015-03-08', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Jantien', 'van', 'Zevenhuizen', '2016-09-20', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Arjan', NULL, 'Bergkamp', '1968-07-12', 'Klant', 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Janneke', NULL, 'Sanders', '1969-05-11', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Stein', NULL, 'Bergkamp', '2009-02-02', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Judith', NULL, 'Bergkamp', '2022-02-05', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Mazin', 'van', 'Vliet', '1968-08-18', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Selma', 'van de', 'Heuvel', '1965-09-04', 'Klant', 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 'Eva', NULL, 'Scherder', '2000-04-07', 'Klant', 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 'Felicia', NULL, 'Scherder', '2021-11-29', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 'Devin', NULL, 'Scherder', '2024-03-01', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 'Frieda', 'de', 'Jong', '1980-09-04', 'Klant', 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 'Simeon', 'de', 'Jong', '2018-05-23', 'Klant', 0, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 'Hanna', 'van der', 'Berg', '1999-09-09', 'Klant', 1, 1, NULL, SYSDATE(6), SYSDATE(6));
 
--- --------------------------------------------------------
+     -- Vul tabel Gebruiker
+     INSERT INTO Gebruiker (PersoonId, InlogNaam, Gebruikersnaam, Wachtwoord, IsIngelogd, Ingelogd, Uitgelogd, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 'Hans', 'hans@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVowCp/DL6zKiF0i', 1, '2024-03-13 17:03:06', NULL, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Jan', 'jan@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVowCp/DL3zKiF6i', 0, '2024-03-13 15:13:23', '2024-03-13 15:23:46', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Herman', 'herman@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVuwCp/DL9zKiF2i', 1, '2024-06-20 12:05:20', NULL, 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Tabelstructuur voor tabel `persoon`
---
+     -- Vul tabel Product
+     INSERT INTO Product (CategorieId, Naam, SoortAllergie, Barcode, Houdbaarheidsdatum, Omschrijving, Status, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 'Aardappel', NULL, '8719587321239', '2024-07-12', 'Kruimige aardappel', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Aardappel', NULL, '8719587321239', '2024-07-26', 'Kruimige aardappel', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Ui', NULL, '8719437321335', '2024-09-02', 'Gele ui', 'NietOpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Appel', NULL, '8719486321332', '2024-08-16', 'Granny Smith', 'NietLeverbaar', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Appel', NULL, '8719486321332', '2024-09-23', 'Granny Smith', 'NietLeverbaar', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Banaan', 'Banaan', '8719484321336', '2024-07-12', 'Biologische Banaan', 'OverHoudbaarheidsDatum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 'Banaan', 'Banaan', '8719484321336', '2024-07-19', 'Biologische Banaan', 'OverHoudbaarheidsDatum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Kaas', 'Lactose', '8719487421338', '2024-09-19', 'Jonge Kaas', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Rosbief', NULL, '8719487421331', '2024-07-23', 'Rundvlees', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Melk', 'Lactose', '8719447321332', '2024-07-23', 'Halfvolle melk', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Margarine', NULL, '8719486321336', '2024-08-02', 'Plantaardige boter', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Ei', 'Eier', '8719487421334', '2024-08-04', 'Scharrelei', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 'Brood', 'Gluten', '8719487721337', '2024-07-07', 'Volkoren brood', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 'Gevulde Koek', 'Amandel', '8719483321333', '2024-09-04', 'Banketbakkers kwaliteit', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 'Fristi', 'Lactose', '8719487121331', '2024-10-28', 'Frisdrank', 'NietOpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 'Appelsap', NULL, '8719487521335', '2024-10-19', '100% vruchtensap', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 'Koffie', 'Caffeïne', '8719487381338', '2024-10-23', 'Arabica koffie', 'OverHoudbaarheidsDatum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 'Thee', 'Theïne', '8719487329339', '2024-09-02', 'Ceylon thee', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 'Pasta', 'Gluten', '8719487321334', '2024-12-16', 'Macaroni', 'NietLeverbaar', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 'Rijst', NULL, '8719487331332', '2024-12-25', 'Basmati Rijst', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 'Knorr Nasi Mix', NULL, '871948735135', '2024-12-13', 'Nasi kruiden', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (7, 'Tomatensoep', NULL, '8719487371337', '2024-12-23', 'Romige tomatensoep', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (7, 'Tomatensaus', NULL, '8719487341334', '2024-12-21', 'Pizza saus', 'NietOpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (7, 'Peterselie', NULL, '8719487321636', '2024-07-31', 'Verse kruidenpot', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 'Olie', NULL, '8719487327337', '2024-12-27', 'Olijfolie', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 'Mars', NULL, '8719487324334', '2024-12-11', 'Snoep', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 'Biscuit', NULL, '8719487311331', '2024-08-07', 'San Francisco biscuit', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 'Paprika Chips', NULL, '87194873218398', '2024-12-22', 'Ribbelchips paprika', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 'Chocolade reep', 'Cacoa', '8719487321533', '2024-11-21', 'Tony Chocolonely', 'OpVoorraad', 1, NULL, SYSDATE(6), SYSDATE(6));
 
-DROP TABLE IF EXISTS `persoon`;
-CREATE TABLE IF NOT EXISTS `persoon` (
-  `Id` int NOT NULL,
-  `GezinId` int DEFAULT NULL,
-  `Voornaam` varchar(50) NOT NULL,
-  `Tussenvoegsel` varchar(20) DEFAULT NULL,
-  `Achternaam` varchar(50) NOT NULL,
-  `Geboortedatum` date NOT NULL,
-  `TypePersoon` varchar(50) NOT NULL,
-  `IsVertegenwoordiger` bit(1) DEFAULT b'0',
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`),
-  KEY `FK_Persoon_Gezin` (`GezinId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     -- Vul tabel Voedselpakket
+     INSERT INTO Voedselpakket (GezinId, PakketNummer, DatumSamenstelling, DatumUitgifte, Status, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 1, '2024-04-06', '2024-04-07', 'Uitgereikt', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 2, '2024-04-13', NULL, 'NietUitgereikt', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 3, '2024-04-20', NULL, 'NietMeerIngeschreven', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 4, '2024-04-06', '2024-04-07', 'Uitgereikt', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 5, '2024-04-13', '2024-04-14', 'Uitgereikt', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 6, '2024-04-20', NULL, 'NietUitgereikt', 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Gegevens worden geëxporteerd voor tabel `persoon`
---
+     -- Vul junction tabellen
+     INSERT INTO AllergiePerPersoon (PersoonId, AllergieId, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (4, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 3, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (7, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 3, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (9, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (10, 5, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (12, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (13, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (14, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (15, 3, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (16, 5, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (17, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (17, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (18, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (19, 4, 1, NULL, SYSDATE(6), SYSDATE(6));
 
-INSERT INTO `persoon` (`Id`, `GezinId`, `Voornaam`, `Tussenvoegsel`, `Achternaam`, `Geboortedatum`, `TypePersoon`, `IsVertegenwoordiger`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, NULL, 'Hans', 'van', 'Leeuwen', '1958-02-12', 'Manager', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(2, NULL, 'Jan', 'van der', 'Sluijs', '1993-04-30', 'Medewerker', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(3, NULL, 'Herman', 'den', 'Duiker', '1989-08-30', 'Vrijwilliger', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(4, 1, 'Johan', 'van', 'Zevenhuizen', '1990-05-20', 'Klant', b'1', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(5, 1, 'Sarah', 'den', 'Dolder', '1985-03-23', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(6, 1, 'Theo', 'van', 'Zevenhuizen', '2015-03-08', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(7, 1, 'Jantien', 'van', 'Zevenhuizen', '2016-09-20', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(8, 2, 'Arjan', NULL, 'Bergkamp', '1968-07-12', 'Klant', b'1', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(9, 2, 'Janneke', NULL, 'Sanders', '1969-05-11', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(10, 2, 'Stein', NULL, 'Bergkamp', '2009-02-02', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(11, 2, 'Judith', NULL, 'Bergkamp', '2022-02-05', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(12, 3, 'Mazin', 'van', 'Vliet', '1968-08-18', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(13, 3, 'Selma', 'van de', 'Heuvel', '1965-09-04', 'Klant', b'1', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(14, 4, 'Eva', NULL, 'Scherder', '2000-04-07', 'Klant', b'1', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(15, 4, 'Felicia', NULL, 'Scherder', '2021-11-29', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(16, 4, 'Devin', NULL, 'Scherder', '2024-03-01', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(17, 5, 'Frieda', 'de', 'Jong', '1980-09-04', 'Klant', b'1', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(18, 5, 'Simeon', 'de', 'Jong', '2018-05-23', 'Klant', b'0', b'1', NULL, '2025-07-01 09:56:41.774710', NULL),
-(19, 6, 'Hanna', 'van der', 'Berg', '1999-09-09', 'Klant', b'1', b'1', NULL, '2025-07-01 09:56:41.774710', NULL);
+     INSERT INTO RolPerGebruiker (GebruikerId, RolId, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 3, 1, NULL, SYSDATE(6), SYSDATE(6));
 
--- --------------------------------------------------------
+     INSERT INTO EetwensPerGezin (GezinId, EetwensId, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 3, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 2, 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Tabelstructuur voor tabel `product`
---
+     INSERT INTO ContactPerLeverancier (LeverancierId, ContactId, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 7, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 8, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 9, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 10, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 11, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (7, 12, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 13, 1, NULL, SYSDATE(6), SYSDATE(6));
 
-DROP TABLE IF EXISTS `product`;
-CREATE TABLE IF NOT EXISTS `product` (
-  `Id` int NOT NULL,
-  `CategorieId` int NOT NULL,
-  `Naam` varchar(100) NOT NULL,
-  `Inhoud` varchar(100) DEFAULT NULL,
-  `Eenheid` varchar(20) DEFAULT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`),
-  KEY `CategorieId` (`CategorieId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     INSERT INTO ContactPerGezin (GezinId, ContactId, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 3, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 4, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 5, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 6, 1, NULL, SYSDATE(6), SYSDATE(6));
 
---
--- Gegevens worden geëxporteerd voor tabel `product`
---
+     INSERT INTO ProductPerVoedselpakket (VoedselpakketId, ProductId, AantalProductEenheden, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 7, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 8, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 9, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 12, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 13, 2, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 14, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 3, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 4, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 20, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 19, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 21, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 24, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 25, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 26, 1, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 26, 1, 1, NULL, SYSDATE(6), SYSDATE(6));
 
-INSERT INTO `product` (`Id`, `CategorieId`, `Naam`, `Inhoud`, `Eenheid`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 1, 'Witbrood', '600', 'gram', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(2, 1, 'Tarwebrood', '600', 'gram', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(3, 2, 'Komkommer', '500', 'gram', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(4, 3, 'Appels', '1', 'stuk', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(5, 4, 'Melk', '1', 'liter', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(6, 4, 'Yoghurt', '200', 'gram', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(7, 5, 'Rundvlees', '300', 'gram', b'1', NULL, '2025-07-01 09:56:41.900230', NULL),
-(8, 6, 'Pindakaas', '500', 'gram', b'1', NULL, '2025-07-01 09:56:41.900230', NULL);
+     INSERT INTO ProductPerLeverancier (LeverancierId, ProductId, DatumAangeleverd, DatumEerstVolgendeLevering, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (4, 1, '2024-04-12', '2024-05-12', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 2, '2024-03-02', '2024-04-02', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 3, '2024-07-16', '2024-08-16', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 4, '2024-02-12', '2024-03-12', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 5, '2024-05-19', '2024-06-19', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 6, '2024-06-23', '2024-07-23', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 7, '2024-06-20', '2024-07-20', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 8, '2024-05-02', '2024-06-02', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 9, '2022-12-04', '2024-01-04', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 10, '2024-03-07', '2024-04-07', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 11, '2024-02-04', '2024-03-04', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 12, '2024-02-28', '2024-03-28', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 13, '2024-03-19', '2024-04-19', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 14, '2024-03-23', '2024-04-23', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 15, '2024-02-02', '2024-03-02', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 16, '2024-02-16', '2024-03-16', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 17, '2024-03-25', '2024-04-25', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 18, '2024-03-13', '2024-04-13', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 19, '2024-03-23', '2024-04-23', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 20, '2024-02-21', '2024-03-21', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 21, '2024-03-31', '2024-04-30', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 22, '2024-03-27', '2024-04-27', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 23, '2024-04-11', '2024-04-18', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 24, '2024-04-07', '2024-04-14', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (1, 25, '2024-05-07', '2024-05-14', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 26, '2024-05-05', '2024-05-12', 1, NULL, SYSDATE(6), SYSDATE(6));
 
--- --------------------------------------------------------
-
---
--- Tabelstructuur voor tabel `rol`
---
-
-DROP TABLE IF EXISTS `rol`;
-CREATE TABLE IF NOT EXISTS `rol` (
-  `Id` int NOT NULL,
-  `Naam` varchar(50) NOT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Gegevens worden geëxporteerd voor tabel `rol`
---
-
-INSERT INTO `rol` (`Id`, `Naam`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 'Manager', b'1', NULL, '2025-07-01 09:56:41.820527', NULL),
-(2, 'Medewerker', b'1', NULL, '2025-07-01 09:56:41.820527', NULL),
-(3, 'Vrijwilliger', b'1', NULL, '2025-07-01 09:56:41.820527', NULL);
-
--- --------------------------------------------------------
-
---
--- Tabelstructuur voor tabel `rolpergebruiker`
---
-
-DROP TABLE IF EXISTS `rolpergebruiker`;
-CREATE TABLE IF NOT EXISTS `rolpergebruiker` (
-  `Id` int NOT NULL,
-  `GebruikerId` int NOT NULL,
-  `RolId` int NOT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`),
-  KEY `GebruikerId` (`GebruikerId`),
-  KEY `RolId` (`RolId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Gegevens worden geëxporteerd voor tabel `rolpergebruiker`
---
-
-INSERT INTO `rolpergebruiker` (`Id`, `GebruikerId`, `RolId`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 1, 1, b'1', NULL, '2025-07-01 09:56:41.861310', NULL),
-(2, 2, 2, b'1', NULL, '2025-07-01 09:56:41.861310', NULL),
-(3, 3, 3, b'1', NULL, '2025-07-01 09:56:41.861310', NULL);
-
--- --------------------------------------------------------
-
---
--- Tabelstructuur voor tabel `voorraad`
---
-
-DROP TABLE IF EXISTS `voorraad`;
-CREATE TABLE IF NOT EXISTS `voorraad` (
-  `Id` int NOT NULL,
-  `ProductId` int NOT NULL,
-  `LeverancierId` int NOT NULL,
-  `Aantal` int NOT NULL,
-  `IsActief` bit(1) DEFAULT b'1',
-  `Opmerking` varchar(255) DEFAULT NULL,
-  `DatumAangemaakt` datetime(6) DEFAULT CURRENT_TIMESTAMP(6),
-  `DatumGewijzigd` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (`Id`),
-  KEY `ProductId` (`ProductId`),
-  KEY `LeverancierId` (`LeverancierId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Gegevens worden geëxporteerd voor tabel `voorraad`
---
-
-INSERT INTO `voorraad` (`Id`, `ProductId`, `LeverancierId`, `Aantal`, `IsActief`, `Opmerking`, `DatumAangemaakt`, `DatumGewijzigd`) VALUES
-(1, 1, 1, 50, b'1', NULL, '2025-07-01 09:56:41.937549', NULL),
-(2, 3, 2, 100, b'1', NULL, '2025-07-01 09:56:41.937549', NULL);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+     INSERT INTO ProductPerMagazijn (ProductId, MagazijnId, Locatie, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
+     VALUES
+     (1, 1, 'Berlicum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 2, 'Rosmalen', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 3, 'Berlicum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (4, 4, 'Berlicum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (5, 5, 'Rosmalen', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (6, 6, 'Berlicum', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (7, 7, 'Rosmalen', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (8, 8, 'Sint-MichelsGestel', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (9, 9, 'Sint-MichelsGestel', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (10, 10, 'Middelrode', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (11, 11, 'Middelrode', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (12, 12, 'Middelrode', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (13, 13, 'Schijndel', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (14, 14, 'Schijndel', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (15, 15, 'Gemonde', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (16, 16, 'Gemonde', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (17, 17, 'Gemonde', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (18, 18, 'Gemonde', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (19, 19, 'Den Bosch', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (20, 20, 'Den Bosch', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (21, 21, 'Den Bosch', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (22, 22, 'Heeswijk Dinther', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (23, 23, 'Heeswijk Dinther', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (24, 24, 'Heeswijk Dinther', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (25, 25, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (26, 26, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (27, 27, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (28, 28, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (29, 29, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6));
