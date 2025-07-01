@@ -12,8 +12,15 @@
             
             <!-- Navigation links -->
             <div class="mt-4">
-                <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-primary">
-                    Overzicht voedselpakketten
+                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Manager'): ?>
+                    <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-primary">
+                        Overzicht voedselpakketten
+                    </a>
+                <?php endif; ?>
+                
+                <!-- Andere links die voor alle gebruikers toegankelijk zijn -->
+                <a href="<?= URLROOT; ?>klanten" class="btn btn-secondary">
+                    Overzicht Klanten
                 </a>
             </div>
 

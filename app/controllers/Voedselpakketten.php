@@ -42,6 +42,7 @@ class Voedselpakketten extends BaseController
      * Overzicht methode - Toont alle gezinnen met voedselpakketten
      * 
      * Functionaliteit:
+     * - Alleen toegankelijk voor Manager rol
      * - Haalt alle gezinnen op uit database
      * - Haalt alle eetwensen op voor filter dropdown
      * - Toont success/error berichten
@@ -49,6 +50,9 @@ class Voedselpakketten extends BaseController
      */
     public function overzicht(): void
     {
+        // Controleer Manager autorisatie
+        requireManagerRole();
+        
         try {
             // Haal alle gezinnen met hun voedselpakketten op
             $gezinnen = $this->voedselpakketModel->getAllGezinnenMetVoedselpakketten();
@@ -78,6 +82,7 @@ class Voedselpakketten extends BaseController
      * FilterByEetwens methode - Filtert gezinnen op basis van geselecteerde eetwens
      * 
      * Functionaliteit:
+     * - Alleen toegankelijk voor Manager rol
      * - Ontvangt eetwens ID via GET parameter
      * - Filtert gezinnen op basis van eetwens
      * - Als geen eetwens geselecteerd, toon alle gezinnen
@@ -86,6 +91,9 @@ class Voedselpakketten extends BaseController
      */
     public function filterByEetwens(): void
     {
+        // Controleer Manager autorisatie
+        requireManagerRole();
+        
         try {
             // Haal eetwens ID op uit GET parameter, default 0
             $eetwensId = (int)($_GET['eetwens'] ?? 0);
@@ -123,6 +131,7 @@ class Voedselpakketten extends BaseController
      * Details methode - Toont voedselpakketten details voor een specifiek gezin
      * 
      * Functionaliteit:
+     * - Alleen toegankelijk voor Manager rol
      * - Ontvangt gezin ID via URL parameter
      * - Haalt gezin details op
      * - Haalt alle voedselpakketten voor dit gezin op
@@ -132,6 +141,9 @@ class Voedselpakketten extends BaseController
      */
     public function details(int $gezinId): void
     {
+        // Controleer Manager autorisatie
+        requireManagerRole();
+        
         try {
             // Haal details van het specifieke gezin op
             $gezinDetails = $this->voedselpakketModel->getGezinDetails($gezinId);
@@ -160,6 +172,7 @@ class Voedselpakketten extends BaseController
      * WijzigStatus methode - Toont formulier om voedselpakket status te wijzigen
      * 
      * Functionaliteit:
+     * - Alleen toegankelijk voor Manager rol
      * - Ontvangt voedselpakket ID via URL parameter
      * - Controleert of pakket bestaat
      * - Controleert of wijziging toegestaan is (scenario 2 check)
@@ -169,6 +182,9 @@ class Voedselpakketten extends BaseController
      */
     public function wijzigStatus(int $voedselpakketId): void
     {
+        // Controleer Manager autorisatie
+        requireManagerRole();
+        
         try {
             // Haal voedselpakket op basis van ID
             $voedselpakket = $this->voedselpakketModel->getVoedselpakketById($voedselpakketId);
@@ -207,6 +223,7 @@ class Voedselpakketten extends BaseController
      * UpdateStatus methode - Verwerkt het wijzigen van voedselpakket status
      * 
      * Functionaliteit:
+     * - Alleen toegankelijk voor Manager rol
      * - Ontvangt POST data van wijzig formulier
      * - Valideert input data
      * - Wijzigt status in database
@@ -214,6 +231,9 @@ class Voedselpakketten extends BaseController
      */
     public function updateStatus(): void
     {
+        // Controleer Manager autorisatie
+        requireManagerRole();
+        
         // Controleer of het een POST request is
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {

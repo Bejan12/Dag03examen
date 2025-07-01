@@ -4,6 +4,9 @@ class Leveranciers extends BaseController
 {
     public function index()
     {
+        // Controleer Manager of Medewerker autorisatie
+        requireManagerOrMedewerkerRole();
+        
         $leverancierModel = $this->model('Leverancier');
         $type = isset($_POST['leveranciertype']) ? $_POST['leveranciertype'] : null;
         $leveranciers = $leverancierModel->getLeveranciers($type);
