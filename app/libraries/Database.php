@@ -10,7 +10,6 @@ class Database
     private $dbUser = DB_USER;
     private $dbPass = DB_PASS;
 
-
     private $dbHandler;
     private $statement;
 
@@ -42,7 +41,7 @@ class Database
              * Wanneer er een error optreed daarbij wordt er een PDOException object 
              * aangemaakt met informatie over de error
              */
-            // logger(__LINE__, __METHOD__, __FILE__, $e->getMessage());
+            logger(__LINE__, __METHOD__, __FILE__, $e->getMessage());
             echo "Op dit moment kunnen we u niet helpen... probeer het later nog eens";
             header('Refresh:30; url=' .URLROOT . '/homepages/index');
         }
@@ -65,7 +64,7 @@ class Database
     /**
      * Deze methode bind de waardes aan de parameters in de query
      */
-    public function bind($parameter, $value, $type = null)
+    public function bind($param, $value, $type = null)
     {
         if ($type === null) {
             switch (true) {
@@ -82,7 +81,7 @@ class Database
                     $type = PDO::PARAM_STR;
             }
         }
-        $this->statement->bindValue($parameter, $value, $type);
+        $this->statement->bindValue($param, $value, $type);
     }
 
     /**
@@ -93,20 +92,25 @@ class Database
         return $this->statement->execute();
     }
 
+    /**
+     * Deze methode retourneert een enkele rij uit de database
+     */
     public function single()
     {
-        $this->statement->execute();
-        $result = $this->statement->fetch(PDO::FETCH_OBJ);
-        $this->statement->closecursor();
-        return $result;
-    }
-
-    public function outQuery($sql) {
-        return $this->dbHandler->query($sql);
+        $this->execute();
+        return $this->statement->fetch(PDO::FETCH_OBJ);
     }
 
     /**
-     * Begin database transaction
+     * Deze methode retourneert het aantal rijen
+     */
+    public function rowCount()
+    {
+        return $this->statement->rowCount();
+    }
+
+    /**
+     * Begin een database transactie
      */
     public function beginTransaction()
     {
@@ -114,7 +118,7 @@ class Database
     }
 
     /**
-     * Commit database transaction
+     * Commit een database transactie
      */
     public function commit()
     {
@@ -122,7 +126,7 @@ class Database
     }
 
     /**
-     * Rollback database transaction
+     * Rollback een database transactie
      */
     public function rollback()
     {

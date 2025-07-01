@@ -48,9 +48,9 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= URLROOT; ?>/voedselpakket">
+                            <a class="nav-link" href="<?= URLROOT; ?>/voedselpakketten">
                                 <i class="bi bi-bag-heart-fill me-1"></i>
-                                Overzicht Voedselpakket
+                                Overzicht Voedselpakketten
                             </a>
                         </li>
                         <li class="nav-item dropdown">

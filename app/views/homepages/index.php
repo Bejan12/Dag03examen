@@ -9,11 +9,13 @@
         <div class="col-8">
 
             <h3><?php echo $data['title']; ?></h3>
-
-            <a href="<?= URLROOT; ?>/smartphones/index">Overzicht smartphones</a> |
-            <a href="<?= URLROOT; ?>/sneakers/index">Mooiste sneakers</a> | 
-            <a href="<?= URLROOT; ?>/horloges/index">Duurste Horloges</a> | 
-            <a href="<?= URLROOT; ?>/zangeressen/index">Rijkste Zangeressen</a> | 
+            
+            <!-- Navigation links -->
+            <div class="mt-4">
+                <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-primary">
+                    Overzicht voedselpakketten
+                </a>
+            </div>
 
         </div>
         
