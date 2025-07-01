@@ -104,4 +104,36 @@ class Database
     public function outQuery($sql) {
         return $this->dbHandler->query($sql);
     }
+
+    /**
+     * Begin database transaction
+     */
+    public function beginTransaction()
+    {
+        return $this->dbHandler->beginTransaction();
+    }
+
+    /**
+     * Commit database transaction
+     */
+    public function commit()
+    {
+        return $this->dbHandler->commit();
+    }
+
+    /**
+     * Rollback database transaction
+     */
+    public function rollback()
+    {
+        return $this->dbHandler->rollback();
+    }
+
+    /**
+     * Get last insert ID
+     */
+    public function lastInsertId()
+    {
+        return $this->dbHandler->lastInsertId();
+    }
 }

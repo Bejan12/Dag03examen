@@ -1,5 +1,10 @@
 <?php
     /**
+     * Start session
+     */
+    session_start();
+    
+    /**
      * We includen hier alle libraries die we nodig hebben
      * voor het mvc-framework
      */
@@ -14,6 +19,22 @@
     function redirect($page) {
         header('location: ' . URLROOT . '/' . $page);
         exit();
+    }
+    
+    /**
+     * Helper functie om te checken of gebruiker is ingelogd
+     */
+    function isLoggedIn() {
+        return isset($_SESSION['user_id']);
+    }
+    
+    /**
+     * Helper functie om toegang te controleren
+     */
+    function requireLogin() {
+        if (!isLoggedIn()) {
+            redirect('auth/login');
+        }
     }
     
     /**

@@ -12,8 +12,8 @@
                 <?php $hoofdklant = $data['klant'][0]; ?>
                 
                 <!-- Klant Details volgens wireframe -->
-                <div class="card">
-                    <div class="card-header bg-success text-white">
+                <div class="card shadow">
+                    <div class="card-header text-success">
                         <h5 class="mb-0">Klant Details <?= htmlspecialchars($data['title']); ?></h5>
                     </div>
                     <div class="card-body p-3">

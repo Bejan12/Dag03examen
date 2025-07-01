@@ -11,6 +11,9 @@ class Klanten extends BaseController
 
     public function index()
     {
+        // Require login
+        requireLogin();
+        
         // Haal alle klanten op uit de database
         $klanten = $this->klantModel->getAllKlanten();
 
@@ -24,6 +27,9 @@ class Klanten extends BaseController
 
     public function details($id)
     {
+        // Require login
+        requireLogin();
+        
         if (!$id) {
             redirect('klanten');
         }
@@ -49,6 +55,9 @@ class Klanten extends BaseController
 
     public function edit($id)
     {
+        // Require login
+        requireLogin();
+        
         $klant = $this->klantModel->getKlantById($id);
         
         if (!$klant) {
@@ -62,8 +71,8 @@ class Klanten extends BaseController
 
         // Check for POST request
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Sanitize POST data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // Sanitize POST data (modern approach)
+            $_POST = array_map('trim', $_POST);
 
             $data = [
                 'id' => $id,

@@ -16,8 +16,8 @@
             <?php endif; ?>
 
             <!-- Wijzig Klant Details volgens wireframe -->
-            <div class="card">
-                <div class="card-header bg-success text-white">
+            <div class="card shadow">
+                <div class="card-header text-success">
                     <h5 class="mb-0">Wijzig Klant Details <?= htmlspecialchars($data['title']); ?></h5>
                 </div>
                 <div class="card-body p-3">
@@ -66,7 +66,7 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Vertegenwoordiger</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= htmlspecialchars($data['vertegenwoordiger']); ?>" readonly>
+                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['vertegenwoordiger']) ? htmlspecialchars($data['vertegenwoordiger']) : '~~~~'; ?>" readonly>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -79,7 +79,7 @@
                                        name="straat" 
                                        id="straat" 
                                        class="form-control form-control-sm <?= (!empty($data['straat_err'])) ? 'is-invalid' : ''; ?>" 
-                                       value="<?= !empty($data['straat']) ? htmlspecialchars($data['straat']) : '~~~~'; ?>" 
+                                       value="<?= !empty($data['straat']) ? htmlspecialchars($data['straat']) : ''; ?>" 
                                        required>
                                 <div class="invalid-feedback">
                                     <?= $data['straat_err']; ?>
@@ -95,7 +95,7 @@
                                        name="huisnummer" 
                                        id="huisnummer" 
                                        class="form-control form-control-sm <?= (!empty($data['huisnummer_err'])) ? 'is-invalid' : ''; ?>" 
-                                       value="<?= !empty($data['huisnummer']) ? htmlspecialchars($data['huisnummer']) : '~~~~'; ?>" 
+                                       value="<?= !empty($data['huisnummer']) ? htmlspecialchars($data['huisnummer']) : ''; ?>" 
                                        required>
                                 <div class="invalid-feedback">
                                     <?= $data['huisnummer_err']; ?>
@@ -111,7 +111,7 @@
                                        name="toevoeging" 
                                        id="toevoeging" 
                                        class="form-control form-control-sm" 
-                                       value="<?= !empty($data['toevoeging']) ? htmlspecialchars($data['toevoeging']) : '~~~~'; ?>">
+                                       value="<?= !empty($data['toevoeging']) ? htmlspecialchars($data['toevoeging']) : ''; ?>">
                             </div>
                         </div>
                         <hr class="my-2">
@@ -123,7 +123,7 @@
                                        name="postcode" 
                                        id="postcode" 
                                        class="form-control form-control-sm <?= (!empty($data['postcode_err'])) ? 'is-invalid' : ''; ?>" 
-                                       value="<?= !empty($data['postcode']) ? htmlspecialchars($data['postcode']) : '~~~~'; ?>" 
+                                       value="<?= !empty($data['postcode']) ? htmlspecialchars($data['postcode']) : ''; ?>" 
                                        required>
                                 <div class="invalid-feedback">
                                     <?= $data['postcode_err']; ?>
@@ -139,7 +139,7 @@
                                        name="woonplaats" 
                                        id="woonplaats" 
                                        class="form-control form-control-sm <?= (!empty($data['woonplaats_err'])) ? 'is-invalid' : ''; ?>" 
-                                       value="<?= !empty($data['woonplaats']) ? htmlspecialchars($data['woonplaats']) : '~~~~'; ?>" 
+                                       value="<?= !empty($data['woonplaats']) ? htmlspecialchars($data['woonplaats']) : ''; ?>" 
                                        required>
                                 <div class="invalid-feedback">
                                     <?= $data['woonplaats_err']; ?>
@@ -155,7 +155,7 @@
                                        name="email" 
                                        id="email" 
                                        class="form-control form-control-sm <?= (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" 
-                                       value="<?= !empty($data['email']) ? htmlspecialchars($data['email']) : '~~~~'; ?>">
+                                       value="<?= !empty($data['email']) ? htmlspecialchars($data['email']) : ''; ?>">
                                 <div class="invalid-feedback">
                                     <?= $data['email_err']; ?>
                                 </div>
@@ -170,7 +170,7 @@
                                        name="mobiel" 
                                        id="mobiel" 
                                        class="form-control form-control-sm" 
-                                       value="<?= !empty($data['mobiel']) ? htmlspecialchars($data['mobiel']) : str_repeat('~', 20); ?>">
+                                       value="<?= !empty($data['mobiel']) ? htmlspecialchars($data['mobiel']) : ''; ?>">
                             </div>
                         </div>
                     </form>

@@ -478,9 +478,9 @@
      -- Vul tabel Gebruiker
      INSERT INTO Gebruiker (PersoonId, InlogNaam, Gebruikersnaam, Wachtwoord, IsIngelogd, Ingelogd, Uitgelogd, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
      VALUES
-     (1, 'Hans', 'hans@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVowCp/DL6zKiF0i', 1, '2024-03-13 17:03:06', NULL, 1, NULL, SYSDATE(6), SYSDATE(6)),
-     (2, 'Jan', 'jan@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVowCp/DL3zKiF6i', 0, '2024-03-13 15:13:23', '2024-03-13 15:23:46', 1, NULL, SYSDATE(6), SYSDATE(6)),
-     (3, 'Herman', 'herman@maaskantje.nl', '$2y$10$296RMzqzZqWENu9vyh6axed0DkfsuYkbvoI/AXVuwCp/DL9zKiF2i', 1, '2024-06-20 12:05:20', NULL, 1, NULL, SYSDATE(6), SYSDATE(6));
+     (1, 'Hans', 'hans@maaskantje.nl', '$2y$10$J/NG36JIuaO7qfkwz0pKyO5WWS8x1CJfIDCuNJvkDwjv9Sal3lQz2', 0, NULL, NULL, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (2, 'Jan', 'jan@maaskantje.nl', '$2y$10$J/NG36JIuaO7qfkwz0pKyO5WWS8x1CJfIDCuNJvkDwjv9Sal3lQz2', 0, NULL, NULL, 1, NULL, SYSDATE(6), SYSDATE(6)),
+     (3, 'Herman', 'herman@maaskantje.nl', '$2y$10$J/NG36JIuaO7qfkwz0pKyO5WWS8x1CJfIDCuNJvkDwjv9Sal3lQz2', 0, NULL, NULL, 1, NULL, SYSDATE(6), SYSDATE(6));
 
      -- Vul tabel Product
      INSERT INTO Product (CategorieId, Naam, SoortAllergie, Barcode, Houdbaarheidsdatum, Omschrijving, Status, IsActief, Opmerking, DatumAangemaakt, DatumGewijzigd)
