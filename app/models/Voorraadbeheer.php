@@ -5,6 +5,23 @@
  * @author Bejan Afkar
  */
 class VoorraadModel
+    /**
+     * Haal het magazijnId op bij een productId
+     * @param int $productId
+     * @return int|null
+     */
+    public function getMagazijnIdByProductId($productId)
+    {
+        try {
+            $this->db->query('SELECT pm.MagazijnId FROM productpermagazijn pm WHERE pm.ProductId = :productId AND pm.IsActief = 1 LIMIT 1');
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $row = $this->db->single();
+            return $row ? $row->MagazijnId : null;
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen magazijnId: ' . $e->getMessage());
+            return null;
+        }
+    }
 {
     private $db;
 
@@ -75,6 +92,31 @@ class VoorraadModel
         } catch (PDOException $e) {
             error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Update het aantal uitgeleverde producten (voorraad)
+     * @param int $productId
+     * @param int $magazijnId
+     * @param int $aantal
+     * @return bool
+     */
+    public function updateVoorraad($productId, $magazijnId, $aantal)
+    {
+        try {
+            $sql = "UPDATE magazijn m
+                    JOIN productpermagazijn pm ON m.Id = pm.MagazijnId
+                    SET m.Aantal = :aantal
+                    WHERE pm.ProductId = :productId AND m.Id = :magazijnId AND m.IsActief = 1 AND pm.IsActief = 1";
+            $this->db->query($sql);
+            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            error_log('Fout bij updaten voorraad: ' . $e->getMessage());
+            return false;
         }
     }
 }

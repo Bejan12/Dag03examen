@@ -46,4 +46,39 @@ class Voorraadbeheer extends BaseController
         ];
         $this->view('voorraadbeheer/details', $data);
     }
+
+    /**
+     * Wijzig voorraad van een product
+     */
+    public function wijzig($id)
+    {
+        $product = $this->voorraadModel->getProductDetails($id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $magazijnLocatie = isset($_POST['magazijn']) ? trim($_POST['magazijn']) : $product->magazijn;
+            $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
+            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? $_POST['uitleveringsdatum'] : null;
+
+            $magazijnId = $this->voorraadModel->getMagazijnIdByProductId($id);
+            $updateSuccess = true;
+            if ($magazijnId && $aantalUitgeleverd !== null) {
+                $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
+            } else {
+                $updateSuccess = false;
+            }
+
+            if ($updateSuccess) {
+                $_SESSION['success'] = 'De productgegevens zijn gewijzigd.';
+                // Geen exit en geen header, zodat de melding zichtbaar blijft op de wijzigpagina
+            } else {
+                $_SESSION['error'] = 'Wijzigen mislukt.';
+            }
+            // Haal opnieuw de productdetails op na wijziging
+            $product = $this->voorraadModel->getProductDetails($id);
+        }
+        $data = [
+            'title' => 'Wijzig Productvoorraad',
+            'product' => $product
+        ];
+        $this->view('voorraadbeheer/wijzig', $data);
+    }
 }

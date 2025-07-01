@@ -14,27 +14,88 @@ class VoorraadModel
     }
 
     /**
+     * Update het aantal uitgeleverde producten (voorraad)
+     * @param int $productId
+     * @param int $magazijnId
+     * @param int $aantal
+     * @return bool
+     */
+    public function updateVoorraad(int $productId, int $magazijnId, int $aantal): bool
+    {
+        try {
+            // We updaten de voorraad van het product per magazijn
+            $sql = "UPDATE magazijn m
+                    JOIN productpermagazijn pm ON m.Id = pm.MagazijnId
+                    SET m.Aantal = :aantal
+                    WHERE pm.ProductId = :productId
+                      AND m.Id = :magazijnId
+                      AND m.IsActief = 1
+                      AND pm.IsActief = 1";
+            $this->db->query($sql);
+            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            error_log('Fout bij updaten voorraad: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Haal het magazijnId op bij een productId
+     * @param int $productId
+     * @return int|null
+     */
+    public function getMagazijnIdByProductId(int $productId): ?int
+    {
+        try {
+            $sql = "SELECT pm.MagazijnId 
+                    FROM productpermagazijn pm 
+                    WHERE pm.ProductId = :productId 
+                      AND pm.IsActief = 1 
+                    LIMIT 1";
+            $this->db->query($sql);
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $row = $this->db->single();
+            return $row ? (int)$row->MagazijnId : null;
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen magazijnId: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Haal alle voorraadproducten op met alle benodigde info
      * @param int|null $categorieId
      * @return array
      */
-    public function getAllVoorraad($categorieId = null)
+    public function getAllVoorraad(?int $categorieId = null): array
     {
         try {
-            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn
+            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, 
+                           m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, 
+                           p.Houdbaarheidsdatum, pm.Locatie AS magazijn
                     FROM product p
                     JOIN categorie c ON p.CategorieId = c.Id
                     JOIN productpermagazijn pm ON p.Id = pm.ProductId
                     JOIN magazijn m ON pm.MagazijnId = m.Id
-                    WHERE p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
-            if ($categorieId) {
-                $sql .= " AND c.Id = :categorieId ";
+                    WHERE p.IsActief = 1 
+                      AND pm.IsActief = 1 
+                      AND m.IsActief = 1";
+
+            if ($categorieId !== null) {
+                $sql .= " AND c.Id = :categorieId";
             }
+
             $sql .= " ORDER BY p.Naam ASC";
+
             $this->db->query($sql);
-            if ($categorieId) {
+
+            if ($categorieId !== null) {
                 $this->db->bind(':categorieId', $categorieId, PDO::PARAM_INT);
             }
+
             return $this->db->resultSet();
         } catch (PDOException $e) {
             error_log('Fout bij ophalen voorraad: ' . $e->getMessage());
@@ -46,10 +107,11 @@ class VoorraadModel
      * Haal alle categorieën op
      * @return array
      */
-    public function getCategorieen()
+    public function getCategorieen(): array
     {
         try {
-            $this->db->query('SELECT Id, Naam FROM categorie WHERE IsActief = 1 ORDER BY Naam ASC');
+            $sql = "SELECT Id, Naam FROM categorie WHERE IsActief = 1 ORDER BY Naam ASC";
+            $this->db->query($sql);
             return $this->db->resultSet();
         } catch (PDOException $e) {
             error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
@@ -62,15 +124,21 @@ class VoorraadModel
      * @param int $id
      * @return object|null
      */
-    public function getProductDetails($id)
+    public function getProductDetails(int $id): ?object
     {
         try {
-            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn, p.Omschrijving, p.Status
+            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, 
+                           m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, 
+                           p.Houdbaarheidsdatum, pm.Locatie AS magazijn, 
+                           p.Omschrijving, p.Status
                     FROM product p
                     JOIN categorie c ON p.CategorieId = c.Id
                     JOIN productpermagazijn pm ON p.Id = pm.ProductId
                     JOIN magazijn m ON pm.MagazijnId = m.Id
-                    WHERE p.Id = :id AND p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
+                    WHERE p.Id = :id 
+                      AND p.IsActief = 1 
+                      AND pm.IsActief = 1 
+                      AND m.IsActief = 1";
             $this->db->query($sql);
             $this->db->bind(':id', $id, PDO::PARAM_INT);
             return $this->db->single();

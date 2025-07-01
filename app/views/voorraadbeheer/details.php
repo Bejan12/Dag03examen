@@ -19,7 +19,15 @@
                             <tr><th>Status</th><td><?= htmlspecialchars($data['product']->Status) ?></td></tr>
                             <tr><th>Omschrijving</th><td><?= htmlspecialchars($data['product']->Omschrijving) ?></td></tr>
                         </table>
-                        <a href="<?= URLROOT; ?>/voorraadbeheer/index" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Terug naar overzicht</a>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="<?= URLROOT; ?>/voorraadbeheer/wijzig/<?= $data['product']->Id; ?>" class="btn btn-primary">
+                                <i class="bi bi-pencil-square"></i> Wijzig
+                            </a>
+                            <div>
+                                <a href="<?= URLROOT; ?>/voorraadbeheer/index" class="btn btn-secondary ms-2">terug</a>
+                                <a href="<?= URLROOT; ?>/" class="btn btn-secondary ms-2">home</a>
+                            </div>
+                        </div>
                     <?php else: ?>
                         <div class="alert alert-danger">Product niet gevonden.</div>
                     <?php endif; ?>
