@@ -133,6 +133,8 @@ class Klanten extends BaseController
 
             if (empty($data['postcode'])) {
                 $data['postcode_err'] = 'Voer een postcode in';
+            } elseif (!preg_match('/^5271[A-Z]{2}$/i', $data['postcode'])) {
+                $data['postcode_err'] = 'De postcode komt niet uit de regio Maaskantje';
             }
 
             if (empty($data['woonplaats'])) {
@@ -157,6 +159,10 @@ class Klanten extends BaseController
                     die('Er is iets fout gegaan');
                 }
             } else {
+                // Als er een postcode fout is, toon algemene foutmelding
+                if (!empty($data['postcode_err'])) {
+                    $data['general_error'] = 'De contactgegevens van de geselecteerde klant kunnen niet gewijzigd';
+                }
                 // Load view with errors
                 $this->view('klant/edit', $data);
             }

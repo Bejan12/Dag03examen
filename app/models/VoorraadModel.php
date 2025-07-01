@@ -62,8 +62,7 @@ class VoorraadModel
             $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, 
                            m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, 
                            p.Houdbaarheidsdatum, pm.Locatie AS magazijn, 
-                           p.Omschrijving, p.Status, m.Ontvangstdatum, m.Uitleveringsdatum,
-                           p.Barcode
+                           p.Omschrijving, p.Status
                     FROM product p
                     JOIN categorie c ON p.CategorieId = c.Id
                     JOIN productpermagazijn pm ON p.Id = pm.ProductId
