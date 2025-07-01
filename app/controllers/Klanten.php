@@ -215,6 +215,24 @@ class Klanten extends BaseController
      * @param string $postcode De postcode om te controleren
      * @return bool True als de postcode binnen de regio valt, anders false
      */
-    
+    private function isPostcodeInMaaskantjeRegio($postcode)
+    {
+        // Verwijder spaties en zet om naar hoofdletters voor consistentie
+        $postcode = strtoupper(str_replace(' ', '', $postcode));
+        
+        // Definieer geldige postcodes voor de regio Maaskantje
+        // Dit zijn voorbeelden - in een echte situatie zou dit uit een database komen
+        $geldigePostcodes = [
+            '5271', '5272', '5273', '5274', '5275', // Den Bosch gebied
+            '4901', '4902', '4903', '4904', '4905', // Oosterhout gebied
+            '5161', '5162', '5163', '5164', '5165'  // Waalwijk gebied
+        ];
+        
+        // Haal de eerste 4 cijfers van de postcode
+        $postcodeStart = substr($postcode, 0, 4);
+        
+        // Controleer of de postcode start begint in de lijst staat
+        return in_array($postcodeStart, $geldigePostcodes);
+    }
 
 }
