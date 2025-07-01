@@ -4,10 +4,10 @@
     <div class="row">
         <div class="col-12">
             <h2 class="mb-4 text-success">Overzicht Klanten</h2>
-            
+
             <!-- Filter sectie volgens wireframe -->
-            <div class="row mb-4">
-                <div class="col-md-3">
+            <div class="row mb-4 justify-content-end">
+                <div class="col-md-1 col-lg-2">
                     <label for="postcodeFilter" class="form-label">Selecteer Postcode</label>
                     <select class="form-select" id="postcodeFilter">
                         <option value="">Alle postcodes</option>
@@ -29,7 +29,7 @@
                         <option value="5271ZH">5271ZH</option>
                     </select>
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
+                <div class="col-auto d-flex align-items-end">
                     <button class="btn btn-primary" id="toonKlantenBtn">Toon Klanten</button>
                 </div>
             </div>
@@ -57,12 +57,11 @@
                         <tbody>
                             <!-- Error row voor unhappy scenario -->
                             <tr id="noResultsRow" style="display: none;">
-                                <td colspan="7" class="text-center text-warning">
-                                    <i class="bi bi-exclamation-triangle me-2"></i>
-                                    Er zijn geen klanten bekend die de geselecteerde postcode hebben.
+                                <td colspan="7" class="text-center p-3" style="background-color: #fff3cd; color: #856404;">
+                                    Er zijn geen klanten bekend die de geselecteerde postcode hebben
                                 </td>
                             </tr>
-                            
+
                             <?php foreach ($data['klanten'] as $klant): ?>
                                 <tr data-postcode="<?= htmlspecialchars($klant->Postcode ?? ''); ?>" class="klant-row">
                                     <td><?= htmlspecialchars($klant->GezinNaam); ?></td>
@@ -135,12 +134,12 @@ function filterByPostcode() {
     const selectedPostcode = document.getElementById('postcodeFilter').value;
     const tableRows = document.querySelectorAll('#klantenTable tbody tr.klant-row');
     const noResultsRow = document.getElementById('noResultsRow');
-    
+
     let visibleRows = 0;
-    
+
     tableRows.forEach(row => {
         const rowPostcode = row.getAttribute('data-postcode');
-        
+
         if (selectedPostcode === '' || rowPostcode === selectedPostcode) {
             row.style.display = '';
             visibleRows++;
@@ -148,7 +147,7 @@ function filterByPostcode() {
             row.style.display = 'none';
         }
     });
-    
+
     // Toon error row als er geen resultaten zijn bij een specifieke postcode selectie
     if (selectedPostcode !== '' && visibleRows === 0) {
         noResultsRow.style.display = '';
