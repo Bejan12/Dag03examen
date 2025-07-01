@@ -105,7 +105,7 @@ class Voedselpakketten extends BaseController
     }
 
     /**
-     * Toont details van een specifiek gezin
+     * Toont details van een specifiek gezin met voedselpakketten (Wireframe 3)
      * 
      * @param int $gezinId ID van het gezin
      */
@@ -118,14 +118,20 @@ class Voedselpakketten extends BaseController
             }
 
             $gezinDetails = $this->voedselpakketModel->getGezinDetails($gezinId);
+            $voedselpakketten = $this->voedselpakketModel->getVoedselpakkettenByGezin($gezinId);
 
             if (!$gezinDetails) {
                 throw new Exception('Gezin niet gevonden');
             }
 
+            if ($voedselpakketten === false) {
+                throw new Exception('Kon voedselpakketten niet ophalen');
+            }
+
             $data = [
-                'title' => 'Gezin Details',
+                'title' => 'Overzicht voedselpakketten',
                 'gezin' => $gezinDetails,
+                'voedselpakketten' => $voedselpakketten,
                 'success_message' => $this->getFlashMessage('success'),
                 'error_message' => $this->getFlashMessage('error')
             ];
@@ -134,6 +140,149 @@ class Voedselpakketten extends BaseController
         } catch (Exception $e) {
             $this->handleError($e, 'Kon gezin details niet laden');
         }
+    }
+
+    /**
+     * Toont wijzig status pagina (Wireframe 4)
+     * 
+     * @param int $voedselpakketId ID van het voedselpakket
+     */
+    public function wijzigStatus(int $voedselpakketId): void
+    {
+        try {
+            // Valideer input
+            if ($voedselpakketId <= 0) {
+                throw new InvalidArgumentException('Ongeldige voedselpakket ID');
+            }
+
+            $voedselpakket = $this->voedselpakketModel->getVoedselpakketById($voedselpakketId);
+
+            if (!$voedselpakket) {
+                throw new Exception('Voedselpakket niet gevonden');
+            }
+
+            // Controleer of gezin nog ingeschreven is
+            $isIngeschreven = $this->voedselpakketModel->isGezinIngeschreven($voedselpakket->GezinId);
+
+            $data = [
+                'title' => 'Wijzig voedselpakket status',
+                'voedselpakket' => $voedselpakket,
+                'isIngeschreven' => $isIngeschreven,
+                'csrf_token' => $this->generateCSRFToken(),
+                'success_message' => $this->getFlashMessage('success'),
+                'error_message' => $this->getFlashMessage('error')
+            ];
+
+            $this->view('voedselpakketten/wijzig_status', $data);
+        } catch (Exception $e) {
+            $this->handleError($e, 'Kon wijzig status pagina niet laden');
+        }
+    }
+
+    /**
+     * Verwerkt de status wijziging (POST)
+     */
+    public function updateStatus(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                // CSRF token validatie
+                if (!$this->validateCSRFToken()) {
+                    throw new Exception('Ongeldige aanvraag');
+                }
+
+                // Sanitize en valideer input
+                $voedselpakketId = (int)$this->sanitizeInput($_POST['voedselpakket_id'] ?? '');
+                $nieuweStatus = $this->sanitizeInput($_POST['status'] ?? '');
+
+                // Server-side validatie
+                if ($voedselpakketId <= 0) {
+                    throw new InvalidArgumentException('Ongeldige voedselpakket ID');
+                }
+
+                $geldige_statussen = ['NietUitgereikt', 'Uitgereikt'];
+                if (!in_array($nieuweStatus, $geldige_statussen)) {
+                    throw new InvalidArgumentException('Ongeldige status');
+                }
+
+                // Wijzig status
+                $result = $this->voedselpakketModel->wijzigVoedselpakketStatus($voedselpakketId, $nieuweStatus);
+
+                if ($result) {
+                    $this->setFlashMessage('success', 'De wijziging is doorgevoerd');
+                    
+                    // Haal gezin ID op voor redirect
+                    $voedselpakket = $this->voedselpakketModel->getVoedselpakketById($voedselpakketId);
+                    if ($voedselpakket) {
+                        // Redirect naar details pagina van het gezin
+                        $this->redirect('voedselpakketten/details/' . $voedselpakket->GezinId);
+                    } else {
+                        $this->redirect('voedselpakketten/overzicht');
+                    }
+                } else {
+                    throw new Exception('Kon status niet wijzigen');
+                }
+
+            } catch (Exception $e) {
+                // Als het een specifieke foutmelding is over inschrijving, toon die
+                if (strpos($e->getMessage(), 'niet meer ingeschreven') !== false) {
+                    $this->setFlashMessage('error', $e->getMessage());
+                    // Ga terug naar wijzig status pagina met disabled velden
+                    $voedselpakketId = (int)($_POST['voedselpakket_id'] ?? 0);
+                    if ($voedselpakketId > 0) {
+                        $this->redirect('voedselpakketten/wijzigStatus/' . $voedselpakketId);
+                    }
+                } else {
+                    $this->handleError($e, 'Er is een fout opgetreden bij het wijzigen van de status');
+                }
+            }
+        }
+
+        // Als niet POST, redirect naar overzicht
+        $this->redirect('voedselpakketten/overzicht');
+    }
+
+    /**
+     * Sanitize user input
+     * 
+     * @param string $input Input string
+     * @return string Geschoonde string
+     */
+    private function sanitizeInput(string $input): string
+    {
+        return htmlspecialchars(strip_tags(trim($input)), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Valideer CSRF token
+     * 
+     * @return bool True als geldig
+     */
+    private function validateCSRFToken(): bool
+    {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+
+        return isset($_POST['csrf_token']) && 
+               isset($_SESSION['csrf_token']) && 
+               hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
+    }
+
+    /**
+     * Genereer CSRF token
+     * 
+     * @return string CSRF token
+     */
+    private function generateCSRFToken(): string
+    {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+
+        $token = bin2hex(random_bytes(32));
+        $_SESSION['csrf_token'] = $token;
+        return $token;
     }
 
     /**

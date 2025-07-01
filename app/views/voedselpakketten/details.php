@@ -68,27 +68,20 @@
                                     <td><?= $pakket->DatumUitgifte ? htmlspecialchars($pakket->DatumUitgifte) : '-'; ?></td>
                                     <td>
                                         <?php
-                                        $statusText = '';
-                                        $statusClass = '';
                                         switch($pakket->Status) {
                                             case 'NietUitgereikt':
-                                                $statusText = 'Niet uitgereikt';
-                                                $statusClass = 'bg-warning';
+                                                echo 'Niet uitgereikt';
                                                 break;
                                             case 'Uitgereikt':
-                                                $statusText = 'Uitgereikt';
-                                                $statusClass = 'bg-success';
+                                                echo 'Uitgereikt';
                                                 break;
                                             case 'NietMeerIngeschreven':
-                                                $statusText = 'Niet meer ingeschreven';
-                                                $statusClass = 'bg-danger';
+                                                echo 'Niet meer ingeschreven';
                                                 break;
                                             default:
-                                                $statusText = htmlspecialchars($pakket->Status);
-                                                $statusClass = 'bg-secondary';
+                                                echo htmlspecialchars($pakket->Status);
                                         }
                                         ?>
-                                        <span class="badge <?= $statusClass; ?>"><?= $statusText; ?></span>
                                     </td>
                                     <td><?= (int)($pakket->AantalProducten ?? 0); ?></td>
                                     <td>
