@@ -202,4 +202,31 @@ class VoorraadModel
             return false;
         }
     }
+
+    /**
+     * Voorbeeld: Haal voorraadproducten op via stored procedure
+     * @param int|null $categorieId
+     * @return array
+     */
+    public function getAllVoorraadViaStoredProcedure(?int $categorieId = null): array
+    {
+        try {
+            // Stored procedure aanroepen, bijvoorbeeld 'sp_getVoorraad' met 1 parameter
+            $sql = "CALL sp_getVoorraad(:categorieId)";
+            $this->db->query($sql);
+            
+            // Bind parameter of bind null als geen categorieId is meegegeven
+            if ($categorieId !== null) {
+                $this->db->bind(':categorieId', $categorieId, PDO::PARAM_INT);
+            } else {
+                $this->db->bind(':categorieId', null, PDO::PARAM_NULL);
+            }
+
+            // Resultaat ophalen
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen voorraad via stored procedure: ' . $e->getMessage());
+            return [];
+        }
+    }
 }
