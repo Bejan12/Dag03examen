@@ -39,8 +39,8 @@
                                        class="form-control form-control-sm <?= (!empty($data['voornaam_err'])) ? 'is-invalid' : ''; ?>" 
                                        value="<?= !empty($data['voornaam']) ? htmlspecialchars($data['voornaam']) : ''; ?>" 
                                        required>
-                                <div class="invalid-feedback">
-                                    <?= $data['voornaam_err']; ?>
+                                <div class="invalid-feedback" id="voornaam-error">
+                                    Voornaam is verplicht en mag geen cijfers bevatten
                                 </div>
                             </div>
                         </div>
@@ -52,8 +52,11 @@
                                 <input type="text" 
                                        name="tussenvoegsel" 
                                        id="tussenvoegsel" 
-                                       class="form-control form-control-sm" 
+                                       class="form-control form-control-sm <?= (!empty($data['tussenvoegsel_err'])) ? 'is-invalid' : ''; ?>" 
                                        value="<?= !empty($data['tussenvoegsel']) ? htmlspecialchars($data['tussenvoegsel']) : ''; ?>">
+                                <div class="invalid-feedback">
+                                    <?= $data['tussenvoegsel_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -67,8 +70,8 @@
                                        class="form-control form-control-sm <?= (!empty($data['achternaam_err'])) ? 'is-invalid' : ''; ?>" 
                                        value="<?= !empty($data['achternaam']) ? htmlspecialchars($data['achternaam']) : ''; ?>" 
                                        required>
-                                <div class="invalid-feedback">
-                                    <?= $data['achternaam_err']; ?>
+                                <div class="invalid-feedback" id="achternaam-error">
+                                    Achternaam is verplicht en mag geen cijfers bevatten
                                 </div>
                             </div>
                         </div>
@@ -82,9 +85,11 @@
                                        id="geboortedatum" 
                                        class="form-control form-control-sm <?= (!empty($data['geboortedatum_err'])) ? 'is-invalid' : ''; ?>" 
                                        value="<?= !empty($data['geboortedatum']) ? htmlspecialchars($data['geboortedatum']) : ''; ?>" 
+                                       min="1920-01-01"
+                                       max="<?= date('Y-m-d'); ?>"
                                        required>
-                                <div class="invalid-feedback">
-                                    <?= $data['geboortedatum_err']; ?>
+                                <div class="invalid-feedback" id="geboortedatum-error">
+                                    Geboortedatum moet tussen 1920 en vandaag liggen
                                 </div>
                             </div>
                         </div>
@@ -130,9 +135,10 @@
                                        id="huisnummer" 
                                        class="form-control form-control-sm <?= (!empty($data['huisnummer_err'])) ? 'is-invalid' : ''; ?>" 
                                        value="<?= !empty($data['huisnummer']) ? htmlspecialchars($data['huisnummer']) : ''; ?>" 
+                                       pattern="[0-9]+"
                                        required>
-                                <div class="invalid-feedback">
-                                    <?= $data['huisnummer_err']; ?>
+                                <div class="invalid-feedback" id="huisnummer-error">
+                                    Huisnummer mag alleen cijfers bevatten
                                 </div>
                             </div>
                         </div>
@@ -203,8 +209,12 @@
                                 <input type="tel" 
                                        name="mobiel" 
                                        id="mobiel" 
-                                       class="form-control form-control-sm" 
-                                       value="<?= !empty($data['mobiel']) ? htmlspecialchars($data['mobiel']) : ''; ?>">
+                                       class="form-control form-control-sm <?= (!empty($data['mobiel_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['mobiel']) ? htmlspecialchars($data['mobiel']) : ''; ?>" 
+                                       pattern="[0-9+\-\s()]*">
+                                <div class="invalid-feedback" id="mobiel-error">
+                                    Mobiel nummer mag alleen cijfers, spaties, +, -, ( en ) bevatten
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -226,17 +236,137 @@
 </div>
 
 <script>
-// Bootstrap form validation
+// Uitgebreide client-side validatie
 (function() {
     'use strict';
+    
+    // Validatie functies
+    function validateName(value) {
+        return value.trim() !== '' && !/\d/.test(value);
+    }
+    
+    function validateBirthDate(value) {
+        if (!value) return false;
+        const date = new Date(value);
+        const minDate = new Date('1920-01-01');
+        const maxDate = new Date();
+        return date >= minDate && date <= maxDate;
+    }
+    
+    function validateHouseNumber(value) {
+        return /^\d+$/.test(value.trim());
+    }
+    
+    function validateMobile(value) {
+        if (!value.trim()) return true; // Mobiel is optioneel
+        return /^[0-9+\-\s()]*$/.test(value);
+    }
+    
+    // Real-time validatie voor specifieke velden
+    function addRealTimeValidation() {
+        // Voornaam validatie
+        const voornaamField = document.getElementById('voornaam');
+        if (voornaamField) {
+            voornaamField.addEventListener('input', function() {
+                const isValid = validateName(this.value);
+                toggleValidation(this, isValid);
+            });
+        }
+        
+        // Achternaam validatie
+        const achternaamField = document.getElementById('achternaam');
+        if (achternaamField) {
+            achternaamField.addEventListener('input', function() {
+                const isValid = validateName(this.value);
+                toggleValidation(this, isValid);
+            });
+        }
+        
+        // Geboortedatum validatie
+        const geboortedatumField = document.getElementById('geboortedatum');
+        if (geboortedatumField) {
+            geboortedatumField.addEventListener('change', function() {
+                const isValid = validateBirthDate(this.value);
+                toggleValidation(this, isValid);
+            });
+        }
+        
+        // Huisnummer validatie
+        const huisnummerField = document.getElementById('huisnummer');
+        if (huisnummerField) {
+            huisnummerField.addEventListener('input', function() {
+                const isValid = validateHouseNumber(this.value);
+                toggleValidation(this, isValid);
+            });
+        }
+        
+        // Mobiel validatie
+        const mobielField = document.getElementById('mobiel');
+        if (mobielField) {
+            mobielField.addEventListener('input', function() {
+                const isValid = validateMobile(this.value);
+                toggleValidation(this, isValid);
+            });
+        }
+    }
+    
+    function toggleValidation(field, isValid) {
+        if (isValid) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        }
+    }
+    
     window.addEventListener('load', function() {
+        // Voeg real-time validatie toe
+        addRealTimeValidation();
+        
+        // Bootstrap form validatie
         var forms = document.getElementsByClassName('needs-validation');
         var validation = Array.prototype.filter.call(forms, function(form) {
             form.addEventListener('submit', function(event) {
-                if (form.checkValidity() === false) {
+                let isFormValid = true;
+                
+                // Custom validatie checks
+                const voornaam = document.getElementById('voornaam');
+                if (voornaam && !validateName(voornaam.value)) {
+                    toggleValidation(voornaam, false);
+                    isFormValid = false;
+                }
+                
+                const achternaam = document.getElementById('achternaam');
+                if (achternaam && !validateName(achternaam.value)) {
+                    toggleValidation(achternaam, false);
+                    isFormValid = false;
+                }
+                
+                const geboortedatum = document.getElementById('geboortedatum');
+                if (geboortedatum && !validateBirthDate(geboortedatum.value)) {
+                    toggleValidation(geboortedatum, false);
+                    isFormValid = false;
+                }
+                
+                const huisnummer = document.getElementById('huisnummer');
+                if (huisnummer && !validateHouseNumber(huisnummer.value)) {
+                    toggleValidation(huisnummer, false);
+                    isFormValid = false;
+                }
+                
+                const mobiel = document.getElementById('mobiel');
+                if (mobiel && !validateMobile(mobiel.value)) {
+                    toggleValidation(mobiel, false);
+                    isFormValid = false;
+                }
+                
+                // Combineer met Bootstrap validatie
+                if (form.checkValidity() === false || !isFormValid) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
+                
                 form.classList.add('was-validated');
             }, false);
         });

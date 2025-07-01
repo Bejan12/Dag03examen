@@ -112,16 +112,36 @@ class Klanten extends BaseController
             // Persoonlijke gegevens validatie
             if (empty($data['voornaam'])) {
                 $data['voornaam_err'] = 'Voer een voornaam in';
+            } elseif (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $data['voornaam'])) {
+                $data['voornaam_err'] = 'Voornaam mag alleen letters, spaties, apostrofes en koppeltekens bevatten';
             }
 
             if (empty($data['achternaam'])) {
                 $data['achternaam_err'] = 'Voer een achternaam in';
+            } elseif (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $data['achternaam'])) {
+                $data['achternaam_err'] = 'Achternaam mag alleen letters, spaties, apostrofes en koppeltekens bevatten';
+            }
+
+            // Tussenvoegsel validatie (optioneel veld)
+            if (!empty($data['tussenvoegsel']) && !preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $data['tussenvoegsel'])) {
+                $data['tussenvoegsel_err'] = 'Tussenvoegsel mag alleen letters, spaties, apostrofes en koppeltekens bevatten';
             }
 
             if (empty($data['geboortedatum'])) {
                 $data['geboortedatum_err'] = 'Voer een geboortedatum in';
             } elseif (!strtotime($data['geboortedatum'])) {
                 $data['geboortedatum_err'] = 'Voer een geldige geboortedatum in';
+            } else {
+                $geboorteJaar = date('Y', strtotime($data['geboortedatum']));
+                $huidigJaar = date('Y');
+                $geboorteDatum = new DateTime($data['geboortedatum']);
+                $vandaag = new DateTime();
+                
+                if ($geboorteJaar < 1920) {
+                    $data['geboortedatum_err'] = 'Geboortedatum mag niet voor 1920 zijn';
+                } elseif ($geboorteDatum > $vandaag) {
+                    $data['geboortedatum_err'] = 'Geboortedatum mag niet in de toekomst liggen';
+                }
             }
             
             // Contactgegevens validatie
@@ -131,6 +151,8 @@ class Klanten extends BaseController
 
             if (empty($data['huisnummer'])) {
                 $data['huisnummer_err'] = 'Voer een huisnummer in';
+            } elseif (!preg_match('/^[0-9]+[a-zA-Z]*$/', $data['huisnummer'])) {
+                $data['huisnummer_err'] = 'Huisnummer moet beginnen met cijfers, gevolgd door optionele letters';
             }
 
             if (empty($data['postcode'])) {
@@ -147,11 +169,22 @@ class Klanten extends BaseController
                 $data['email_err'] = 'Voer een geldig emailadres in';
             }
 
+            // Mobiel nummer validatie (optioneel veld)
+            if (!empty($data['mobiel'])) {
+                // Verwijder spaties, koppeltekens en plus teken voor validatie
+                $cleanMobiel = preg_replace('/[\s\-\+]/', '', $data['mobiel']);
+                if (!preg_match('/^[0-9]+$/', $cleanMobiel)) {
+                    $data['mobiel_err'] = 'Mobiel nummer mag alleen cijfers, spaties, koppeltekens en + bevatten';
+                } elseif (strlen($cleanMobiel) < 10 || strlen($cleanMobiel) > 15) {
+                    $data['mobiel_err'] = 'Mobiel nummer moet tussen 10 en 15 cijfers lang zijn';
+                }
+            }
+
             // Make sure no errors
             if (empty($data['voornaam_err']) && empty($data['tussenvoegsel_err']) && empty($data['achternaam_err']) && 
                 empty($data['geboortedatum_err']) && empty($data['straat_err']) && 
                 empty($data['huisnummer_err']) && empty($data['postcode_err']) && 
-                empty($data['woonplaats_err']) && empty($data['email_err'])) {
+                empty($data['woonplaats_err']) && empty($data['email_err']) && empty($data['mobiel_err'])) {
                 
                 // Update alle gegevens
                 if ($this->klantModel->updateKlant($data)) {
