@@ -15,6 +15,13 @@
                 </script>
             <?php endif; ?>
 
+            <?php if (isset($data['general_err']) && !empty($data['general_err'])): ?>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <?= $data['general_err']; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Wijzig Klant Details volgens wireframe -->
             <div class="card shadow">
                 <div class="card-header text-success">
@@ -26,7 +33,15 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Voornaam</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['voornaam']) ? htmlspecialchars($data['voornaam']) : '~~~~'; ?>" readonly>
+                                <input type="text" 
+                                       name="voornaam" 
+                                       id="voornaam" 
+                                       class="form-control form-control-sm <?= (!empty($data['voornaam_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= htmlspecialchars($data['voornaam']); ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['voornaam_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -34,7 +49,14 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Tussenvoegsel</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['tussenvoegsel']) ? htmlspecialchars($data['tussenvoegsel']) : '~~~~'; ?>" readonly>
+                                <input type="text" 
+                                       name="tussenvoegsel" 
+                                       id="tussenvoegsel" 
+                                       class="form-control form-control-sm <?= (!empty($data['tussenvoegsel_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= $data['tussenvoegsel'] ? htmlspecialchars($data['tussenvoegsel']) : ''; ?>">
+                                <div class="invalid-feedback">
+                                    <?= $data['tussenvoegsel_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -42,7 +64,15 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Achternaam</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['achternaam']) ? htmlspecialchars($data['achternaam']) : '~~~~'; ?>" readonly>
+                                <input type="text" 
+                                       name="achternaam" 
+                                       id="achternaam" 
+                                       class="form-control form-control-sm <?= (!empty($data['achternaam_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= htmlspecialchars($data['achternaam']); ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['achternaam_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -50,7 +80,15 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Geboortedatum</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" placeholder="dd-mm-jjjj" value="<?= !empty($data['geboortedatum']) ? htmlspecialchars(date('d-m-Y', strtotime($data['geboortedatum']))) : '~~~~'; ?>" readonly>
+                                <input type="date" 
+                                       name="geboortedatum" 
+                                       id="geboortedatum" 
+                                       class="form-control form-control-sm <?= (!empty($data['geboortedatum_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['geboortedatum']) ? htmlspecialchars($data['geboortedatum']) : ''; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['geboortedatum_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
