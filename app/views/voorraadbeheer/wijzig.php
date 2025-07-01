@@ -52,7 +52,33 @@
                                 </tr>
                                 <tr>
                                     <th>Magazijn locatie</th>
-                                    <td><input type="text" class="form-control" name="magazijn" value="<?= htmlspecialchars($data['product']->magazijn) ?>" required></td>
+                                    <td>
+                                        <select name="magazijn" class="form-control" required>
+                                            <?php
+                                            $locaties = [
+                                                'Berlicum',
+                                                'Rosmalen',
+                                                'Gemonde',
+                                                'Vught',
+                                                'Schijndel',
+                                                'Middelrode',
+                                                'Sint-Michielsgestel',
+                                                'Den Bosch',
+                                                'Heeswijk Dinther'
+                                            ];
+                                            foreach ($locaties as $locatie):
+                                                // Check of dit de geselecteerde optie is (houd rekening met POST data als die er is)
+                                                $selected = '';
+                                                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['magazijn'])) {
+                                                    $selected = ($_POST['magazijn'] === $locatie) ? 'selected' : '';
+                                                } else {
+                                                    $selected = ($data['product']->magazijn === $locatie) ? 'selected' : '';
+                                                }
+                                            ?>
+                                                <option value="<?= htmlspecialchars($locatie) ?>" <?= $selected ?>><?= htmlspecialchars($locatie) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Ontvangstdatum</th>
@@ -94,7 +120,6 @@
                         <div class="alert alert-danger">Product niet gevonden.</div>
                     <?php endif; ?>
 
-                    <!-- VERGEET NIET error te unsetten als die bestaat -->
                     <?php if (isset($_SESSION['error'])) unset($_SESSION['error']); ?>
                 </div>
             </div>
