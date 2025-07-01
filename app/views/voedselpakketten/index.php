@@ -75,7 +75,11 @@
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="7" class="text-center">Geen gezinnen gevonden</td>
+                                <td colspan="7" class="text-center">
+                                    <div class="alert" style="background-color: #ffe4e1; border-color: #ffc0cb; color: #8b0000;">
+                                        Er zijn geen gezinnen bekent die de geselecteerde eetwens hebben
+                                    </div>
+                                </td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -91,18 +95,23 @@
     </div>
 </div>
 
-<!-- Client-side validatie JavaScript -->
+<!-- Client-side JavaScript (ZONDER auto-submit) -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const eetwensForm = document.getElementById('eetwensForm');
-    const eetwensSelect = document.getElementById('eetwensSelect');
-    
-    // Auto-submit bij selectie wijziging (optioneel)
-    eetwensSelect.addEventListener('change', function() {
-        if (this.value !== '') {
-            eetwensForm.submit();
-        }
+    // Bevestiging voor eventuele delete acties (indien van toepassing)
+    document.querySelectorAll('.btn-danger').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            if (!confirm('Weet je zeker dat je deze actie wilt uitvoeren?')) {
+                e.preventDefault();
+            }
+        });
     });
+    
+    // Optioneel: Focus op dropdown bij pagina load
+    const eetwensSelect = document.getElementById('eetwensSelect');
+    if (eetwensSelect) {
+        eetwensSelect.focus();
+    }
 });
 </script>
 

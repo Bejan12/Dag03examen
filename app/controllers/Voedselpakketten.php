@@ -37,18 +37,16 @@ class Voedselpakketten extends BaseController
             // Haal data op uit model
             $gezinnen = $this->voedselpakketModel->getAllGezinnenMetVoedselpakketten();
             $eetwensen = $this->voedselpakketModel->getAllEetwensen();
-            $allergieen = $this->voedselpakketModel->getAllAllergieen();
 
             // Check of data succesvol opgehaald is
-            if ($gezinnen === false || $eetwensen === false || $allergieen === false) {
+            if ($gezinnen === false || $eetwensen === false) {
                 throw new Exception('Kon gegevens niet ophalen uit database');
             }
 
             $data = [
-                'title' => 'Overzicht gezinnen met voedselpakketten',
+                'title' => 'Overzicht gezinnen',
                 'gezinnen' => $gezinnen,
                 'eetwensen' => $eetwensen,
-                'allergieen' => $allergieen,
                 'success_message' => $this->getFlashMessage('success'),
                 'error_message' => $this->getFlashMessage('error')
             ];
@@ -62,35 +60,39 @@ class Voedselpakketten extends BaseController
     /**
      * Filter gezinnen op basis van eetwens
      * 
-     * @param int|null $eetwensId ID van de eetwens
+     * @param int|null $eetwensId ID van de eetwens (optioneel via GET parameter)
      */
     public function filterByEetwens(?int $eetwensId = null): void
     {
         try {
+            // Haal eetwens ID uit GET parameter als niet via URL parameter gegeven
+            if ($eetwensId === null && isset($_GET['eetwens'])) {
+                $eetwensId = (int)$_GET['eetwens'];
+            }
+
             // Server-side validatie
             if ($eetwensId !== null && $eetwensId <= 0) {
-                throw new InvalidArgumentException('Ongeldige eetwens ID');
+                // Als eetwens 0 is, toon alle gezinnen
+                $eetwensId = null;
             }
 
             // Haal data op
-            if ($eetwensId) {
+            if ($eetwensId && $eetwensId > 0) {
                 $gezinnen = $this->voedselpakketModel->getGezinnenByEetwens($eetwensId);
             } else {
                 $gezinnen = $this->voedselpakketModel->getAllGezinnenMetVoedselpakketten();
             }
 
             $eetwensen = $this->voedselpakketModel->getAllEetwensen();
-            $allergieen = $this->voedselpakketModel->getAllAllergieen();
 
-            if ($gezinnen === false || $eetwensen === false || $allergieen === false) {
+            if ($gezinnen === false || $eetwensen === false) {
                 throw new Exception('Kon gegevens niet ophalen uit database');
             }
 
             $data = [
-                'title' => 'Overzicht gezinnen met voedselpakketten',
+                'title' => 'Overzicht gezinnen',
                 'gezinnen' => $gezinnen,
                 'eetwensen' => $eetwensen,
-                'allergieen' => $allergieen,
                 'selectedEetwens' => $eetwensId,
                 'success_message' => $this->getFlashMessage('success'),
                 'error_message' => $this->getFlashMessage('error')
@@ -99,49 +101,6 @@ class Voedselpakketten extends BaseController
             $this->view('voedselpakketten/index', $data);
         } catch (Exception $e) {
             $this->handleError($e, 'Er is een fout opgetreden bij het filteren op eetwens');
-        }
-    }
-
-    /**
-     * Filter gezinnen op basis van allergie
-     * 
-     * @param int|null $allergieId ID van de allergie
-     */
-    public function filterByAllergie(?int $allergieId = null): void
-    {
-        try {
-            // Server-side validatie
-            if ($allergieId !== null && $allergieId <= 0) {
-                throw new InvalidArgumentException('Ongeldige allergie ID');
-            }
-
-            // Haal data op
-            if ($allergieId) {
-                $gezinnen = $this->voedselpakketModel->getGezinnenByAllergie($allergieId);
-            } else {
-                $gezinnen = $this->voedselpakketModel->getAllGezinnenMetVoedselpakketten();
-            }
-
-            $eetwensen = $this->voedselpakketModel->getAllEetwensen();
-            $allergieen = $this->voedselpakketModel->getAllAllergieen();
-
-            if ($gezinnen === false || $eetwensen === false || $allergieen === false) {
-                throw new Exception('Kon gegevens niet ophalen uit database');
-            }
-
-            $data = [
-                'title' => 'Overzicht gezinnen met voedselpakketten',
-                'gezinnen' => $gezinnen,
-                'eetwensen' => $eetwensen,
-                'allergieen' => $allergieen,
-                'selectedAllergie' => $allergieId,
-                'success_message' => $this->getFlashMessage('success'),
-                'error_message' => $this->getFlashMessage('error')
-            ];
-
-            $this->view('voedselpakketten/index', $data);
-        } catch (Exception $e) {
-            $this->handleError($e, 'Er is een fout opgetreden bij het filteren op allergie');
         }
     }
 
