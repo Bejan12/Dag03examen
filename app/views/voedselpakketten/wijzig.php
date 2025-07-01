@@ -117,12 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
             
-            // Confirmatie voor wijziging
-            if (!confirm('Weet je zeker dat je de status wilt wijzigen?')) {
-                e.preventDefault();
-                return false;
-            }
-            
             return true;
         });
     }

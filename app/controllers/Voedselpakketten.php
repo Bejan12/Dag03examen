@@ -147,7 +147,7 @@ class Voedselpakketten extends BaseController
      * 
      * @param int $voedselpakketId ID van het voedselpakket
      */
-    public function wijzigStatus(int $voedselpakketId): void
+     public function wijzigStatus(int $voedselpakketId): void
     {
         try {
             // Valideer input
@@ -173,7 +173,8 @@ class Voedselpakketten extends BaseController
                 'error_message' => $this->getFlashMessage('error')
             ];
 
-            $this->view('voedselpakketten/wijzig_status', $data);
+            // WIJZIGING: van 'wijzig_status' naar 'wijzig'
+            $this->view('voedselpakketten/wijzig', $data);
         } catch (Exception $e) {
             $this->handleError($e, 'Kon wijzig status pagina niet laden');
         }
