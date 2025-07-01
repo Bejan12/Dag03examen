@@ -1,125 +1,162 @@
 <?php
 /**
- * Controller voor voorraadbeheer
- * Toont een overzicht van alle voorraadproducten
+ * Model voor voorraadbeheer
+ * Haalt alle voorraadproducten op uit de database
  * @author Bejan Afkar
  */
-
-class Voorraadbeheer extends BaseController
+class VoorraadModel
+    /**
+     * Haal het magazijnId op bij een productId
+     * @param int $productId
+     * @return int|null
+     */
+    public function getMagazijnIdByProductId($productId)
+    {
+        try {
+            $this->db->query('SELECT pm.MagazijnId FROM productpermagazijn pm WHERE pm.ProductId = :productId AND pm.IsActief = 1 LIMIT 1');
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $row = $this->db->single();
+            return $row ? $row->MagazijnId : null;
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen magazijnId: ' . $e->getMessage());
+            return null;
+        }
+    }
 {
-    private $voorraadModel;
+    private $db;
 
     public function __construct()
     {
-        // Laad het model voor voorraadbeheer
-        $this->voorraadModel = $this->model('VoorraadModel');
+        $this->db = new Database();
     }
 
     /**
-     * Toon overzicht van alle voorraadproducten
+     * Haal alle voorraadproducten op met alle benodigde info
+     * @return array
      */
-    public function index()
+    public function getAllVoorraad($categorieId = null)
     {
-        // Optionele filter op categorieId via GET
-        $categorieId = isset($_GET['categorieId']) && $_GET['categorieId'] !== '' ? (int)$_GET['categorieId'] : null;
-
-        // Haal voorraad en categorieën op
-        $voorraad = $this->voorraadModel->getAllVoorraad($categorieId);
-        $categorieen = $this->voorraadModel->getCategorieen();
-
-        $feedback = null;
-        if ($categorieId !== null && empty($voorraad)) {
-            $feedback = 'Er zijn geen producten bekend die behoren bij de geselecteerde productcategorie.';
-        }
-
-        $data = [
-            'title' => 'Overzicht Productvoorraad',
-            'voorraad' => $voorraad,
-            'categorieen' => $categorieen,
-            'feedback' => $feedback
-        ];
-
-        $this->view('voorraadbeheer/index', $data);
-    }
-
-    /**
-     * Toon details van een product
-     */
-    public function details($id)
-    {
-        $product = $this->voorraadModel->getProductDetails((int)$id);
-
-        if (!$product) {
-            // Product niet gevonden, eventueel redirect of foutmelding tonen
-            $_SESSION['error'] = 'Product niet gevonden.';
-            header('Location: ' . URLROOT . '/voorraadbeheer');
-            exit;
-        }
-
-        $data = [
-            'title' => 'Product Details',
-            'product' => $product
-        ];
-
-        $this->view('voorraadbeheer/details', $data);
-    }
-
-    /**
-     * Wijzig voorraad van een product
-     */
-    public function wijzig($id)
-    {
-        $id = (int)$id;
-
-        $product = $this->voorraadModel->getProductDetails($id);
-        $magazijnen = $this->voorraadModel->getMagazijnLocaties();
-
-        if (!$product) {
-            $_SESSION['error'] = 'Product niet gevonden.';
-            header('Location: ' . URLROOT . '/voorraadbeheer');
-            exit;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Filter en valideer input
-            $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
-            $magazijn = isset($_POST['magazijn']) ? trim($_POST['magazijn']) : null;
-            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? trim($_POST['uitleveringsdatum']) : null;
-
-            $_SESSION['voorraad_error'] = null;
-            $_SESSION['success'] = null;
-
-            $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
-
-            if ($aantalUitgeleverd === null || $magazijn === null || $magazijn === '') {
-                $_SESSION['voorraad_error'] = 'Alle velden zijn verplicht.';
-            } elseif ($aantalUitgeleverd > $huidigeVoorraad) {
-                $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn.';
-            } else {
-                // Update de voorraad en magazijnlocatie
-                $updateSuccess = $this->voorraadModel->updateProductMagazijnEnAantal($id, $magazijn, $aantalUitgeleverd);
-
-                if ($updateSuccess) {
-                    $_SESSION['success'] = 'De productgegevens zijn succesvol gewijzigd.';
-                    // Product details opnieuw ophalen na update
-                    $product = $this->voorraadModel->getProductDetails($id);
-                } else {
-                    $_SESSION['voorraad_error'] = 'Wijzigen mislukt, probeer het opnieuw.';
-                }
+        try {
+            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn
+                    FROM product p
+                    JOIN categorie c ON p.CategorieId = c.Id
+                    JOIN productpermagazijn pm ON p.Id = pm.ProductId
+                    JOIN magazijn m ON pm.MagazijnId = m.Id
+                    WHERE p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
+            if ($categorieId) {
+                $sql .= " AND c.Id = :categorieId";
             }
+            $this->db->query($sql);
+            if ($categorieId) {
+                $this->db->bind(':categorieId', $categorieId, PDO::PARAM_INT);
+            }
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen voorraad: ' . $e->getMessage());
+            return [];
         }
+    }
 
-        $data = [
-            'title' => 'Wijzig Productvoorraad',
-            'product' => $product,
-            'magazijnen' => $magazijnen,
-            'feedback' => $_SESSION['voorraad_error'] ?? null,
-            'success' => $_SESSION['success'] ?? null
-        ];
+    /**
+     * Haal details van één product op
+     * @param int $id
+     * @return object|null
+     */
+    public function getProductDetails($id)
+    {
+        try {
+            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn, p.Omschrijving, p.Status
+                    FROM product p
+                    JOIN categorie c ON p.CategorieId = c.Id
+                    JOIN productpermagazijn pm ON p.Id = pm.ProductId
+                    JOIN magazijn m ON pm.MagazijnId = m.Id
+                    WHERE p.Id = :id AND p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
+            $this->db->query($sql);
+            $this->db->bind(':id', $id, PDO::PARAM_INT);
+            return $this->db->single();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen productdetails: ' . $e->getMessage());
+            return null;
+        }
+    }
 
-        // Zorg dat feedback en success na tonen verdwijnen uit sessie
-        unset($_SESSION['voorraad_error'], $_SESSION['success']);
+    /**
+     * Haal alle categorieën op
+     * @return array
+     */
+    public function getCategorieen()
+    {
+        try {
+            $this->db->query('SELECT Id, Naam FROM categorie WHERE IsActief = 1');
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
+            return [];
+        }
+    }
 
-        $this->view('voorraadbeheer/wijzig', $data);
+    /**
+     * Update het aantal uitgeleverde producten (voorraad)
+     * @param int $productId
+     * @param int $magazijnId
+     * @param int $aantal
+     * @return bool
+     */
+    public function updateVoorraad($productId, $magazijnId, $aantal)
+    {
+        try {
+            $sql = "UPDATE magazijn m
+                    JOIN productpermagazijn pm ON m.Id = pm.MagazijnId
+                    SET m.Aantal = :aantal
+                    WHERE pm.ProductId = :productId AND m.Id = :magazijnId AND m.IsActief = 1 AND pm.IsActief = 1";
+            $this->db->query($sql);
+            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            error_log('Fout bij updaten voorraad: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update magazijn locatie en aantal uitgeleverde producten voor een product
+     * @param int $productId
+     * @param string $magazijnLocatie
+     * @param int $aantal
+     * @return bool
+     */
+    public function updateProductMagazijnEnAantal($productId, $magazijnLocatie, $aantal)
+    {
+        try {
+            // Zoek magazijnId op basis van locatie, of maak aan als niet bestaat
+            $this->db->query('SELECT Id FROM magazijn WHERE Locatie = :locatie AND IsActief = 1 LIMIT 1');
+            $this->db->bind(':locatie', $magazijnLocatie, PDO::PARAM_STR);
+            $magazijn = $this->db->single();
+            if ($magazijn) {
+                $magazijnId = $magazijn->Id;
+            } else {
+                // Magazijn bestaat niet, maak aan
+                $this->db->query('INSERT INTO magazijn (Locatie, IsActief, Aantal, VerpakkingsEenheid) VALUES (:locatie, 1, 0, "stuks")');
+                $this->db->bind(':locatie', $magazijnLocatie, PDO::PARAM_STR);
+                $this->db->execute();
+                $magazijnId = $this->db->lastInsertId();
+            }
+            // Update productpermagazijn
+            $this->db->query('UPDATE productpermagazijn SET MagazijnId = :magazijnId WHERE ProductId = :productId AND IsActief = 1');
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $this->db->execute();
+            // Update aantal in magazijn
+            $this->db->query('UPDATE magazijn SET Aantal = :aantal WHERE Id = :magazijnId');
+            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            $this->db->execute();
+            return true;
+        } catch (PDOException $e) {
+            error_log("Fout bij updaten product magazijn en aantal: " . $e->getMessage());
+            return false;
+        }
     }
 }

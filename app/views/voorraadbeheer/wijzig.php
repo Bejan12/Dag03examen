@@ -12,33 +12,33 @@
                 </div>
                 <div class="card-body bg-light">
 
-                    <!-- Succesbericht -->
-                    <?php if (!empty($data['success'])): ?>
-                        <div class="alert alert-success">
-                            <?= htmlspecialchars($data['success']) ?>
-                        </div>
+                    <!-- SERVER-SIDE FEEDBACK ABOVE FORM -->
+                    <?php if (isset($_SESSION['success'])): ?>
+                        <div class="alert alert-success">De productgegevens zijn gewijzigd.</div>
                         <script>
                             setTimeout(function() {
-                                window.location.href = "<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id ?>";
+                                window.location.href = "<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id; ?>";
+                            }, 3000);
+                        </script>
+                        <?php unset($_SESSION['success']); ?>
+                    <?php endif; ?>
+
+                    <!-- ALGEMENE FOUTMELDING BOVENAAN -->
+                    <?php if (isset($_SESSION['error']) || isset($_SESSION['voorraad_error'])): ?>
+                        <div class="alert alert-danger">De productgegevens kunnen niet worden gewijzigd.</div>
+                        <script>
+                            setTimeout(function() {
+                                window.location.href = "<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id; ?>";
                             }, 3000);
                         </script>
                     <?php endif; ?>
 
-                    <!-- Foutmeldingen -->
-                    <?php if (!empty($data['feedback'])): ?>
-                        <div class="alert alert-danger">
-                            <?= htmlspecialchars($data['feedback']) ?>
-                        </div>
-                    <?php endif; ?>
-
                     <?php if ($data['product']): ?>
-                        <form method="post" novalidate>
+                        <form method="post">
                             <table class="table table-bordered">
                                 <tr>
                                     <th>Productnaam</th>
-                                    <td>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->productnaam) ?>" readonly>
-                                    </td>
+                                    <td><input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->productnaam) ?>" readonly></td>
                                 </tr>
                                 <tr>
                                     <th>Houdbaarheidsdatum</th>
@@ -48,26 +48,11 @@
                                 </tr>
                                 <tr>
                                     <th>Barcode</th>
-                                    <td>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->Barcode ?? '') ?>" readonly>
-                                    </td>
+                                    <td><input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->Barcode ?? '') ?>" readonly></td>
                                 </tr>
                                 <tr>
                                     <th>Magazijn locatie</th>
-                                    <td>
-<select name="magazijn" class="form-select" required>
-    <option value="" disabled <?= empty($data['product']->magazijn) ? 'selected' : '' ?>>-- Kies magazijn --</option>
-    <?php if (!empty($data['magazijnen'])): ?>
-        <?php foreach ($data['magazijnen'] as $magazijn): ?>
-            <option value="<?= htmlspecialchars($magazijn->Locatie) ?>" <?= ($magazijn->Locatie === $data['product']->magazijn) ? 'selected' : '' ?>>
-                <?= htmlspecialchars($magazijn->Locatie) ?>
-            </option>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <option value="">Geen magazijnen beschikbaar</option>
-    <?php endif; ?>
-</select>
-                                    </td>
+                                    <td><input type="text" class="form-control" name="magazijn" value="<?= htmlspecialchars($data['product']->magazijn) ?>" required></td>
                                 </tr>
                                 <tr>
                                     <th>Ontvangstdatum</th>
@@ -78,9 +63,10 @@
                                 <tr>
                                     <th>Aantal uitgeleverde producten</th>
                                     <td>
-                                        <input type="number" class="form-control" name="aantal_uitgeleverd" min="0" max="<?= (int)$data['product']->aantal ?>" value="<?= htmlspecialchars($_POST['aantal_uitgeleverd'] ?? '') ?>" required>
-                                        <?php if (!empty($data['feedback']) && strpos($data['feedback'], 'meer producten uitgeleverd') !== false): ?>
+                                        <input type="number" class="form-control" name="aantal_uitgeleverd" value="<?= htmlspecialchars($data['product']->aantal_uitgeleverd ?? '') ?>" min="0" required>
+                                        <?php if (isset($_SESSION['voorraad_error'])): ?>
                                             <small class="text-danger">Er worden meer producten uitgeleverd dan in voorraad zijn.</small>
+                                            <?php unset($_SESSION['voorraad_error']); ?>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -88,7 +74,7 @@
                                     <th>Uitleveringsdatum</th>
                                     <td>
                                         <input type="date" class="form-control" name="uitleveringsdatum"
-                                               value="<?= htmlspecialchars($_POST['uitleveringsdatum'] ?? '') ?>"
+                                               value="<?= htmlspecialchars($data['product']->Uitleveringsdatum ?? '') ?>"
                                                min="<?= date('Y-m-d', strtotime('+1 day')) ?>"
                                                max="2030-12-31"
                                                required>
@@ -96,20 +82,20 @@
                                 </tr>
                                 <tr>
                                     <th>Aantal op voorraad</th>
-                                    <td>
-                                        <input type="number" class="form-control" value="<?= htmlspecialchars($data['product']->aantal) ?>" readonly>
-                                    </td>
+                                    <td><input type="number" class="form-control" value="<?= htmlspecialchars($data['product']->aantal) ?>" readonly></td>
                                 </tr>
                             </table>
 
                             <button type="submit" class="btn btn-primary">Wijzig Product Details</button>
-                            <a href="<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id ?>" class="btn btn-secondary ms-2">Terug</a>
+                            <a href="<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id; ?>" class="btn btn-secondary ms-2">Terug</a>
                             <a href="<?= URLROOT; ?>/" class="btn btn-secondary ms-2">Home</a>
                         </form>
                     <?php else: ?>
                         <div class="alert alert-danger">Product niet gevonden.</div>
                     <?php endif; ?>
 
+                    <!-- VERGEET NIET error te unsetten als die bestaat -->
+                    <?php if (isset($_SESSION['error'])) unset($_SESSION['error']); ?>
                 </div>
             </div>
         </div>
