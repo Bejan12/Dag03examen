@@ -65,9 +65,23 @@ class Database
     /**
      * Deze methode bind de waardes aan de parameters in de query
      */
-    public function bind($parameter, $value, $type = null)
-    {
-        $this->statement->bindValue($parameter, $value, $type);
+    public function bind($param, $value, $type = null) {
+        if (is_null($type)) {
+            switch (true) {
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = PDO::PARAM_STR;
+            }
+        }
+        $this->statement->bindValue($param, $value, $type);
     }
 
     /**
