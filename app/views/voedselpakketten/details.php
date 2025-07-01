@@ -62,10 +62,10 @@
                     <tbody>
                         <?php if (isset($data['voedselpakketten']) && !empty($data['voedselpakketten'])): ?>
                             <?php foreach($data['voedselpakketten'] as $pakket): ?>
-                                <tr>
+                               <tr>
                                     <td><?= (int)$pakket->PakketNummer; ?></td>
-                                    <td><?= htmlspecialchars($pakket->DatumSamenstelling ?? ''); ?></td>
-                                    <td><?= $pakket->DatumUitgifte ? htmlspecialchars($pakket->DatumUitgifte) : '-'; ?></td>
+                                    <td><?= $pakket->DatumSamenstelling ? date('d-m-Y', strtotime($pakket->DatumSamenstelling)) : '-'; ?></td>
+                                    <td><?= $pakket->DatumUitgifte ? date('d-m-Y', strtotime($pakket->DatumUitgifte)) : '-'; ?></td>
                                     <td>
                                         <?php
                                         switch($pakket->Status) {

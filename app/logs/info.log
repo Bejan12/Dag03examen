@@ -13,3 +13,4 @@
 2025-07-01 10:05:56 [INFO] VoedselpakketModel::wijzigVoedselpakketStatus: Voedselpakket status gewijzigd naar NietUitgereikt | Context: {"voedselpakketId":6,"nieuweStatus":"NietUitgereikt"}
 2025-07-01 10:06:07 [INFO] VoedselpakketModel::wijzigVoedselpakketStatus: Voedselpakket status gewijzigd naar NietUitgereikt | Context: {"voedselpakketId":6,"nieuweStatus":"NietUitgereikt"}
 2025-07-01 10:08:01 [INFO] VoedselpakketModel::wijzigVoedselpakketStatus: Voedselpakket status gewijzigd naar Uitgereikt | Context: {"voedselpakketId":6,"nieuweStatus":"Uitgereikt"}
+2025-07-01 10:18:35 [INFO] VoedselpakketModel::wijzigVoedselpakketStatus: Voedselpakket status gewijzigd naar NietUitgereikt | Context: {"voedselpakketId":6,"nieuweStatus":"NietUitgereikt"}
