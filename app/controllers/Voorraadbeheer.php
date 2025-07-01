@@ -3,7 +3,7 @@
  * Controller voor voorraadbeheer
  * Beheert het tonen en wijzigen van producten in de voorraad
  * 
- * @author Bejan Afkar
+ * @author ZZakaria el bakkali
  */
 class Voorraadbeheer extends BaseController
 {
@@ -113,10 +113,8 @@ class Voorraadbeheer extends BaseController
 
         // Check of het formulier is verzonden via POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Haal gegevens op uit POST data
+            // Haal het aantal uitgeleverde producten op uit POST data, default null als niet gezet
             $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
-            $magazijnLocatie = isset($_POST['magazijn']) ? trim($_POST['magazijn']) : null;
-            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? $_POST['uitleveringsdatum'] : null;
 
             // Variabele om bij te houden of de update succesvol was
             $updateSuccess = false;
@@ -125,23 +123,14 @@ class Voorraadbeheer extends BaseController
             $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
 
             // Controle: zorg dat er niet meer wordt uitgeleverd dan er op voorraad is
-            if ($aantalUitgeleverd !== null && $aantalUitgeleverd > $huidigeVoorraad) {
-                // Zet een sessie-foutmelding als er teveel wordt uitgeleverd
-                $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
-            } else {
-                // Probeer magazijn locatie en voorraad te updaten
-                if ($magazijnLocatie && $aantalUitgeleverd !== null) {
-                    // Bereken nieuw aantal in voorraad (huidige voorraad min uitgeleverd)
-                    $nieuwAantal = $huidigeVoorraad - $aantalUitgeleverd;
-                    
-                    // Update magazijn locatie en voorraad via model
-                    $updateSuccess = $this->voorraadModel->updateProductMagazijnEnAantal($id, $magazijnLocatie, $nieuwAantal);
-                    
-                    // Als magazijn update succesvol, update ook andere velden indien nodig
-                    if ($updateSuccess && $uitleveringsdatum) {
-                        // Hier kun je eventueel uitleveringsdatum opslaan als je een aparte tabel hebt
-                        // Voor nu slaan we alleen magazijn en voorraad op
-                    }
+            if ($aantalUitgeleverd !== null && $magazijnId !== null) {
+                if ($aantalUitgeleverd > $huidigeVoorraad) {
+                    // Zet een sessie-foutmelding als er teveel wordt uitgeleverd
+                    $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
+                } else {
+                    // Probeer voorraad in database te updaten via model
+                    // Dit update de magazijn tabel via een JOIN met productpermagazijn, zodat juiste magazijn en product worden aangesproken
+                    $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
                 }
             }
 
@@ -174,6 +163,3 @@ class Voorraadbeheer extends BaseController
  * 
  * @package Controllers
  */
-
-
-        
