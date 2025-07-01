@@ -43,9 +43,6 @@ class Klant
 
     public function getKlantById($id)
     {
-        // Debug: laat zien welke ID we zoeken
-        error_log("Zoek klant met ID: " . $id);
-        
         $this->db->query('SELECT 
             g.Id as GezinId,
             g.Naam as GezinNaam,
@@ -78,12 +75,7 @@ class Klant
 
         $this->db->bind(':id', $id);
         
-        $result = $this->db->resultSet();
-        
-        // Debug: laat zien hoeveel resultaten we krijgen
-        error_log("Aantal resultaten gevonden: " . count($result));
-        
-        return $result;
+        return $this->db->resultSet();
     }
 
     public function getGezinnenMetEetwensen()

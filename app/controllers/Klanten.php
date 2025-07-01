@@ -24,30 +24,14 @@ class Klanten extends BaseController
 
     public function details($id)
     {
-        // Debug: laat zien dat de method wordt aangeroepen
         if (!$id) {
-            die("Details method aangeroepen maar geen ID ontvangen");
+            redirect('klanten');
         }
-        
-        echo "Details method aangeroepen met ID: " . $id . "<br>";
-        
-        // Laat alle beschikbare gezin ID's zien
-        $allIds = $this->klantModel->getAllGezinIds();
-        echo "Beschikbare Gezin IDs: ";
-        foreach ($allIds as $gezin) {
-            echo $gezin->Id . " ";
-        }
-        echo "<br><br>";
         
         $klant = $this->klantModel->getKlantById($id);
         
-        echo "Aantal gevonden records: " . count($klant) . "<br>";
-        
         if (!$klant || empty($klant)) {
-            echo "Geen klant gevonden met ID: " . $id . "<br>";
-            echo "Probeer een van de beschikbare IDs hierboven.<br>";
-            echo '<a href="' . URLROOT . '/klanten">Terug naar overzicht</a>';
-            exit;
+            redirect('klanten');
         }
 
         // Haal de naam van de hoofdklant voor de titel
@@ -90,8 +74,15 @@ class Klanten extends BaseController
                 'woonplaats' => trim($_POST['woonplaats']),
                 'email' => trim($_POST['email']),
                 'mobiel' => trim($_POST['mobiel']),
-                'klant' => $klant,
+                'klant' => $hoofdklant, // Alleen de hoofdklant object
                 'title' => $klantnaam,
+                // Readonly velden toevoegen
+                'voornaam' => $hoofdklant->Voornaam,
+                'tussenvoegsel' => $hoofdklant->Tussenvoegsel,
+                'achternaam' => $hoofdklant->Achternaam,
+                'geboortedatum' => $hoofdklant->Geboortedatum,
+                'typepersoon' => $hoofdklant->TypePersoon,
+                'vertegenwoordiger' => $hoofdklant->IsVertegenwoordiger ? 'Ja' : 'Nee',
                 'straat_err' => '',
                 'huisnummer_err' => '',
                 'postcode_err' => '',
@@ -143,8 +134,15 @@ class Klanten extends BaseController
             
             $data = [
                 'id' => $id,
-                'klant' => $klant,
+                'klant' => $hoofdklant, // Alleen de hoofdklant object
                 'title' => $klantnaam,
+                // Readonly velden toevoegen
+                'voornaam' => $hoofdklant->Voornaam,
+                'tussenvoegsel' => $hoofdklant->Tussenvoegsel,
+                'achternaam' => $hoofdklant->Achternaam,
+                'geboortedatum' => $hoofdklant->Geboortedatum,
+                'typepersoon' => $hoofdklant->TypePersoon,
+                'vertegenwoordiger' => $hoofdklant->IsVertegenwoordiger ? 'Ja' : 'Nee',
                 'straat' => $contactData ? $contactData->Straat : '',
                 'huisnummer' => $contactData ? $contactData->Huisnummer : '',
                 'toevoeging' => $contactData ? $contactData->Toevoeging : '',
@@ -164,9 +162,4 @@ class Klanten extends BaseController
         }
     }
 
-    public function test()
-    {
-        echo "Test routing werkt! Je bent op klanten/test";
-        exit;
-    }
 }

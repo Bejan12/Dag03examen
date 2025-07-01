@@ -1,28 +1,8 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?= URLROOT; ?>">Home</a></li>
-                    <li class="breadcrumb-item"><a href="<?= URLROOT; ?>/klanten">Klanten</a></li>
-                    <li class="breadcrumb-item active">Details</li>
-                </ol>
-            </nav>
-
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>
-                    <i class="bi bi-person-circle me-2"></i>
-                    <?= $data['title']; ?>
-                </h1>
-                <a href="<?= URLROOT; ?>/klanten" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left me-1"></i>
-                    Terug naar overzicht
-                </a>
-            </div>
-    
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
             <?php if (empty($data['klant'])): ?>
                 <div class="alert alert-warning">
                     <i class="bi bi-exclamation-triangle me-2"></i>
@@ -31,165 +11,126 @@
             <?php else: ?>
                 <?php $hoofdklant = $data['klant'][0]; ?>
                 
-                <!-- Gezin Informatie -->
-                <div class="row mb-4">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-house me-2"></i>
-                                    Gezin Informatie
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>Gezin Naam:</strong> <?= htmlspecialchars($hoofdklant->GezinNaam); ?></p>
-                                        <p><strong>Gezin Code:</strong> 
-                                            <span class="badge bg-primary"><?= htmlspecialchars($hoofdklant->GezinCode); ?></span>
-                                        </p>
-                                        <p><strong>Omschrijving:</strong> <?= htmlspecialchars($hoofdklant->GezinOmschrijving); ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>Aantal Volwassenen:</strong> <?= $hoofdklant->AantalVolwassenen; ?></p>
-                                        <p><strong>Aantal Kinderen:</strong> <?= $hoofdklant->AantalKinderen; ?></p>
-                                        <p><strong>Aantal Baby's:</strong> <?= $hoofdklant->AantalBabys; ?></p>
-                                        <p><strong>Totaal Personen:</strong> 
-                                            <span class="badge bg-success"><?= $hoofdklant->TotaalAantalPersonen; ?></span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-person-vcard me-2"></i>
-                                    Contact Informatie
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <?php if (!empty($hoofdklant->Straat)): ?>
-                                    <p><strong>Adres:</strong><br>
-                                        <?= htmlspecialchars($hoofdklant->Straat); ?> 
-                                        <?= htmlspecialchars($hoofdklant->Huisnummer); ?>
-                                        <?= !empty($hoofdklant->Toevoeging) ? htmlspecialchars($hoofdklant->Toevoeging) : ''; ?><br>
-                                        <?= htmlspecialchars($hoofdklant->Postcode); ?> 
-                                        <?= htmlspecialchars($hoofdklant->Woonplaats); ?>
-                                    </p>
-                                <?php endif; ?>
-                                
-                                <?php if (!empty($hoofdklant->Email)): ?>
-                                    <p><strong>Email:</strong><br>
-                                        <a href="mailto:<?= htmlspecialchars($hoofdklant->Email); ?>">
-                                            <?= htmlspecialchars($hoofdklant->Email); ?>
-                                        </a>
-                                    </p>
-                                <?php endif; ?>
-                                
-                                <?php if (!empty($hoofdklant->Mobiel)): ?>
-                                    <p><strong>Telefoon:</strong><br>
-                                        <a href="tel:<?= htmlspecialchars($hoofdklant->Mobiel); ?>">
-                                            <?= htmlspecialchars($hoofdklant->Mobiel); ?>
-                                        </a>
-                                    </p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gezinsleden -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="bi bi-people me-2"></i>
-                            Gezinsleden
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Naam</th>
-                                        <th>Geboortedatum</th>
-                                        <th>Type</th>
-                                        <th>Vertegenwoordiger</th>
-                                        <th>Leeftijd</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($data['klant'] as $persoon): ?>
-                                        <?php 
-                                        $geboortedatum = new DateTime($persoon->Geboortedatum);
-                                        $vandaag = new DateTime();
-                                        $leeftijd = $vandaag->diff($geboortedatum)->y;
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <?= htmlspecialchars($persoon->Voornaam); ?>
-                                                <?= !empty($persoon->Tussenvoegsel) ? htmlspecialchars($persoon->Tussenvoegsel) . ' ' : ''; ?>
-                                                <?= htmlspecialchars($persoon->Achternaam); ?>
-                                            </td>
-                                            <td><?= date('d-m-Y', strtotime($persoon->Geboortedatum)); ?></td>
-                                            <td>
-                                                <span class="badge bg-info"><?= htmlspecialchars($persoon->TypePersoon); ?></span>
-                                            </td>
-                                            <td>
-                                                <?php if ($persoon->IsVertegenwoordiger): ?>
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check"></i> Ja
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-secondary">Nee</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?= $leeftijd; ?> jaar
-                                                <?php if ($leeftijd < 2): ?>
-                                                    <i class="bi bi-heart-fill text-warning" title="Baby"></i>
-                                                <?php elseif ($leeftijd < 18): ?>
-                                                    <i class="bi bi-person text-info" title="Kind"></i>
-                                                <?php else: ?>
-                                                    <i class="bi bi-person-fill text-success" title="Volwassene"></i>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Acties -->
+                <!-- Klant Details volgens wireframe -->
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="bi bi-gear me-2"></i>
-                            Acties
-                        </h5>
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Klant Details <?= htmlspecialchars($data['title']); ?></h5>
                     </div>
-                    <div class="card-body">
-                        <div class="btn-group" role="group">
-                            <a href="<?= URLROOT; ?>/voedselpakketten/gezin/<?= $hoofdklant->GezinId; ?>" 
-                               class="btn btn-success">
-                                <i class="bi bi-box me-1"></i>
-                                Voedselpakketten
-                            </a>
-                            <a href="<?= URLROOT; ?>/klanten/edit/<?= $hoofdklant->GezinId; ?>" 
-                               class="btn btn-warning">
-                                <i class="bi bi-pencil me-1"></i>
-                                Bewerken
-                            </a>
-                            <button class="btn btn-info" onclick="window.print()">
-                                <i class="bi bi-printer me-1"></i>
-                                Print Details
-                            </button>
+                    <div class="card-body p-3">
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Voornaam</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Voornaam) ? htmlspecialchars($hoofdklant->Voornaam) : '~~~~'; ?>
+                            </div>
                         </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Tussenvoegsel</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Tussenvoegsel) ? htmlspecialchars($hoofdklant->Tussenvoegsel) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Achternaam</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Achternaam) ? htmlspecialchars($hoofdklant->Achternaam) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Geboortedatum</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Geboortedatum) ? htmlspecialchars(date('d-m-Y', strtotime($hoofdklant->Geboortedatum))) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">TypePersoon</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->TypePersoon) ? htmlspecialchars($hoofdklant->TypePersoon) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Vertegenwoordiger</div>
+                            <div class="col-8">
+                                <?= $hoofdklant->IsVertegenwoordiger ? 'Ja' : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Straatnaam</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Straat) ? htmlspecialchars($hoofdklant->Straat) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Huisnummer</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Huisnummer) ? htmlspecialchars($hoofdklant->Huisnummer) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Toevoeging</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Toevoeging) ? htmlspecialchars($hoofdklant->Toevoeging) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Postcode</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Postcode) ? htmlspecialchars($hoofdklant->Postcode) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Woonplaats</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Woonplaats) ? htmlspecialchars($hoofdklant->Woonplaats) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Email</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Email) ? htmlspecialchars($hoofdklant->Email) : '~~~~'; ?>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-0">
+                            <div class="col-4 fw-bold">Mobiel</div>
+                            <div class="col-8">
+                                <?= !empty($hoofdklant->Mobiel) ? htmlspecialchars($hoofdklant->Mobiel) : str_repeat('~', 20); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Knoppen volgens wireframe -->
+                <div class="mt-3 d-flex justify-content-between">
+                    <a href="<?= URLROOT; ?>/klanten/edit/<?= $hoofdklant->GezinId; ?>" 
+                       class="btn btn-primary btn-sm">
+                        Wijzig
+                    </a>
+                    <div>
+                        <a href="<?= URLROOT; ?>/klanten" class="btn btn-secondary btn-sm me-2">terug</a>
+                        <a href="<?= URLROOT; ?>" class="btn btn-primary btn-sm">home</a>
                     </div>
                 </div>
             <?php endif; ?>

@@ -1,12 +1,8 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <h2 class="mb-4 text-success">
-                Klant Details <?= htmlspecialchars($data['klant']->Voornaam . ' ' . (!empty($data['klant']->Tussenvoegsel) ? $data['klant']->Tussenvoegsel . ' ' : '') . $data['klant']->Achternaam); ?>
-            </h2>
-            
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
             <?php if (isset($data['success'])): ?>
                 <div class="alert alert-success" role="alert">
                     <i class="bi bi-check-circle-fill me-2"></i>
@@ -19,177 +15,178 @@
                 </script>
             <?php endif; ?>
 
-            <form action="<?= URLROOT; ?>/klanten/edit/<?= $data['id']; ?>" method="POST" class="needs-validation" novalidate>
-                <div class="row">
-                    <div class="col-md-6">
-                        <!-- Persoonlijke gegevens -->
-                        <div class="mb-3">
-                            <label for="voornaam" class="form-label">Voornaam</label>
-                            <input type="text" 
-                                   name="voornaam" 
-                                   id="voornaam" 
-                                   class="form-control <?= (!empty($data['voornaam_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['voornaam']; ?>" 
-                                   readonly>
-                            <div class="invalid-feedback">
-                                <?= $data['voornaam_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="tussenvoegsel" class="form-label">Tussenvoegsel</label>
-                            <input type="text" 
-                                   name="tussenvoegsel" 
-                                   id="tussenvoegsel" 
-                                   class="form-control" 
-                                   value="<?= $data['tussenvoegsel']; ?>" 
-                                   readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="achternaam" class="form-label">Achternaam</label>
-                            <input type="text" 
-                                   name="achternaam" 
-                                   id="achternaam" 
-                                   class="form-control <?= (!empty($data['achternaam_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['achternaam']; ?>" 
-                                   readonly>
-                            <div class="invalid-feedback">
-                                <?= $data['achternaam_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="geboortedatum" class="form-label">Geboortedatum</label>
-                            <input type="date" 
-                                   name="geboortedatum" 
-                                   id="geboortedatum" 
-                                   class="form-control" 
-                                   value="<?= $data['geboortedatum']; ?>" 
-                                   readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="typepersoon" class="form-label">TypePersoon</label>
-                            <input type="text" 
-                                   name="typepersoon" 
-                                   id="typepersoon" 
-                                   class="form-control" 
-                                   value="<?= $data['typepersoon']; ?>" 
-                                   readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="vertegenwoordiger" class="form-label">Vertegenwoordiger</label>
-                            <input type="text" 
-                                   name="vertegenwoordiger" 
-                                   id="vertegenwoordiger" 
-                                   class="form-control" 
-                                   value="<?= $data['vertegenwoordiger'] ? 'Ja' : 'Nee'; ?>" 
-                                   readonly>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <!-- Contactgegevens (bewerkbaar) -->
-                        <div class="mb-3">
-                            <label for="straat" class="form-label">Straatnaam</label>
-                            <input type="text" 
-                                   name="straat" 
-                                   id="straat" 
-                                   class="form-control <?= (!empty($data['straat_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['straat']; ?>" 
-                                   required>
-                            <div class="invalid-feedback">
-                                <?= $data['straat_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="huisnummer" class="form-label">Huisnummer</label>
-                            <input type="text" 
-                                   name="huisnummer" 
-                                   id="huisnummer" 
-                                   class="form-control <?= (!empty($data['huisnummer_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['huisnummer']; ?>" 
-                                   required>
-                            <div class="invalid-feedback">
-                                <?= $data['huisnummer_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="toevoeging" class="form-label">Toevoeging</label>
-                            <input type="text" 
-                                   name="toevoeging" 
-                                   id="toevoeging" 
-                                   class="form-control" 
-                                   value="<?= $data['toevoeging']; ?>">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="postcode" class="form-label">Postcode</label>
-                            <input type="text" 
-                                   name="postcode" 
-                                   id="postcode" 
-                                   class="form-control <?= (!empty($data['postcode_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['postcode']; ?>" 
-                                   required>
-                            <div class="invalid-feedback">
-                                <?= $data['postcode_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="woonplaats" class="form-label">Woonplaats</label>
-                            <input type="text" 
-                                   name="woonplaats" 
-                                   id="woonplaats" 
-                                   class="form-control <?= (!empty($data['woonplaats_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['woonplaats']; ?>" 
-                                   required>
-                            <div class="invalid-feedback">
-                                <?= $data['woonplaats_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" 
-                                   name="email" 
-                                   id="email" 
-                                   class="form-control <?= (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?= $data['email']; ?>">
-                            <div class="invalid-feedback">
-                                <?= $data['email_err']; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="mobiel" class="form-label">Mobiel</label>
-                            <input type="tel" 
-                                   name="mobiel" 
-                                   id="mobiel" 
-                                   class="form-control" 
-                                   value="<?= $data['mobiel']; ?>">
-                        </div>
-                    </div>
+            <!-- Wijzig Klant Details volgens wireframe -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Wijzig Klant Details <?= htmlspecialchars($data['title']); ?></h5>
                 </div>
-
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        Wijzig
-                    </button>
-                    <div>
-                        <a href="<?= URLROOT; ?>/klanten/details/<?= $data['id']; ?>" class="btn btn-secondary me-2">
-                            terug
-                        </a>
-                        <a href="<?= URLROOT; ?>" class="btn btn-primary">
-                            home
-                        </a>
-                    </div>
+                <div class="card-body p-3">
+                    <form id="editForm" action="<?= URLROOT; ?>/klanten/edit/<?= $data['id']; ?>" method="POST" class="needs-validation" novalidate>
+                        <!-- Readonly velden -->
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Voornaam</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['voornaam']) ? htmlspecialchars($data['voornaam']) : '~~~~'; ?>" readonly>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Tussenvoegsel</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['tussenvoegsel']) ? htmlspecialchars($data['tussenvoegsel']) : '~~~~'; ?>" readonly>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Achternaam</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['achternaam']) ? htmlspecialchars($data['achternaam']) : '~~~~'; ?>" readonly>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Geboortedatum</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control form-control-sm" placeholder="dd-mm-jjjj" value="<?= !empty($data['geboortedatum']) ? htmlspecialchars(date('d-m-Y', strtotime($data['geboortedatum']))) : '~~~~'; ?>" readonly>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">TypePersoon</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['typepersoon']) ? htmlspecialchars($data['typepersoon']) : '~~~~'; ?>" readonly>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Vertegenwoordiger</div>
+                            <div class="col-8">
+                                <input type="text" class="form-control form-control-sm" value="<?= htmlspecialchars($data['vertegenwoordiger']); ?>" readonly>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <!-- Bewerkbare velden -->
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Straatnaam</div>
+                            <div class="col-8">
+                                <input type="text" 
+                                       name="straat" 
+                                       id="straat" 
+                                       class="form-control form-control-sm <?= (!empty($data['straat_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['straat']) ? htmlspecialchars($data['straat']) : '~~~~'; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['straat_err']; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Huisnummer</div>
+                            <div class="col-8">
+                                <input type="text" 
+                                       name="huisnummer" 
+                                       id="huisnummer" 
+                                       class="form-control form-control-sm <?= (!empty($data['huisnummer_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['huisnummer']) ? htmlspecialchars($data['huisnummer']) : '~~~~'; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['huisnummer_err']; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Toevoeging</div>
+                            <div class="col-8">
+                                <input type="text" 
+                                       name="toevoeging" 
+                                       id="toevoeging" 
+                                       class="form-control form-control-sm" 
+                                       value="<?= !empty($data['toevoeging']) ? htmlspecialchars($data['toevoeging']) : '~~~~'; ?>">
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Postcode</div>
+                            <div class="col-8">
+                                <input type="text" 
+                                       name="postcode" 
+                                       id="postcode" 
+                                       class="form-control form-control-sm <?= (!empty($data['postcode_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['postcode']) ? htmlspecialchars($data['postcode']) : '~~~~'; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['postcode_err']; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Woonplaats</div>
+                            <div class="col-8">
+                                <input type="text" 
+                                       name="woonplaats" 
+                                       id="woonplaats" 
+                                       class="form-control form-control-sm <?= (!empty($data['woonplaats_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['woonplaats']) ? htmlspecialchars($data['woonplaats']) : '~~~~'; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['woonplaats_err']; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Email</div>
+                            <div class="col-8">
+                                <input type="email" 
+                                       name="email" 
+                                       id="email" 
+                                       class="form-control form-control-sm <?= (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['email']) ? htmlspecialchars($data['email']) : '~~~~'; ?>">
+                                <div class="invalid-feedback">
+                                    <?= $data['email_err']; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        
+                        <div class="row mb-0">
+                            <div class="col-4 fw-bold">Mobiel</div>
+                            <div class="col-8">
+                                <input type="tel" 
+                                       name="mobiel" 
+                                       id="mobiel" 
+                                       class="form-control form-control-sm" 
+                                       value="<?= !empty($data['mobiel']) ? htmlspecialchars($data['mobiel']) : str_repeat('~', 20); ?>">
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+            
+            <!-- Knoppen volgens wireframe -->
+            <div class="mt-3 d-flex justify-content-between">
+                <button type="submit" form="editForm" class="btn btn-primary btn-sm">
+                    Wijzig Klant Details
+                </button>
+                <div>
+                    <a href="<?= URLROOT; ?>/klanten/details/<?= $data['id']; ?>" class="btn btn-secondary btn-sm me-2">terug</a>
+                    <a href="<?= URLROOT; ?>" class="btn btn-primary btn-sm">home</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
