@@ -12,10 +12,20 @@ class Leverancier
     public function getLeveranciers($type = null)
     {
         if ($type) {
-            $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType = :type");
+            $this->db->query("
+                SELECT l.* 
+                FROM Leverancier l 
+                INNER JOIN ContactPerLeverancier cpl ON l.Id = cpl.LeverancierId 
+                WHERE l.LeverancierType = :type AND cpl.IsActief = 1
+            ");
             $this->db->bind(':type', $type);
         } else {
-            $this->db->query("SELECT * FROM Leverancier");
+            $this->db->query("
+                SELECT l.* 
+                FROM Leverancier l 
+                INNER JOIN ContactPerLeverancier cpl ON l.Id = cpl.LeverancierId 
+                WHERE cpl.IsActief = 1
+            ");
         }
         return $this->db->resultSet();
     }

@@ -113,8 +113,10 @@ class Voorraadbeheer extends BaseController
 
         // Check of het formulier is verzonden via POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Haal het aantal uitgeleverde producten op uit POST data, default null als niet gezet
+            // Haal gegevens op uit POST data
             $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
+            $magazijnLocatie = isset($_POST['magazijn']) ? trim($_POST['magazijn']) : null;
+            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? $_POST['uitleveringsdatum'] : null;
 
             // Variabele om bij te houden of de update succesvol was
             $updateSuccess = false;
@@ -122,15 +124,20 @@ class Voorraadbeheer extends BaseController
             // Huidige voorraad van het product (int), default 0 als niet aanwezig
             $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
 
-            // Controle: zorg dat er niet meer wordt uitgeleverd dan er op voorraad is
-            if ($aantalUitgeleverd !== null && $magazijnId !== null) {
-                if ($aantalUitgeleverd > $huidigeVoorraad) {
-                    // Zet een sessie-foutmelding als er teveel wordt uitgeleverd
-                    $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
-                } else {
-                    // Probeer voorraad in database te updaten via model
-                    // Dit update de magazijn tabel via een JOIN met productpermagazijn, zodat juiste magazijn en product worden aangesproken
-                    $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
+            // Validatie: controleer of aantal uitgeleverd niet meer is dan beschikbare voorraad
+            if ($aantalUitgeleverd !== null && $aantalUitgeleverd > $huidigeVoorraad) {
+                // Zet een sessie-foutmelding als er teveel wordt uitgeleverd
+                $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
+            } else {
+                // Bereken het nieuwe voorraadaantal
+                $nieuwVoorraadAantal = $huidigeVoorraad;
+                if ($aantalUitgeleverd !== null) {
+                    $nieuwVoorraadAantal = $huidigeVoorraad - $aantalUitgeleverd;
+                }
+
+                // Update magazijn locatie en voorraad
+                if ($magazijnLocatie) {
+                    $updateSuccess = $this->voorraadModel->updateProductMagazijnEnAantal($id, $magazijnLocatie, $nieuwVoorraadAantal);
                 }
             }
 

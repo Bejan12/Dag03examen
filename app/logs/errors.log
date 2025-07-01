@@ -2160,3 +2160,5 @@
 2025-07-01 14:12:33 [ERROR] VoedselpakketModel::getRecentActivities: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'v.UpdatedAt' in 'field list'
 2025-07-01 14:17:01 [ERROR] VoedselpakketModel::getUitgereiktDezeMaand: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'UpdatedAt' in 'where clause'
 2025-07-01 14:17:01 [ERROR] VoedselpakketModel::getRecentActivities: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'v.UpdatedAt' in 'field list'
+2025-07-01 14:32:29 [ERROR] VoedselpakketModel::getUitgereiktDezeMaand: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'UpdatedAt' in 'where clause'
+2025-07-01 14:32:29 [ERROR] VoedselpakketModel::getRecentActivities: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'v.UpdatedAt' in 'field list'
