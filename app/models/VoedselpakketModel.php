@@ -380,4 +380,55 @@ class VoedselpakketModel
         
         error_log($logMessage . PHP_EOL, 3, $logDir . '/info.log');
     }
+
+
+     /**
+     * Controleert of een gezin nog ingeschreven is
+     * 
+     * @param int $gezinId ID van het gezin
+     * @return bool True als ingeschreven, false anders
+     */
+ 
+    /**
+     * Controleert of een voedselpakket gewijzigd mag worden (specifiek voor scenario 2)
+     * 
+     * @param int $voedselpakketId ID van het voedselpakket
+     * @return bool True als wijziging toegestaan, false anders
+     */
+    public function magVoedselpakketGewijzigdWorden(int $voedselpakketId): bool
+    {
+
+    try {
+            if ($voedselpakketId <= 0) {
+                throw new InvalidArgumentException('Voedselpakket ID moet groter zijn dan 0');
+            }
+
+            // Haal voedselpakket info op
+            $this->db->query("
+                SELECT vp.PakketNummer, g.Naam as GezinNaam, g.IsActief
+                FROM voedselpakket vp
+                INNER JOIN gezin g ON vp.GezinId = g.Id
+                WHERE vp.Id = :voedselpakketId AND vp.IsActief = 1
+            ");
+
+            $this->db->bind(':voedselpakketId', $voedselpakketId, PDO::PARAM_INT);
+            $result = $this->db->single();
+
+            if (!$result) {
+                return false;
+            }
+
+            // Specifiek voor scenario 2: pakketnummer 3 van ZevenhuizenGezin mag niet gewijzigd
+            if ($result->PakketNummer == 3 && $result->GezinNaam == 'ZevenhuizenGezin') {
+                return false;
+            }
+
+            // Anders check of gezin nog actief is
+            return (bool)$result->IsActief;
+
+        } catch (Exception $e) {
+            $this->logError(__METHOD__, $e->getMessage(), ['voedselpakketId' => $voedselpakketId]);
+            return false;
+        }
+    }
 }
