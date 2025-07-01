@@ -18,10 +18,13 @@ class Voorraadbeheer extends BaseController
      */
     public function index()
     {
-        $voorraad = $this->voorraadModel->getAllVoorraad();
+        $categorieId = isset($_GET['categorieId']) && $_GET['categorieId'] !== '' ? (int)$_GET['categorieId'] : null;
+        $voorraad = $this->voorraadModel->getAllVoorraad($categorieId);
+        $categorieen = $this->voorraadModel->getCategorieen();
         $data = [
-            'title' => 'Overzicht Voorraad',
-            'voorraad' => $voorraad
+            'title' => 'Overzicht Productvoorraad',
+            'voorraad' => $voorraad,
+            'categorieen' => $categorieen
         ];
         $this->view('voorraadbeheer/index', $data);
     }

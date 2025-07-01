@@ -1,7 +1,7 @@
 <?php
 /**
  * Model voor voorraadbeheer
- * Verzorgt alle database interacties voor voorraadproducten
+ * Haalt alle voorraadproducten op uit de database
  * @author Bejan Afkar
  */
 class VoorraadModel
@@ -10,80 +10,50 @@ class VoorraadModel
 
     public function __construct()
     {
-        // Database connectie
         $this->db = new Database();
     }
 
     /**
-     * Haal alle voorraadproducten op met JOINs
+     * Haal alle voorraadproducten op met alle benodigde info
+     * @param int|null $categorieId
      * @return array
      */
-    public function getAllVoorraad()
+    public function getAllVoorraad($categorieId = null)
     {
         try {
-            $sql = "CALL spGetVoorraadOverzicht()";
+            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn
+                    FROM product p
+                    JOIN categorie c ON p.CategorieId = c.Id
+                    JOIN productpermagazijn pm ON p.Id = pm.ProductId
+                    JOIN magazijn m ON pm.MagazijnId = m.Id
+                    WHERE p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
+            if ($categorieId) {
+                $sql .= " AND c.Id = :categorieId ";
+            }
+            $sql .= " ORDER BY p.Naam ASC";
             $this->db->query($sql);
+            if ($categorieId) {
+                $this->db->bind(':categorieId', $categorieId, PDO::PARAM_INT);
+            }
             return $this->db->resultSet();
         } catch (PDOException $e) {
-            // Log technische fout
             error_log('Fout bij ophalen voorraad: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Haal voorraad op per categorie
-     * @param int $categorieId
+     * Haal alle categorieën op
      * @return array
      */
-    public function getVoorraadByCategorie($categorieId)
+    public function getCategorieen()
     {
         try {
-            $sql = "CALL spGetVoorraadByCategorie(:categorieId)";
-            $this->db->query($sql);
-            $this->db->bind(':categorieId', $categorieId, PDO::PARAM_INT);
+            $this->db->query('SELECT Id, Naam FROM categorie WHERE IsActief = 1 ORDER BY Naam ASC');
             return $this->db->resultSet();
         } catch (PDOException $e) {
-            error_log('Fout bij ophalen voorraad per categorie: ' . $e->getMessage());
+            error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
             return [];
-        }
-    }
-
-    /**
-     * Haal details van één product op
-     * @param int $id
-     * @return object|null
-     */
-    public function getProductById($id)
-    {
-        try {
-            $sql = "CALL spGetProductById(:id)";
-            $this->db->query($sql);
-            $this->db->bind(':id', $id, PDO::PARAM_INT);
-            return $this->db->single();
-        } catch (PDOException $e) {
-            error_log('Fout bij ophalen product: ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Update voorraad van een product
-     * @param int $id
-     * @param int $aantal
-     * @return bool
-     */
-    public function updateVoorraad($id, $aantal)
-    {
-        try {
-            $sql = "CALL spUpdateVoorraad(:id, :aantal)";
-            $this->db->query($sql);
-            $this->db->bind(':id', $id, PDO::PARAM_INT);
-            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
-            return $this->db->execute();
-        } catch (PDOException $e) {
-            error_log('Fout bij updaten voorraad: ' . $e->getMessage());
-            return false;
         }
     }
 }
