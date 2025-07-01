@@ -43,6 +43,9 @@ class Klant
 
     public function getKlantById($id)
     {
+        // Debug: laat zien welke ID we zoeken
+        error_log("Zoek klant met ID: " . $id);
+        
         $this->db->query('SELECT 
             g.Id as GezinId,
             g.Naam as GezinNaam,
@@ -74,8 +77,13 @@ class Klant
         ORDER BY p.IsVertegenwoordiger DESC, p.Geboortedatum DESC');
 
         $this->db->bind(':id', $id);
-
-        return $this->db->resultSet();
+        
+        $result = $this->db->resultSet();
+        
+        // Debug: laat zien hoeveel resultaten we krijgen
+        error_log("Aantal resultaten gevonden: " . count($result));
+        
+        return $result;
     }
 
     public function getGezinnenMetEetwensen()
@@ -210,5 +218,11 @@ class Klant
             $this->db->rollback();
             return false;
         }
+    }
+
+    public function getAllGezinIds()
+    {
+        $this->db->query('SELECT Id FROM Gezin WHERE IsActief = 1 ORDER BY Id');
+        return $this->db->resultSet();
     }
 }

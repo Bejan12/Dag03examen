@@ -24,14 +24,39 @@ class Klanten extends BaseController
 
     public function details($id)
     {
+        // Debug: laat zien dat de method wordt aangeroepen
+        if (!$id) {
+            die("Details method aangeroepen maar geen ID ontvangen");
+        }
+        
+        echo "Details method aangeroepen met ID: " . $id . "<br>";
+        
+        // Laat alle beschikbare gezin ID's zien
+        $allIds = $this->klantModel->getAllGezinIds();
+        echo "Beschikbare Gezin IDs: ";
+        foreach ($allIds as $gezin) {
+            echo $gezin->Id . " ";
+        }
+        echo "<br><br>";
+        
         $klant = $this->klantModel->getKlantById($id);
         
-        if (!$klant) {
-            redirect('klanten');
+        echo "Aantal gevonden records: " . count($klant) . "<br>";
+        
+        if (!$klant || empty($klant)) {
+            echo "Geen klant gevonden met ID: " . $id . "<br>";
+            echo "Probeer een van de beschikbare IDs hierboven.<br>";
+            echo '<a href="' . URLROOT . '/klanten">Terug naar overzicht</a>';
+            exit;
         }
 
+        // Haal de naam van de hoofdklant voor de titel
+        $hoofdklant = $klant[0];
+        $klantnaam = $hoofdklant->Voornaam . ' ' . $hoofdklant->Tussenvoegsel . ' ' . $hoofdklant->Achternaam;
+        $klantnaam = trim(str_replace('  ', ' ', $klantnaam)); // Verwijder dubbele spaties
+
         $data = [
-            'title' => 'Klant Details',
+            'title' => $klantnaam,
             'klant' => $klant
         ];
 
@@ -45,6 +70,11 @@ class Klanten extends BaseController
         if (!$klant) {
             redirect('klanten');
         }
+
+        // Haal de naam van de hoofdklant voor de titel
+        $hoofdklant = $klant[0];
+        $klantnaam = $hoofdklant->Voornaam . ' ' . $hoofdklant->Tussenvoegsel . ' ' . $hoofdklant->Achternaam;
+        $klantnaam = trim(str_replace('  ', ' ', $klantnaam)); // Verwijder dubbele spaties
 
         // Check for POST request
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -61,7 +91,7 @@ class Klanten extends BaseController
                 'email' => trim($_POST['email']),
                 'mobiel' => trim($_POST['mobiel']),
                 'klant' => $klant,
-                'title' => 'Klant Wijzigen',
+                'title' => $klantnaam,
                 'straat_err' => '',
                 'huisnummer_err' => '',
                 'postcode_err' => '',
@@ -114,7 +144,7 @@ class Klanten extends BaseController
             $data = [
                 'id' => $id,
                 'klant' => $klant,
-                'title' => 'Klant Wijzigen',
+                'title' => $klantnaam,
                 'straat' => $contactData ? $contactData->Straat : '',
                 'huisnummer' => $contactData ? $contactData->Huisnummer : '',
                 'toevoeging' => $contactData ? $contactData->Toevoeging : '',
@@ -132,5 +162,11 @@ class Klanten extends BaseController
 
             $this->view('klant/edit', $data);
         }
+    }
+
+    public function test()
+    {
+        echo "Test routing werkt! Je bent op klanten/test";
+        exit;
     }
 }

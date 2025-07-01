@@ -1,135 +1,193 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
-<div class="container">
+<div class="container mt-4">
     <div class="row">
         <div class="col-12">
-            <h2><?php echo $data['title']; ?></h2>
-            <p class="mb-4">Wijzig de contactgegevens van <strong><?php echo $data['klant']->Voornaam . ' ' . $data['klant']->Tussenvoegsel . ' ' . $data['klant']->Achternaam; ?></strong></p>
+            <h2 class="mb-4 text-success">
+                Klant Details <?= htmlspecialchars($data['klant']->Voornaam . ' ' . (!empty($data['klant']->Tussenvoegsel) ? $data['klant']->Tussenvoegsel . ' ' : '') . $data['klant']->Achternaam); ?>
+            </h2>
             
             <?php if (isset($data['success'])): ?>
                 <div class="alert alert-success" role="alert">
                     <i class="bi bi-check-circle-fill me-2"></i>
-                    <?php echo $data['success']; ?>
+                    De klantgegevens zijn gewijzigd
                 </div>
                 <script>
                     setTimeout(function() {
-                        window.location.href = '<?php echo URLROOT; ?>/klanten/details/<?php echo $data['id']; ?>';
+                        window.location.href = '<?= URLROOT; ?>/klanten/details/<?= $data['id']; ?>';
                     }, 3000);
                 </script>
-                <div class="alert alert-info" role="alert">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    U wordt automatisch doorverwezen naar de klantdetails...
-                </div>
             <?php endif; ?>
 
-            <form action="<?php echo URLROOT; ?>/klanten/edit/<?php echo $data['id']; ?>" method="POST" class="needs-validation" novalidate>
+            <form action="<?= URLROOT; ?>/klanten/edit/<?= $data['id']; ?>" method="POST" class="needs-validation" novalidate>
                 <div class="row">
                     <div class="col-md-6">
+                        <!-- Persoonlijke gegevens -->
                         <div class="mb-3">
-                            <label for="straat" class="form-label">Straat <span class="text-danger">*</span></label>
+                            <label for="voornaam" class="form-label">Voornaam</label>
+                            <input type="text" 
+                                   name="voornaam" 
+                                   id="voornaam" 
+                                   class="form-control <?= (!empty($data['voornaam_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['voornaam']; ?>" 
+                                   readonly>
+                            <div class="invalid-feedback">
+                                <?= $data['voornaam_err']; ?>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tussenvoegsel" class="form-label">Tussenvoegsel</label>
+                            <input type="text" 
+                                   name="tussenvoegsel" 
+                                   id="tussenvoegsel" 
+                                   class="form-control" 
+                                   value="<?= $data['tussenvoegsel']; ?>" 
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="achternaam" class="form-label">Achternaam</label>
+                            <input type="text" 
+                                   name="achternaam" 
+                                   id="achternaam" 
+                                   class="form-control <?= (!empty($data['achternaam_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['achternaam']; ?>" 
+                                   readonly>
+                            <div class="invalid-feedback">
+                                <?= $data['achternaam_err']; ?>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="geboortedatum" class="form-label">Geboortedatum</label>
+                            <input type="date" 
+                                   name="geboortedatum" 
+                                   id="geboortedatum" 
+                                   class="form-control" 
+                                   value="<?= $data['geboortedatum']; ?>" 
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="typepersoon" class="form-label">TypePersoon</label>
+                            <input type="text" 
+                                   name="typepersoon" 
+                                   id="typepersoon" 
+                                   class="form-control" 
+                                   value="<?= $data['typepersoon']; ?>" 
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="vertegenwoordiger" class="form-label">Vertegenwoordiger</label>
+                            <input type="text" 
+                                   name="vertegenwoordiger" 
+                                   id="vertegenwoordiger" 
+                                   class="form-control" 
+                                   value="<?= $data['vertegenwoordiger'] ? 'Ja' : 'Nee'; ?>" 
+                                   readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- Contactgegevens (bewerkbaar) -->
+                        <div class="mb-3">
+                            <label for="straat" class="form-label">Straatnaam</label>
                             <input type="text" 
                                    name="straat" 
                                    id="straat" 
-                                   class="form-control <?php echo (!empty($data['straat_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?php echo $data['straat']; ?>" 
+                                   class="form-control <?= (!empty($data['straat_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['straat']; ?>" 
                                    required>
                             <div class="invalid-feedback">
-                                <?php echo $data['straat_err']; ?>
+                                <?= $data['straat_err']; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
+
                         <div class="mb-3">
-                            <label for="huisnummer" class="form-label">Huisnummer <span class="text-danger">*</span></label>
+                            <label for="huisnummer" class="form-label">Huisnummer</label>
                             <input type="text" 
                                    name="huisnummer" 
                                    id="huisnummer" 
-                                   class="form-control <?php echo (!empty($data['huisnummer_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?php echo $data['huisnummer']; ?>" 
+                                   class="form-control <?= (!empty($data['huisnummer_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['huisnummer']; ?>" 
                                    required>
                             <div class="invalid-feedback">
-                                <?php echo $data['huisnummer_err']; ?>
+                                <?= $data['huisnummer_err']; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
+
                         <div class="mb-3">
                             <label for="toevoeging" class="form-label">Toevoeging</label>
                             <input type="text" 
                                    name="toevoeging" 
                                    id="toevoeging" 
                                    class="form-control" 
-                                   value="<?php echo $data['toevoeging']; ?>">
+                                   value="<?= $data['toevoeging']; ?>">
                         </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="postcode" class="form-label">Postcode <span class="text-danger">*</span></label>
+                            <label for="postcode" class="form-label">Postcode</label>
                             <input type="text" 
                                    name="postcode" 
                                    id="postcode" 
-                                   class="form-control <?php echo (!empty($data['postcode_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?php echo $data['postcode']; ?>" 
+                                   class="form-control <?= (!empty($data['postcode_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['postcode']; ?>" 
                                    required>
                             <div class="invalid-feedback">
-                                <?php echo $data['postcode_err']; ?>
+                                <?= $data['postcode_err']; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-8">
+
                         <div class="mb-3">
-                            <label for="woonplaats" class="form-label">Woonplaats <span class="text-danger">*</span></label>
+                            <label for="woonplaats" class="form-label">Woonplaats</label>
                             <input type="text" 
                                    name="woonplaats" 
                                    id="woonplaats" 
-                                   class="form-control <?php echo (!empty($data['woonplaats_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?php echo $data['woonplaats']; ?>" 
+                                   class="form-control <?= (!empty($data['woonplaats_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['woonplaats']; ?>" 
                                    required>
                             <div class="invalid-feedback">
-                                <?php echo $data['woonplaats_err']; ?>
+                                <?= $data['woonplaats_err']; ?>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="email" class="form-label">E-mailadres</label>
+                            <label for="email" class="form-label">Email</label>
                             <input type="email" 
                                    name="email" 
                                    id="email" 
-                                   class="form-control <?php echo (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" 
-                                   value="<?php echo $data['email']; ?>">
+                                   class="form-control <?= (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>" 
+                                   value="<?= $data['email']; ?>">
                             <div class="invalid-feedback">
-                                <?php echo $data['email_err']; ?>
+                                <?= $data['email_err']; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
+
                         <div class="mb-3">
-                            <label for="mobiel" class="form-label">Mobiel nummer</label>
+                            <label for="mobiel" class="form-label">Mobiel</label>
                             <input type="tel" 
                                    name="mobiel" 
                                    id="mobiel" 
                                    class="form-control" 
-                                   value="<?php echo $data['mobiel']; ?>">
+                                   value="<?= $data['mobiel']; ?>">
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <a href="<?php echo URLROOT; ?>/klanten/details/<?php echo $data['id']; ?>" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left me-1"></i>
-                        Terug naar klantdetails
-                    </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-floppy me-1"></i>
-                        Wijzigingen opslaan
+                        Wijzig
                     </button>
+                    <div>
+                        <a href="<?= URLROOT; ?>/klanten/details/<?= $data['id']; ?>" class="btn btn-secondary me-2">
+                            terug
+                        </a>
+                        <a href="<?= URLROOT; ?>" class="btn btn-primary">
+                            home
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
