@@ -48,6 +48,8 @@
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
+                            <?php elseif (isset($_GET['categorieId']) && $_GET['categorieId'] !== ""): ?>
+                                <tr><td colspan="8" class="text-center text-warning bg-light fs-5">Er zijn geen producten bekent die behoren bij de geselecteerde productcategorie</td></tr>
                             <?php else: ?>
                                 <tr><td colspan="8" class="text-center text-muted">Geen voorraadproducten gevonden.</td></tr>
                             <?php endif; ?>

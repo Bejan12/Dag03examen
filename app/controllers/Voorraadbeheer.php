@@ -21,10 +21,15 @@ class Voorraadbeheer extends BaseController
         $categorieId = isset($_GET['categorieId']) && $_GET['categorieId'] !== '' ? (int)$_GET['categorieId'] : null;
         $voorraad = $this->voorraadModel->getAllVoorraad($categorieId);
         $categorieen = $this->voorraadModel->getCategorieen();
+        $feedback = null;
+        if (isset($_GET['categorieId']) && $_GET['categorieId'] !== "" && empty($voorraad)) {
+            $feedback = 'Er zijn geen producten bekent die behoren bij de geselecteerde productcategorie';
+        }
         $data = [
             'title' => 'Overzicht Productvoorraad',
             'voorraad' => $voorraad,
-            'categorieen' => $categorieen
+            'categorieen' => $categorieen,
+            'feedback' => $feedback
         ];
         $this->view('voorraadbeheer/index', $data);
     }

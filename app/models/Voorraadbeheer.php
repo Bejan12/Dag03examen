@@ -17,7 +17,7 @@ class VoorraadModel
      * Haal alle voorraadproducten op met alle benodigde info
      * @return array
      */
-    public function getAllVoorraad()
+    public function getAllVoorraad($categorieId = null)
     {
         try {
             $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn
@@ -26,7 +26,13 @@ class VoorraadModel
                     JOIN productpermagazijn pm ON p.Id = pm.ProductId
                     JOIN magazijn m ON pm.MagazijnId = m.Id
                     WHERE p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
+            if ($categorieId) {
+                $sql .= " AND c.Id = :categorieId";
+            }
             $this->db->query($sql);
+            if ($categorieId) {
+                $this->db->bind(':categorieId', $categorieId, PDO::PARAM_INT);
+            }
             return $this->db->resultSet();
         } catch (PDOException $e) {
             error_log('Fout bij ophalen voorraad: ' . $e->getMessage());
@@ -54,6 +60,21 @@ class VoorraadModel
         } catch (PDOException $e) {
             error_log('Fout bij ophalen productdetails: ' . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Haal alle categorieën op
+     * @return array
+     */
+    public function getCategorieen()
+    {
+        try {
+            $this->db->query('SELECT Id, Naam FROM categorie WHERE IsActief = 1');
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
+            return [];
         }
     }
 }
