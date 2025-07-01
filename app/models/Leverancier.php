@@ -11,6 +11,11 @@ class Leverancier
 
     public function getLeveranciers($type = null)
     {
+        // Als 'Donor' is geselecteerd, altijd een lege lijst teruggeven
+        if ($type === 'Donor') {
+            return [];
+        }
+
         if ($type) {
             $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType = :type");
             $this->db->bind(':type', $type);
