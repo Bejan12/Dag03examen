@@ -15,6 +15,13 @@
                 </script>
             <?php endif; ?>
 
+            <?php if (!empty($data['general_err'])): ?>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <?= htmlspecialchars($data['general_err']); ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Wijzig Klant Details volgens wireframe -->
             <div class="card shadow">
                 <div class="card-header text-success">

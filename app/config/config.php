@@ -11,7 +11,7 @@ define('DB_PASS', '');
 /**
  * De naam van de virtualhost
  */
-define('URLROOT', 'http://dag03examen');
+define('URLROOT', 'http://dag3/');
 
 /**
  * Het pad naar de folder app
