@@ -1,5 +1,19 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
+<style>
+/* Zorg voor een duidelijke dropdown-pijl */
+select.form-control {
+    -webkit-appearance: menulist-button;
+    -moz-appearance: menulist-button;
+    appearance: menulist-button;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -67,7 +81,6 @@
                                                 'Heeswijk Dinther'
                                             ];
                                             foreach ($locaties as $locatie):
-                                                // Check of dit de geselecteerde optie is (houd rekening met POST data als die er is)
                                                 $selected = '';
                                                 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['magazijn'])) {
                                                     $selected = ($_POST['magazijn'] === $locatie) ? 'selected' : '';

@@ -14,7 +14,6 @@
  *  VoorraadModel.php
  *  VoorraadbeheerController.php
  * VoorraadModel.php
- * VoorraadbeheerController.php
  * VoorraadModel.php
  * Model voor voorraadbeheer
  * Haalt alle voorraadproducten op uit de database
