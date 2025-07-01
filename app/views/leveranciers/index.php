@@ -24,11 +24,15 @@
     </div>
 </div>
 
-<?php if ($data['melding']): ?>
+<?php if ($data['selectedType'] === 'Donor'): ?>
+    <div class="alert alert-warning">
+        Er zijn geen leveranciers bekend van het geselecteerde leverancierstype
+    </div>
+<?php elseif ($data['melding']): ?>
     <div class="alert alert-warning"><?= $data['melding'] ?></div>
 <?php endif; ?>
 
-<?php if (count($data['leveranciers']) > 0): ?>
+<?php if ($data['selectedType'] !== 'Donor' && count($data['leveranciers']) > 0): ?>
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -61,7 +65,7 @@
             <?php endforeach; ?>
         </tbody>
     </table>
-<?php elseif (!$data['melding']): ?>
+<?php elseif ($data['selectedType'] !== 'Donor' && !$data['melding']): ?>
     <div class="alert alert-info">
         Er zijn geen leveranciers bekend van het geselecteerde leverancierstype
     </div>

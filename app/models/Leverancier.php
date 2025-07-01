@@ -11,16 +11,12 @@ class Leverancier
 
     public function getLeveranciers($type = null)
     {
-        // Als 'Donor' is geselecteerd, altijd een lege lijst teruggeven
-        if ($type === 'Donor') {
-            return [];
-        }
-
+        // Altijd Donor uitsluiten
         if ($type) {
-            $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType = :type");
+            $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType = :type AND LeverancierType != 'Donor'");
             $this->db->bind(':type', $type);
         } else {
-            $this->db->query("SELECT * FROM Leverancier");
+            $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType != 'Donor'");
         }
         return $this->db->resultSet();
     }
@@ -80,3 +76,5 @@ class Leverancier
         return $this->db->single();
     }
 }
+
+
