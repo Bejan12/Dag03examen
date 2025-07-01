@@ -42,7 +42,7 @@ require_once APPROOT . '/views/includes/header.php';
 
             <!-- Toon error bericht als deze bestaat in sessie -->
             <?php if (isset($data['error_message']) && !empty($data['error_message'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <?= htmlspecialchars($data['error_message']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -130,7 +130,7 @@ require_once APPROOT . '/views/includes/header.php';
                                 <td colspan="7" class="text-center">
                                     <!-- Verschillende berichten afhankelijk van filter status -->
                                     <?php if (isset($data['selectedEetwens']) && $data['selectedEetwens'] > 0): ?>
-                                        <div class="alert" style="background-color: #ffe4e1; border-color: #ffc0cb; color: #8b0000;">
+                                        <div class="alert alert-danger" style="background-color: #ffe4e1; border-color: #ffc0cb; color: #8b0000;">
                                             Er zijn geen gezinnen bekend die de geselecteerde eetwens hebben
                                         </div>
                                     <?php else: ?>

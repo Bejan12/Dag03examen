@@ -107,7 +107,7 @@ require_once APPROOT . '/views/includes/header.php';
                         <!-- SCENARIO 2 WAARSCHUWING -->
                         <!-- Toon waarschuwing als wijziging niet toegestaan is -->
                         <?php if (!$data['magGewijzigdWorden']): ?>
-                            <div class="alert alert-warning">
+                            <div class="alert alert-danger">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                 Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt
                             </div>
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000); // 3 seconden delay
     }
     
-    // FORM VALIDATIE
+  // FORM VALIDATIE
     const form = document.getElementById('statusForm');
     
     if (form) {
@@ -222,14 +222,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
             
-            // EXTRA BEVESTIGING
-            // Vraag bevestiging bij statuswijziging naar "Uitgereikt"
-            if (status === 'Uitgereikt') {
-                if (!confirm('Weet u zeker dat u dit voedselpakket als uitgereikt wilt markeren?')) {
-                    e.preventDefault();
-                    return false;
-                }
-            }
+            // EXTRA BEVESTIGING WEGGEHAALD!
+            // Nu wordt er geen confirm() dialog meer getoond
             
             // Als alles OK, ga door met submit
             return true;
