@@ -9,7 +9,13 @@
         <div class="col-8">
 
             <h3><?php echo $data['title']; ?></h3>
-
+            
+            <!-- Navigation links -->
+            <div class="mt-4">
+                <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-primary">
+                    Overzicht voedselpakketten
+                </a>
+            </div>
 
         </div>
         
