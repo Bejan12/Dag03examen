@@ -3,7 +3,7 @@
  * Controller voor voorraadbeheer
  * Beheert het tonen en wijzigen van producten in de voorraad
  * 
- * @author Bejan Afkar
+ * @author ZZakaria el bakkali
  */
 class Voorraadbeheer extends BaseController
 {
