@@ -11,6 +11,7 @@
                     </h2>
                 </div>
                 <div class="card-body bg-light">
+                    <!-- SERVER-SIDE FEEDBACK ABOVE FORM -->
 
                     <!-- SERVER-SIDE FEEDBACK ABOVE FORM -->
                     <?php if (isset($_SESSION['success'])): ?>
@@ -34,13 +35,11 @@
                     <?php endif; ?>
 
                     <?php if ($data['product']): ?>
-                        <form method="post" novalidate>
+                        <form method="post">
                             <table class="table table-bordered">
                                 <tr>
                                     <th>Productnaam</th>
-                                    <td>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->productnaam) ?>" readonly>
-                                    </td>
+                                    <td><input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->productnaam) ?>" readonly></td>
                                 </tr>
                                 <tr>
                                     <th>Houdbaarheidsdatum</th>
@@ -50,46 +49,36 @@
                                 </tr>
                                 <tr>
                                     <th>Barcode</th>
-                                    <td>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->Barcode ?? '') ?>" readonly>
-                                    </td>
+                                    <td><input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->Barcode ?? '') ?>" readonly></td>
                                 </tr>
                                 <tr>
                                     <th>Magazijn locatie</th>
                                     <td>
-                                        <!-- Position-relative wrapper voor het pijltje -->
-                                        <div class="position-relative">
-                                            <!-- Bootstrap 5 form-select met padding rechts voor pijltje -->
-                                            <select name="magazijn" class="form-select pe-5" required>
-                                                <?php
-                                                $locaties = [
-                                                    'Berlicum',
-                                                    'Rosmalen',
-                                                    'Gemonde',
-                                                    'Vught',
-                                                    'Schijndel',
-                                                    'Middelrode',
-                                                    'Sint-Michielsgestel',
-                                                    'Den Bosch',
-                                                    'Heeswijk Dinther'
-                                                ];
-                                                foreach ($locaties as $locatie):
-                                                    $selected = '';
-                                                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['magazijn'])) {
-                                                        $selected = ($_POST['magazijn'] === $locatie) ? 'selected' : '';
-                                                    } else {
-                                                        $selected = (isset($data['product']->magazijn) && $data['product']->magazijn === $locatie) ? 'selected' : '';
-                                                    }
-                                                ?>
-                                                    <option value="<?= htmlspecialchars($locatie) ?>" <?= $selected ?>>
-                                                        <?= htmlspecialchars($locatie) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <!-- Pijltje als visuele dropdown indicator -->
-                                            <i class="bi bi-caret-down-fill position-absolute top-50 end-0 translate-middle-y me-3"
-                                               style="pointer-events:none; color:#495057; font-size:1.2rem;"></i>
-                                        </div>
+                                        <select name="magazijn" class="form-control" required>
+                                            <?php
+                                            $locaties = [
+                                                'Berlicum',
+                                                'Rosmalen',
+                                                'Gemonde',
+                                                'Vught',
+                                                'Schijndel',
+                                                'Middelrode',
+                                                'Sint-Michielsgestel',
+                                                'Den Bosch',
+                                                'Heeswijk Dinther'
+                                            ];
+                                            foreach ($locaties as $locatie):
+                                                // Check of dit de geselecteerde optie is (houd rekening met POST data als die er is)
+                                                $selected = '';
+                                                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['magazijn'])) {
+                                                    $selected = ($_POST['magazijn'] === $locatie) ? 'selected' : '';
+                                                } else {
+                                                    $selected = ($data['product']->magazijn === $locatie) ? 'selected' : '';
+                                                }
+                                            ?>
+                                                <option value="<?= htmlspecialchars($locatie) ?>" <?= $selected ?>><?= htmlspecialchars($locatie) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </td>
                                 </tr>
                                 <tr>
@@ -101,8 +90,7 @@
                                 <tr>
                                     <th>Aantal uitgeleverde producten</th>
                                     <td>
-                                        <input type="number" class="form-control" name="aantal_uitgeleverd" 
-                                               value="<?= htmlspecialchars($data['product']->aantal_uitgeleverd ?? '') ?>" min="0" required>
+                                        <input type="number" class="form-control" name="aantal_uitgeleverd" value="<?= htmlspecialchars($data['product']->aantal_uitgeleverd ?? '') ?>" min="0" required>
                                         <?php if (isset($_SESSION['voorraad_error'])): ?>
                                             <small class="text-danger">Er worden meer producten uitgeleverd dan in voorraad zijn.</small>
                                             <?php unset($_SESSION['voorraad_error']); ?>
@@ -121,9 +109,7 @@
                                 </tr>
                                 <tr>
                                     <th>Aantal op voorraad</th>
-                                    <td>
-                                        <input type="number" class="form-control" value="<?= htmlspecialchars($data['product']->aantal) ?>" readonly>
-                                    </td>
+                                    <td><input type="number" class="form-control" value="<?= htmlspecialchars($data['product']->aantal) ?>" readonly></td>
                                 </tr>
                             </table>
 
