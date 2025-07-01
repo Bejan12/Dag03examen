@@ -25,6 +25,8 @@
                             }
                         }
                         ?>
+                        <!-- Dummy postcode voor testing unhappy scenario -->
+                        <option value="5271ZH">5271ZH</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
@@ -39,7 +41,7 @@
                     Er zijn nog geen klanten geregistreerd.
                 </div>
             <?php else: ?>
-                <div class="table-responsive">
+                <div class="table-responsive" id="klantenTableContainer">
                     <table class="table table-striped table-bordered" id="klantenTable">
                         <thead class="table-light">
                             <tr>
@@ -53,8 +55,16 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Error row voor unhappy scenario -->
+                            <tr id="noResultsRow" style="display: none;">
+                                <td colspan="7" class="text-center text-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Er zijn geen klanten bekend die de geselecteerde postcode hebben.
+                                </td>
+                            </tr>
+                            
                             <?php foreach ($data['klanten'] as $klant): ?>
-                                <tr data-postcode="<?= htmlspecialchars($klant->Postcode ?? ''); ?>">
+                                <tr data-postcode="<?= htmlspecialchars($klant->Postcode ?? ''); ?>" class="klant-row">
                                     <td><?= htmlspecialchars($klant->GezinNaam); ?></td>
                                     <td>
                                         <?php if (!empty($klant->Voornaam)): ?>
@@ -123,17 +133,28 @@ document.getElementById('toonKlantenBtn').addEventListener('click', function() {
 
 function filterByPostcode() {
     const selectedPostcode = document.getElementById('postcodeFilter').value;
-    const tableRows = document.querySelectorAll('#klantenTable tbody tr');
+    const tableRows = document.querySelectorAll('#klantenTable tbody tr.klant-row');
+    const noResultsRow = document.getElementById('noResultsRow');
+    
+    let visibleRows = 0;
     
     tableRows.forEach(row => {
         const rowPostcode = row.getAttribute('data-postcode');
         
         if (selectedPostcode === '' || rowPostcode === selectedPostcode) {
             row.style.display = '';
+            visibleRows++;
         } else {
             row.style.display = 'none';
         }
     });
+    
+    // Toon error row als er geen resultaten zijn bij een specifieke postcode selectie
+    if (selectedPostcode !== '' && visibleRows === 0) {
+        noResultsRow.style.display = '';
+    } else {
+        noResultsRow.style.display = 'none';
+    }
 }
 
 // Initieel alle klanten tonen
