@@ -56,4 +56,27 @@ class VoorraadModel
             return [];
         }
     }
+
+    /**
+     * Haal details van één product op
+     * @param int $id
+     * @return object|null
+     */
+    public function getProductDetails($id)
+    {
+        try {
+            $sql = "SELECT p.Id, p.Naam AS productnaam, c.Naam AS categorienaam, m.VerpakkingsEenheid AS eenheid, m.Aantal AS aantal, p.Houdbaarheidsdatum, pm.Locatie AS magazijn, p.Omschrijving, p.Status
+                    FROM product p
+                    JOIN categorie c ON p.CategorieId = c.Id
+                    JOIN productpermagazijn pm ON p.Id = pm.ProductId
+                    JOIN magazijn m ON pm.MagazijnId = m.Id
+                    WHERE p.Id = :id AND p.IsActief = 1 AND pm.IsActief = 1 AND m.IsActief = 1";
+            $this->db->query($sql);
+            $this->db->bind(':id', $id, PDO::PARAM_INT);
+            return $this->db->single();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen productdetails: ' . $e->getMessage());
+            return null;
+        }
+    }
 }

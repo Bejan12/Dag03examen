@@ -28,4 +28,17 @@ class Voorraadbeheer extends BaseController
         ];
         $this->view('voorraadbeheer/index', $data);
     }
+
+    /**
+     * Toon details van een product
+     */
+    public function details($id)
+    {
+        $product = $this->voorraadModel->getProductDetails($id);
+        $data = [
+            'title' => 'Product Details',
+            'product' => $product
+        ];
+        $this->view('voorraadbeheer/details', $data);
+    }
 }
