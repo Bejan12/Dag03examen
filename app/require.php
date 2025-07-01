@@ -9,6 +9,14 @@
     require_once 'config/config.php';
     
     /**
+     * Helper functie voor redirects
+     */
+    function redirect($page) {
+        header('location: ' . URLROOT . '/' . $page);
+        exit();
+    }
+    
+    /**
      * Maak een instantie of object van de Core-Class
      */
     $init = new Core();
