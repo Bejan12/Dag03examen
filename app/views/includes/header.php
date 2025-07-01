@@ -27,32 +27,55 @@
             
             <!-- Navigation items -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URLROOT; ?>/klanten">
-                            <i class="bi bi-people-fill me-1"></i>
-                            Overzicht Klanten
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URLROOT; ?>/leveranciers">
-                            <i class="bi bi-truck me-1"></i>
-                            Overzicht Leveranciers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URLROOT; ?>/voorraadbeheer">
-                            <i class="bi bi-box-seam me-1"></i>
-                            Overzicht Voorraadbeheer
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= URLROOT; ?>/voedselpakket">
-                            <i class="bi bi-bag-heart-fill me-1"></i>
-                            Overzicht Voedselpakket
-                        </a>
-                    </li>
-                </ul>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URLROOT; ?>/klanten">
+                                <i class="bi bi-people-fill me-1"></i>
+                                Overzicht Klanten
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URLROOT; ?>/leveranciers">
+                                <i class="bi bi-truck me-1"></i>
+                                Overzicht Leveranciers
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URLROOT; ?>/voorraadbeheer">
+                                <i class="bi bi-box-seam me-1"></i>
+                                Overzicht Voorraadbeheer
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URLROOT; ?>/voedselpakketten">
+                                <i class="bi bi-bag-heart-fill me-1"></i>
+                                Overzicht Voedselpakketten
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i>
+                                <?= $_SESSION['user_name']; ?> (<?= $_SESSION['user_role']; ?>)
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="<?= URLROOT; ?>/auth/logout">
+                                    <i class="bi bi-box-arrow-right me-1"></i>
+                                    Uitloggen
+                                </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                <?php else: ?>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= URLROOT; ?>/auth/login">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>
+                                Inloggen
+                            </a>
+                        </li>
+                    </ul>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
