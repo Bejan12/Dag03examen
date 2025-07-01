@@ -85,25 +85,11 @@
                                     </td>
                                     <td><?= (int)($pakket->AantalProducten ?? 0); ?></td>
                                     <td>
-                                        <?php
-                                        // Check of dit ZevenhuizenGezin is EN pakketnummer 3
-                                        $isZevenhuizenPakket3 = (isset($data['gezin']) && 
-                                                                $data['gezin']->Naam === 'ZevenhuizenGezin' && 
-                                                                $pakket->PakketNummer == 3);
-                                        ?>
-                                        
-                                        <?php if ($isZevenhuizenPakket3): ?>
-                                            <!-- Disabled button voor scenario 2 -->
-                                            <button class="btn btn-sm btn-secondary" disabled title="Gezin niet meer ingeschreven">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                        <?php else: ?>
-                                            <!-- Normale wijzig link -->
-                                            <a href="<?= URLROOT; ?>voedselpakketten/wijzigStatus/<?= (int)$pakket->Id; ?>" 
-                                               class="btn btn-sm btn-warning" title="Wijzig status">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                        <?php endif; ?>
+                                        <!-- Gewoon normale link - geen speciale check -->
+                                        <a href="<?= URLROOT; ?>voedselpakketten/wijzigStatus/<?= (int)$pakket->Id; ?>" 
+                                           class="btn btn-sm btn-warning" title="Wijzig status">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

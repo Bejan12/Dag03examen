@@ -142,12 +142,14 @@ class Voedselpakketten extends BaseController
         }
     }
 
+
+  
     /**
      * Toont wijzig status pagina (Wireframe 4)
      * 
      * @param int $voedselpakketId ID van het voedselpakket
      */
-     public function wijzigStatus(int $voedselpakketId): void
+    public function wijzigStatus(int $voedselpakketId): void
     {
         try {
             // Valideer input
@@ -161,6 +163,9 @@ class Voedselpakketten extends BaseController
                 throw new Exception('Voedselpakket niet gevonden');
             }
 
+            // Check of dit voedselpakket gewijzigd mag worden (voor scenario 2)
+            $magGewijzigdWorden = $this->voedselpakketModel->magVoedselpakketGewijzigdWorden($voedselpakketId);
+            
             // Controleer of gezin nog ingeschreven is
             $isIngeschreven = $this->voedselpakketModel->isGezinIngeschreven($voedselpakket->GezinId);
 
@@ -168,12 +173,12 @@ class Voedselpakketten extends BaseController
                 'title' => 'Wijzig voedselpakket status',
                 'voedselpakket' => $voedselpakket,
                 'isIngeschreven' => $isIngeschreven,
+                'magGewijzigdWorden' => $magGewijzigdWorden,
                 'csrf_token' => $this->generateCSRFToken(),
                 'success_message' => $this->getFlashMessage('success'),
                 'error_message' => $this->getFlashMessage('error')
             ];
 
-            // WIJZIGING: van 'wijzig_status' naar 'wijzig'
             $this->view('voedselpakketten/wijzig', $data);
         } catch (Exception $e) {
             $this->handleError($e, 'Kon wijzig status pagina niet laden');

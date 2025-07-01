@@ -49,8 +49,8 @@
                             </div>
                         </div>
 
-                        <!-- Scenario 2: Niet meer ingeschreven -->
-                        <?php if (!$data['isIngeschreven']): ?>
+                        <!-- Scenario 2: AUTOMATISCH tonen als het niet mag gewijzigd worden -->
+                        <?php if (!$data['magGewijzigdWorden']): ?>
                             <div class="alert" style="background-color: #ffe4e1; border-color: #ffc0cb; color: #8b0000;">
                                 Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt
                             </div>
@@ -64,7 +64,7 @@
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status:</label>
                                 <select name="status" id="status" class="form-select" 
-                                        <?= !$data['isIngeschreven'] ? 'disabled' : ''; ?>>
+                                        <?= !$data['magGewijzigdWorden'] ? 'disabled' : ''; ?>>
                                     <option value="NietUitgereikt" 
                                         <?= ($data['voedselpakket']->Status === 'NietUitgereikt') ? 'selected' : ''; ?>>
                                         Niet uitgereikt
@@ -78,7 +78,7 @@
 
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary me-2" 
-                                        <?= !$data['isIngeschreven'] ? 'disabled' : ''; ?>>
+                                        <?= !$data['magGewijzigdWorden'] ? 'disabled' : ''; ?>>
                                     Wijzig status voedselpakket
                                 </button>
                                 <a href="<?= URLROOT; ?>voedselpakketten/details/<?= (int)$data['voedselpakket']->GezinId; ?>" 
