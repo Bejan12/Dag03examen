@@ -6,12 +6,12 @@
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white">
                     <h2 class="mb-0"><i class="bi bi-cube me-2"></i><?= htmlspecialchars($data['title']) ?></h2>
-                </div>
+</div>
                 <div class="card-body bg-light">
                     <?php if ($data['product']): ?>
                         <table class="table table-bordered">
                             <tr><th>Productnaam</th><td><?= htmlspecialchars($data['product']->productnaam) ?></td></tr>
-                            <tr><th>Categorie</th><td><?= htmlspecialchars($data['product']->categorienaam) ?></td></tr>
+<tr><th>Categorie</th><td><?= htmlspecialchars($data['product']->categorienaam) ?></td></tr>
                             <tr><th>Eenheid</th><td><?= htmlspecialchars($data['product']->eenheid) ?></td></tr>
                             <tr><th>Aantal</th><td><?= htmlspecialchars($data['product']->aantal) ?></td></tr>
                             <tr><th>Houdbaarheidsdatum</th><td><?= htmlspecialchars($data['product']->Houdbaarheidsdatum) ?></td></tr>

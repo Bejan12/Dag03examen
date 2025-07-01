@@ -8,7 +8,7 @@
                     <h2 class="mb-0"><i class="bi bi-box-seam me-2"></i><?= htmlspecialchars($data['title']) ?></h2>
                     <form class="d-flex" method="get" action="">
                         <select class="form-select me-2" name="categorieId" style="min-width:200px;">
-                            <option value="">Alle categorieën</option>
+                            <option value="">Alle categorieÃ«n</option>
                             <?php foreach ($data['categorieen'] as $cat): ?>
                                 <option value="<?= $cat->Id ?>" <?= isset($_GET['categorieId']) && $_GET['categorieId'] == $cat->Id ? 'selected' : '' ?>><?= htmlspecialchars($cat->Naam) ?></option>
                             <?php endforeach; ?>
