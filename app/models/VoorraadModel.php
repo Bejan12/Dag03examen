@@ -1,7 +1,7 @@
 <?php
 /**
  * Model voor voorraadbeheer
- * Haalt alle voorraadproducten op uit de database
+ * Haalt alle voorraadproducten en magazijnen op uit de database
  * @author Bejan Afkar
  */
 class VoorraadModel
@@ -23,7 +23,6 @@ class VoorraadModel
     public function updateVoorraad(int $productId, int $magazijnId, int $aantal): bool
     {
         try {
-            // We updaten de voorraad van het product per magazijn
             $sql = "UPDATE magazijn m
                     JOIN productpermagazijn pm ON m.Id = pm.MagazijnId
                     SET m.Aantal = :aantal
@@ -145,6 +144,22 @@ class VoorraadModel
         } catch (PDOException $e) {
             error_log('Fout bij ophalen productdetails: ' . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Haal alle magazijnen op
+     * @return array
+     */
+    public function getAllMagazijnen(): array
+    {
+        try {
+            $sql = "SELECT Id, Locatie, IsActief FROM magazijn WHERE IsActief = 1 ORDER BY Locatie ASC";
+            $this->db->query($sql);
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen magazijnen: ' . $e->getMessage());
+            return [];
         }
     }
 }

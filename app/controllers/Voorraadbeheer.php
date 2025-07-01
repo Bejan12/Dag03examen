@@ -53,22 +53,22 @@ class Voorraadbeheer extends BaseController
     public function wijzig($id)
     {
         $product = $this->voorraadModel->getProductDetails($id);
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $magazijnLocatie = isset($_POST['magazijn']) ? trim($_POST['magazijn']) : $product->magazijn;
-            $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
-            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? $_POST['uitleveringsdatum'] : null;
-
+        // Haal het magazijnId op voor updateVoorraad
+        $magazijnId = null;
+        if ($product && property_exists($product, 'magazijnId')) {
+            $magazijnId = $product->magazijnId;
+        } else {
+            // Fallback ophalen magazijnId
             $magazijnId = $this->voorraadModel->getMagazijnIdByProductId($id);
-            $updateSuccess = true;
-            if ($magazijnId && $aantalUitgeleverd !== null) {
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
+            $updateSuccess = false;
+            if ($aantalUitgeleverd !== null && $magazijnId !== null) {
                 $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
-            } else {
-                $updateSuccess = false;
             }
-
             if ($updateSuccess) {
                 $_SESSION['success'] = 'De productgegevens zijn gewijzigd.';
-                // Geen exit en geen header, zodat de melding zichtbaar blijft op de wijzigpagina
             } else {
                 $_SESSION['error'] = 'Wijzigen mislukt.';
             }

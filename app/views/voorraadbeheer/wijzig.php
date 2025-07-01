@@ -9,7 +9,7 @@
                 </div>
                 <div class="card-body bg-light">
                     <?php if (isset($_SESSION['success'])): ?>
-                        <div class="alert alert-success">De productgegevens zijn gewijzigd.<br>U wordt automatisch teruggestuurd naar de productdetails...</div>
+                        <div class="alert alert-success">De productgegevens zijn gewijzigd.</div>
                         <script>
                         setTimeout(function() {
                             window.location.href = "<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id; ?>";
