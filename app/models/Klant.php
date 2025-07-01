@@ -112,4 +112,103 @@ class Klant
 
         return $this->db->resultSet();
     }
+
+    public function getContactByGezinId($gezinId)
+    {
+        $this->db->query('SELECT 
+            c.Id as ContactId,
+            c.Straat,
+            c.Huisnummer,
+            c.Toevoeging,
+            c.Postcode,
+            c.Woonplaats,
+            c.Email,
+            c.Mobiel
+        FROM Contact c
+        LEFT JOIN ContactPerGezin cpg ON c.Id = cpg.ContactId AND cpg.IsActief = 1
+        WHERE cpg.GezinId = :gezinId AND c.IsActief = 1');
+
+        $this->db->bind(':gezinId', $gezinId);
+
+        return $this->db->single();
+    }
+
+    public function updateKlantContact($data)
+    {
+        // Begin transaction
+        $this->db->beginTransaction();
+
+        try {
+            // Check if contact exists for this gezin
+            $existingContact = $this->getContactByGezinId($data['id']);
+
+            if ($existingContact) {
+                // Update existing contact
+                $this->db->query('UPDATE Contact SET 
+                    Straat = :straat,
+                    Huisnummer = :huisnummer,
+                    Toevoeging = :toevoeging,
+                    Postcode = :postcode,
+                    Woonplaats = :woonplaats,
+                    Email = :email,
+                    Mobiel = :mobiel,
+                    DatumGewijzigd = SYSDATE(6)
+                WHERE Id = :contactId');
+
+                $this->db->bind(':straat', $data['straat']);
+                $this->db->bind(':huisnummer', $data['huisnummer']);
+                $this->db->bind(':toevoeging', $data['toevoeging']);
+                $this->db->bind(':postcode', $data['postcode']);
+                $this->db->bind(':woonplaats', $data['woonplaats']);
+                $this->db->bind(':email', $data['email']);
+                $this->db->bind(':mobiel', $data['mobiel']);
+                $this->db->bind(':contactId', $existingContact->ContactId);
+
+                $this->db->execute();
+            } else {
+                // Create new contact
+                $this->db->query('INSERT INTO Contact (
+                    Straat, Huisnummer, Toevoeging, Postcode, Woonplaats, 
+                    Email, Mobiel, IsActief, DatumAangemaakt, DatumGewijzigd
+                ) VALUES (
+                    :straat, :huisnummer, :toevoeging, :postcode, :woonplaats,
+                    :email, :mobiel, 1, SYSDATE(6), SYSDATE(6)
+                )');
+
+                $this->db->bind(':straat', $data['straat']);
+                $this->db->bind(':huisnummer', $data['huisnummer']);
+                $this->db->bind(':toevoeging', $data['toevoeging']);
+                $this->db->bind(':postcode', $data['postcode']);
+                $this->db->bind(':woonplaats', $data['woonplaats']);
+                $this->db->bind(':email', $data['email']);
+                $this->db->bind(':mobiel', $data['mobiel']);
+
+                $this->db->execute();
+
+                // Get the new contact ID
+                $contactId = $this->db->lastInsertId();
+
+                // Create ContactPerGezin relation
+                $this->db->query('INSERT INTO ContactPerGezin (
+                    GezinId, ContactId, IsActief, DatumAangemaakt, DatumGewijzigd
+                ) VALUES (
+                    :gezinId, :contactId, 1, SYSDATE(6), SYSDATE(6)
+                )');
+
+                $this->db->bind(':gezinId', $data['id']);
+                $this->db->bind(':contactId', $contactId);
+
+                $this->db->execute();
+            }
+
+            // Commit transaction
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            // Rollback transaction
+            $this->db->rollback();
+            return false;
+        }
+    }
 }

@@ -22,7 +22,7 @@
                     Terug naar overzicht
                 </a>
             </div>
-
+    
             <?php if (empty($data['klant'])): ?>
                 <div class="alert alert-warning">
                     <i class="bi bi-exclamation-triangle me-2"></i>
