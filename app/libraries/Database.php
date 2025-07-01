@@ -10,7 +10,6 @@ class Database
     private $dbUser = DB_USER;
     private $dbPass = DB_PASS;
 
-
     private $dbHandler;
     private $statement;
 
@@ -42,7 +41,7 @@ class Database
              * Wanneer er een error optreed daarbij wordt er een PDOException object 
              * aangemaakt met informatie over de error
              */
-            // logger(__LINE__, __METHOD__, __FILE__, $e->getMessage());
+            logger(__LINE__, __METHOD__, __FILE__, $e->getMessage());
             echo "Op dit moment kunnen we u niet helpen... probeer het later nog eens";
             header('Refresh:30; url=' .URLROOT . '/homepages/index');
         }
@@ -65,9 +64,25 @@ class Database
     /**
      * Deze methode bind de waardes aan de parameters in de query
      */
-    public function bind($parameter, $value, $type = null)
+    public function bind($param, $value, $type = null)
     {
-        $this->statement->bindValue($parameter, $value, $type);
+        if(is_null($type)) {
+            switch(true) {
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = PDO::PARAM_STR;
+                    break;
+            }
+        }
+        $this->statement->bindValue($param, $value, $type);
     }
 
     /**
@@ -78,15 +93,44 @@ class Database
         return $this->statement->execute();
     }
 
+    /**
+     * Deze methode retourneert een enkele rij uit de database
+     */
     public function single()
     {
-        $this->statement->execute();
-        $result = $this->statement->fetch(PDO::FETCH_OBJ);
-        $this->statement->closecursor();
-        return $result;
+        $this->execute();
+        return $this->statement->fetch(PDO::FETCH_OBJ);
     }
 
-    public function outQuery($sql) {
-        return $this->dbHandler->query($sql);
+    /**
+     * Deze methode retourneert het aantal rijen
+     */
+    public function rowCount()
+    {
+        return $this->statement->rowCount();
+    }
+
+    /**
+     * Begin een database transactie
+     */
+    public function beginTransaction()
+    {
+        return $this->dbHandler->beginTransaction();
+    }
+
+    /**
+     * Commit een database transactie
+     */
+    public function commit()
+    {
+        return $this->dbHandler->commit();
+    }
+
+    /**
+     * Rollback een database transactie
+     */
+    public function rollback()
+    {
+        return $this->dbHandler->rollback();
     }
 }
