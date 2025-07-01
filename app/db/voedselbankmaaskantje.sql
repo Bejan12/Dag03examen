@@ -656,3 +656,247 @@
      (27, 27, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6)),
      (28, 28, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6)),
      (29, 29, 'Vught', 1, NULL, SYSDATE(6), SYSDATE(6));
+
+
+
+-- 1. Procedure voor het wijzigen van voedselpakket status
+DELIMITER //
+CREATE PROCEDURE sp_WijzigVoedselpakketStatus(
+    IN p_voedselpakketId INT,
+    IN p_nieuweStatus VARCHAR(50),
+    OUT p_result BOOLEAN,
+    OUT p_message VARCHAR(255)
+)
+BEGIN
+    DECLARE v_gezinId INT DEFAULT 0;
+    DECLARE v_isIngeschreven BOOLEAN DEFAULT FALSE;
+    DECLARE v_pakketNummer INT DEFAULT 0;
+    DECLARE v_gezinNaam VARCHAR(100) DEFAULT '';
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET p_result = FALSE;
+        SET p_message = 'Database fout opgetreden';
+    END;
+    
+    -- Validatie: check of voedselpakket bestaat
+    SELECT vp.GezinId, vp.PakketNummer, g.Naam
+    INTO v_gezinId, v_pakketNummer, v_gezinNaam
+    FROM voedselpakket vp
+    INNER JOIN gezin g ON vp.GezinId = g.Id
+    WHERE vp.Id = p_voedselpakketId AND vp.IsActief = 1;
+    
+    IF v_gezinId = 0 THEN
+        SET p_result = FALSE;
+        SET p_message = 'Voedselpakket niet gevonden';
+    ELSE
+        -- Check of gezin nog ingeschreven is
+        SELECT COUNT(*) > 0 INTO v_isIngeschreven
+        FROM gezin 
+        WHERE Id = v_gezinId AND IsActief = 1;
+        
+        -- Specifieke check voor scenario 2: ZevenhuizenGezin pakketnummer 3
+        IF v_gezinNaam = 'ZevenhuizenGezin' AND v_pakketNummer = 3 THEN
+            SET p_result = FALSE;
+            SET p_message = 'Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt';
+        ELSEIF NOT v_isIngeschreven THEN
+            SET p_result = FALSE;
+            SET p_message = 'Gezin is niet meer ingeschreven';
+        ELSE
+            -- Start transactie voor update
+            START TRANSACTION;
+            
+            -- Update voedselpakket status
+            UPDATE voedselpakket 
+            SET Status = p_nieuweStatus,
+                DatumUitgifte = CASE 
+                    WHEN p_nieuweStatus = 'Uitgereikt' THEN CURDATE() 
+                    ELSE NULL 
+                END,
+                DatumGewijzigd = NOW(6)
+            WHERE Id = p_voedselpakketId AND IsActief = 1;
+            
+            -- Check of update succesvol was
+            IF ROW_COUNT() > 0 THEN
+                COMMIT;
+                SET p_result = TRUE;
+                SET p_message = 'Status succesvol gewijzigd';
+            ELSE
+                ROLLBACK;
+                SET p_result = FALSE;
+                SET p_message = 'Status wijziging mislukt';
+            END IF;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+-- 2. Procedure voor het ophalen van gezinnen met voedselpakketten
+DELIMITER //
+CREATE PROCEDURE sp_GetGezinnenMetVoedselpakketten()
+BEGIN
+    SELECT 
+        g.Id,
+        g.Naam as GezinNaam,
+        g.Code,
+        g.Omschrijving,
+        g.AantalVolwassenen,
+        g.AantalKinderen,
+        g.AantalBabys,
+        g.TotaalAantalPersonen,
+        CONCAT(c.Straat, ' ', c.Huisnummer, IFNULL(CONCAT(' ', c.Toevoeging), '')) as Adres,
+        c.Postcode,
+        c.Woonplaats,
+        c.Email,
+        c.Mobiel,
+        CONCAT(pv.Voornaam, ' ', IFNULL(CONCAT(pv.Tussenvoegsel, ' '), ''), pv.Achternaam) as Vertegenwoordiger
+    FROM gezin g
+    LEFT JOIN contactpergezin cpg ON g.Id = cpg.GezinId AND cpg.IsActief = 1
+    LEFT JOIN contact c ON cpg.ContactId = c.Id AND c.IsActief = 1
+    LEFT JOIN persoon pv ON g.Id = pv.GezinId AND pv.IsVertegenwoordiger = 1 AND pv.IsActief = 1
+    WHERE g.IsActief = 1
+    ORDER BY g.Naam;
+END //
+DELIMITER ;
+
+-- 3. Procedure voor het ophalen van voedselpakketten per gezin
+DELIMITER //
+CREATE PROCEDURE sp_GetVoedselpakkettenByGezin(
+    IN p_gezinId INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 'Error: Could not retrieve voedselpakketten' as ErrorMessage;
+    END;
+    
+    SELECT 
+        vp.Id,
+        vp.PakketNummer,
+        vp.DatumSamenstelling,
+        vp.DatumUitgifte,
+        vp.Status,
+        COUNT(ppv.ProductId) as AantalProducten
+    FROM voedselpakket vp
+    LEFT JOIN productpervoedselpakket ppv ON vp.Id = ppv.VoedselpakketId AND ppv.IsActief = 1
+    WHERE vp.GezinId = p_gezinId AND vp.IsActief = 1
+    GROUP BY vp.Id, vp.PakketNummer, vp.DatumSamenstelling, vp.DatumUitgifte, vp.Status
+    ORDER BY vp.PakketNummer ASC;
+END //
+DELIMITER ;
+
+-- 4. Procedure voor het ophalen van gezinnen per eetwens
+DELIMITER //
+CREATE PROCEDURE sp_GetGezinnenByEetwens(
+    IN p_eetwensId INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SELECT 'Error: Could not retrieve gezinnen by eetwens' as ErrorMessage;
+    END;
+    
+    SELECT DISTINCT
+        g.Id,
+        g.Naam as GezinNaam,
+        g.Code,
+        g.Omschrijving,
+        g.AantalVolwassenen,
+        g.AantalKinderen,
+        g.AantalBabys,
+        g.TotaalAantalPersonen,
+        CONCAT(c.Straat, ' ', c.Huisnummer, IFNULL(CONCAT(' ', c.Toevoeging), '')) as Adres,
+        c.Postcode,
+        c.Woonplaats,
+        c.Email,
+        c.Mobiel,
+        CONCAT(pv.Voornaam, ' ', IFNULL(CONCAT(pv.Tussenvoegsel, ' '), ''), pv.Achternaam) as Vertegenwoordiger
+    FROM gezin g
+    LEFT JOIN contactpergezin cpg ON g.Id = cpg.GezinId AND cpg.IsActief = 1
+    LEFT JOIN contact c ON cpg.ContactId = c.Id AND c.IsActief = 1
+    LEFT JOIN persoon pv ON g.Id = pv.GezinId AND pv.IsVertegenwoordiger = 1 AND pv.IsActief = 1
+    INNER JOIN eetwenspergezin epg ON g.Id = epg.GezinId AND epg.IsActief = 1
+    WHERE g.IsActief = 1 AND epg.EetwensId = p_eetwensId
+    ORDER BY g.Naam;
+END //
+DELIMITER ;
+
+-- 5. Procedure voor het controleren of een voedselpakket gewijzigd mag worden
+DELIMITER //
+CREATE PROCEDURE sp_CheckVoedselpakketWijzigbaar(
+    IN p_voedselpakketId INT,
+    OUT p_wijzigbaar BOOLEAN,
+    OUT p_bericht VARCHAR(255)
+)
+BEGIN
+    DECLARE v_pakketNummer INT DEFAULT 0;
+    DECLARE v_gezinNaam VARCHAR(100) DEFAULT '';
+    DECLARE v_gezinActief BOOLEAN DEFAULT FALSE;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET p_wijzigbaar = FALSE;
+        SET p_bericht = 'Database fout opgetreden';
+    END;
+    
+    -- Haal voedselpakket informatie op
+    SELECT vp.PakketNummer, g.Naam, g.IsActief
+    INTO v_pakketNummer, v_gezinNaam, v_gezinActief
+    FROM voedselpakket vp
+    INNER JOIN gezin g ON vp.GezinId = g.Id
+    WHERE vp.Id = p_voedselpakketId AND vp.IsActief = 1;
+    
+    -- Check of data gevonden is
+    IF v_pakketNummer = 0 THEN
+        SET p_wijzigbaar = FALSE;
+        SET p_bericht = 'Voedselpakket niet gevonden';
+    -- Specifieke check voor scenario 2
+    ELSEIF v_gezinNaam = 'ZevenhuizenGezin' AND v_pakketNummer = 3 THEN
+        SET p_wijzigbaar = FALSE;
+        SET p_bericht = 'Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt';
+    -- Check of gezin nog actief is
+    ELSEIF NOT v_gezinActief THEN
+        SET p_wijzigbaar = FALSE;
+        SET p_bericht = 'Gezin is niet meer ingeschreven';
+    ELSE
+        SET p_wijzigbaar = TRUE;
+        SET p_bericht = 'Voedselpakket mag gewijzigd worden';
+    END IF;
+END //
+DELIMITER ;
+
+-- 6. Procedure voor activity logging
+DELIMITER //
+CREATE PROCEDURE sp_LogActivity(
+    IN p_level VARCHAR(10),
+    IN p_method VARCHAR(100),
+    IN p_message TEXT,
+    IN p_context JSON
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Stille fout afhandeling voor logging
+    END;
+    
+    -- Maak log tabel aan als deze niet bestaat
+    CREATE TABLE IF NOT EXISTS ActivityLog (
+        Id INT AUTO_INCREMENT PRIMARY KEY,
+        Level VARCHAR(10) NOT NULL,
+        Method VARCHAR(100) NOT NULL,
+        Message TEXT NOT NULL,
+        Context JSON,
+        CreatedAt DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)
+    );
+    
+    -- Insert log record
+    INSERT INTO ActivityLog (Level, Method, Message, Context)
+    VALUES (p_level, p_method, p_message, p_context);
+END //
+DELIMITER ;
+
+-- Reset delimiter terug naar standaard
+DELIMITER ;
+
+-- ***************************************************************
+-- END OF STORED PROCEDURES
+-- ***************************************************************

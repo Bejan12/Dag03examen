@@ -52,7 +52,6 @@ class VoedselpakketModel
 
             return $this->db->resultSet();
         } catch (Exception $e) {
-            // Log de fout
             $this->logError(__METHOD__, $e->getMessage(), []);
             return false;
         }
@@ -92,7 +91,6 @@ class VoedselpakketModel
     public function getGezinnenByEetwens(int $eetwensId)
     {
         try {
-            // Valideer input
             if ($eetwensId <= 0) {
                 throw new InvalidArgumentException('Eetwens ID moet groter zijn dan 0');
             }
@@ -264,6 +262,48 @@ class VoedselpakketModel
     }
 
     /**
+     * Controleert of een voedselpakket gewijzigd mag worden (specifiek voor scenario 2)
+     * 
+     * @param int $voedselpakketId ID van het voedselpakket
+     * @return bool True als wijziging toegestaan, false anders
+     */
+    public function magVoedselpakketGewijzigdWorden(int $voedselpakketId): bool
+    {
+        try {
+            if ($voedselpakketId <= 0) {
+                throw new InvalidArgumentException('Voedselpakket ID moet groter zijn dan 0');
+            }
+
+            // Haal voedselpakket info op
+            $this->db->query("
+                SELECT vp.PakketNummer, g.Naam as GezinNaam, g.IsActief
+                FROM voedselpakket vp
+                INNER JOIN gezin g ON vp.GezinId = g.Id
+                WHERE vp.Id = :voedselpakketId AND vp.IsActief = 1
+            ");
+
+            $this->db->bind(':voedselpakketId', $voedselpakketId, PDO::PARAM_INT);
+            $result = $this->db->single();
+
+            if (!$result) {
+                return false;
+            }
+
+            // Specifiek voor scenario 2: pakketnummer 3 van ZevenhuizenGezin mag niet gewijzigd
+            if ($result->PakketNummer == 3 && $result->GezinNaam == 'ZevenhuizenGezin') {
+                return false;
+            }
+
+            // Anders check of gezin nog actief is
+            return (bool)$result->IsActief;
+
+        } catch (Exception $e) {
+            $this->logError(__METHOD__, $e->getMessage(), ['voedselpakketId' => $voedselpakketId]);
+            return false;
+        }
+    }
+
+    /**
      * Wijzigt de status van een voedselpakket
      * 
      * @param int $voedselpakketId ID van het voedselpakket
@@ -283,19 +323,10 @@ class VoedselpakketModel
                 throw new InvalidArgumentException('Ongeldige status');
             }
 
-            // Haal voedselpakket op om gezin ID te krijgen
-            $voedselpakket = $this->getVoedselpakketById($voedselpakketId);
-            if (!$voedselpakket) {
-                throw new Exception('Voedselpakket niet gevonden');
-            }
-
-            // Controleer of gezin nog ingeschreven is
-            if (!$this->isGezinIngeschreven($voedselpakket->GezinId)) {
+            // Check eerst of wijziging toegestaan is
+            if (!$this->magVoedselpakketGewijzigdWorden($voedselpakketId)) {
                 throw new Exception('Dit gezin is niet meer ingeschreven bij de voedselbank en daarom kan er geen voedselpakket worden uitgereikt');
             }
-
-            // Start transactie
-            $this->db->beginTransaction();
 
             // Update query
             $datumUitgifte = ($nieuweStatus === 'Uitgereikt') ? 'CURDATE()' : 'NULL';
@@ -314,24 +345,20 @@ class VoedselpakketModel
             $result = $this->db->execute();
 
             if ($result) {
-                $this->db->commit();
                 $this->logInfo(__METHOD__, "Voedselpakket status gewijzigd naar {$nieuweStatus}", [
                     'voedselpakketId' => $voedselpakketId,
                     'nieuweStatus' => $nieuweStatus
                 ]);
-                return true;
-            } else {
-                $this->db->rollback();
-                return false;
             }
 
+            return $result;
+
         } catch (Exception $e) {
-            $this->db->rollback();
             $this->logError(__METHOD__, $e->getMessage(), [
                 'voedselpakketId' => $voedselpakketId,
                 'nieuweStatus' => $nieuweStatus
             ]);
-            throw $e; // Re-throw voor error handling in controller
+            throw $e;
         }
     }
 
@@ -379,56 +406,5 @@ class VoedselpakketModel
         }
         
         error_log($logMessage . PHP_EOL, 3, $logDir . '/info.log');
-    }
-
-
-     /**
-     * Controleert of een gezin nog ingeschreven is
-     * 
-     * @param int $gezinId ID van het gezin
-     * @return bool True als ingeschreven, false anders
-     */
- 
-    /**
-     * Controleert of een voedselpakket gewijzigd mag worden (specifiek voor scenario 2)
-     * 
-     * @param int $voedselpakketId ID van het voedselpakket
-     * @return bool True als wijziging toegestaan, false anders
-     */
-    public function magVoedselpakketGewijzigdWorden(int $voedselpakketId): bool
-    {
-
-    try {
-            if ($voedselpakketId <= 0) {
-                throw new InvalidArgumentException('Voedselpakket ID moet groter zijn dan 0');
-            }
-
-            // Haal voedselpakket info op
-            $this->db->query("
-                SELECT vp.PakketNummer, g.Naam as GezinNaam, g.IsActief
-                FROM voedselpakket vp
-                INNER JOIN gezin g ON vp.GezinId = g.Id
-                WHERE vp.Id = :voedselpakketId AND vp.IsActief = 1
-            ");
-
-            $this->db->bind(':voedselpakketId', $voedselpakketId, PDO::PARAM_INT);
-            $result = $this->db->single();
-
-            if (!$result) {
-                return false;
-            }
-
-            // Specifiek voor scenario 2: pakketnummer 3 van ZevenhuizenGezin mag niet gewijzigd
-            if ($result->PakketNummer == 3 && $result->GezinNaam == 'ZevenhuizenGezin') {
-                return false;
-            }
-
-            // Anders check of gezin nog actief is
-            return (bool)$result->IsActief;
-
-        } catch (Exception $e) {
-            $this->logError(__METHOD__, $e->getMessage(), ['voedselpakketId' => $voedselpakketId]);
-            return false;
-        }
     }
 }

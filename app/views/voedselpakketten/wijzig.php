@@ -4,6 +4,14 @@
     <div class="row mt-3">
         <div class="col-12">
             
+            <!-- Success message -->
+            <?php if (isset($data['success_message']) && !empty($data['success_message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
+                    <?= htmlspecialchars($data['success_message']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
             <!-- Error messages -->
             <?php if (isset($data['error_message']) && !empty($data['error_message'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -56,7 +64,8 @@
                             </div>
                         <?php endif; ?>
 
-                        <!-- Status wijzig form -->
+                        <!-- Status wijzig form - alleen tonen als er geen success message is -->
+                        <?php if (!isset($data['success_message']) || empty($data['success_message'])): ?>
                         <form method="POST" action="<?= URLROOT; ?>voedselpakketten/updateStatus" id="statusForm">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($data['csrf_token'] ?? ''); ?>">
                             <input type="hidden" name="voedselpakket_id" value="<?= (int)$data['voedselpakket']->Id; ?>">
@@ -86,6 +95,12 @@
                                 <a href="<?= URLROOT; ?>homepages/index" class="btn btn-secondary">Home</a>
                             </div>
                         </form>
+                        <?php else: ?>
+                            <!-- Toon alleen terug knoppen als er een success message is -->
+                            <div class="text-center">
+                                <p>U wordt automatisch doorverwezen...</p>
+                            </div>
+                        <?php endif; ?>
 
                     <?php else: ?>
                         <div class="alert alert-danger">
@@ -102,9 +117,23 @@
     </div>
 </div>
 
-<!-- Client-side validatie -->
+<!-- Auto-redirect na 3 seconden bij success message -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const successAlert = document.getElementById('successAlert');
+    
+    if (successAlert) {
+        // Na 3 seconden doorverwijzen
+        setTimeout(function() {
+            <?php if (isset($data['redirect_url']) && !empty($data['redirect_url'])): ?>
+                window.location.href = '<?= $data['redirect_url']; ?>';
+            <?php else: ?>
+                window.location.href = '<?= URLROOT; ?>voedselpakketten/overzicht';
+            <?php endif; ?>
+        }, 3000);
+    }
+    
+    // Client-side validatie voor het formulier
     const form = document.getElementById('statusForm');
     
     if (form) {
