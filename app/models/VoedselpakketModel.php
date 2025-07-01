@@ -511,4 +511,92 @@ class VoedselpakketModel
         // Schrijf naar info logbestand
         error_log($logMessage . PHP_EOL, 3, $logDir . '/info.log');
     }
+
+    /**
+     * Dashboard statistiek methods
+     */
+    
+    /**
+     * Haal het totaal aantal voedselpakketten op
+     */
+    public function getTotalVoedselpakketten()
+    {
+        try {
+            $this->db->query('SELECT COUNT(*) as total FROM Voedselpakket WHERE IsActief = 1');
+            $result = $this->db->single();
+            return $result ? (int)$result->total : 0;
+        } catch (Exception $e) {
+            $this->logError(__METHOD__, $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Haal aantal uitgereekte pakketten deze maand op
+     */
+    public function getUitgereiktDezeMaand()
+    {
+        try {
+            $this->db->query("
+                SELECT COUNT(*) as total 
+                FROM Voedselpakket 
+                WHERE IsActief = 1 
+                AND Status = 'Uitgereikt' 
+                AND MONTH(UpdatedAt) = MONTH(NOW()) 
+                AND YEAR(UpdatedAt) = YEAR(NOW())
+            ");
+            $result = $this->db->single();
+            return $result ? (int)$result->total : 0;
+        } catch (Exception $e) {
+            $this->logError(__METHOD__, $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Haal aantal niet uitgereekte pakketten op
+     */
+    public function getNietUitgereikt()
+    {
+        try {
+            $this->db->query("
+                SELECT COUNT(*) as total 
+                FROM Voedselpakket 
+                WHERE IsActief = 1 
+                AND Status = 'NietUitgereikt'
+            ");
+            $result = $this->db->single();
+            return $result ? (int)$result->total : 0;
+        } catch (Exception $e) {
+            $this->logError(__METHOD__, $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Haal recente activiteiten op
+     */
+    public function getRecentActivities($limit = 5)
+    {
+        try {
+            $this->db->query("
+                SELECT 
+                    v.PakketNummer,
+                    g.Naam as GezinNaam,
+                    v.Status,
+                    v.UpdatedAt,
+                    v.GezinId
+                FROM Voedselpakket v
+                LEFT JOIN Gezin g ON v.GezinId = g.Id
+                WHERE v.IsActief = 1
+                ORDER BY v.UpdatedAt DESC
+                LIMIT :limit
+            ");
+            $this->db->bind(':limit', $limit, PDO::PARAM_INT);
+            return $this->db->resultSet();
+        } catch (Exception $e) {
+            $this->logError(__METHOD__, $e->getMessage());
+            return [];
+        }
+    }
 }

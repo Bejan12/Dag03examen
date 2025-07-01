@@ -313,4 +313,14 @@ class Klant
         $this->db->query('SELECT Id FROM Gezin WHERE IsActief = 1 ORDER BY Id');
         return $this->db->resultSet();
     }
+
+    /**
+     * Haal het totaal aantal actieve klanten/gezinnen op
+     */
+    public function getTotalKlanten()
+    {
+        $this->db->query('SELECT COUNT(*) as total FROM Gezin WHERE IsActief = 1');
+        $result = $this->db->single();
+        return $result ? (int)$result->total : 0;
+    }
 }
