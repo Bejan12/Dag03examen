@@ -76,12 +76,12 @@ class Klanten extends BaseController
 
             $data = [
                 'id' => $id,
-                // Persoonlijke gegevens (bewerkbaar)
+                // Bewerkbare persoonlijke gegevens uit POST
                 'voornaam' => trim($_POST['voornaam']),
                 'tussenvoegsel' => trim($_POST['tussenvoegsel']),
                 'achternaam' => trim($_POST['achternaam']),
                 'geboortedatum' => trim($_POST['geboortedatum']),
-                // Contactgegevens (bewerkbaar)
+                // Contactgegevens uit POST
                 'straat' => trim($_POST['straat']),
                 'huisnummer' => trim($_POST['huisnummer']),
                 'toevoeging' => trim($_POST['toevoeging']),
@@ -91,11 +91,12 @@ class Klanten extends BaseController
                 'mobiel' => trim($_POST['mobiel']),
                 'klant' => $hoofdklant, // Alleen de hoofdklant object
                 'title' => $klantnaam,
-                // Readonly velden
+                // Readonly velden (niet bewerkbaar)
                 'typepersoon' => $hoofdklant->TypePersoon,
                 'vertegenwoordiger' => $hoofdklant->IsVertegenwoordiger ? 'Ja' : 'Nee',
                 // Error fields
                 'voornaam_err' => '',
+                'tussenvoegsel_err' => '',
                 'achternaam_err' => '',
                 'geboortedatum_err' => '',
                 'straat_err' => '',
@@ -103,7 +104,8 @@ class Klanten extends BaseController
                 'postcode_err' => '',
                 'woonplaats_err' => '',
                 'email_err' => '',
-                'mobiel_err' => ''
+                'mobiel_err' => '',
+                'general_err' => ''
             ];
 
             // Validate data
@@ -133,7 +135,7 @@ class Klanten extends BaseController
 
             if (empty($data['postcode'])) {
                 $data['postcode_err'] = 'Voer een postcode in';
-            } elseif (!preg_match('/^5271[A-Z]{2}$/i', $data['postcode'])) {
+            } elseif (!$this->isPostcodeInMaaskantjeRegio($data['postcode'])) {
                 $data['postcode_err'] = 'De postcode komt niet uit de regio Maaskantje';
             }
 
@@ -146,7 +148,7 @@ class Klanten extends BaseController
             }
 
             // Make sure no errors
-            if (empty($data['voornaam_err']) && empty($data['achternaam_err']) && 
+            if (empty($data['voornaam_err']) && empty($data['tussenvoegsel_err']) && empty($data['achternaam_err']) && 
                 empty($data['geboortedatum_err']) && empty($data['straat_err']) && 
                 empty($data['huisnummer_err']) && empty($data['postcode_err']) && 
                 empty($data['woonplaats_err']) && empty($data['email_err'])) {
@@ -156,12 +158,13 @@ class Klanten extends BaseController
                     $data['success'] = 'De klantgegevens zijn gewijzigd';
                     $this->view('klant/edit', $data);
                 } else {
-                    die('Er is iets fout gegaan');
+                    $data['general_err'] = 'De contactgegevens van de geselecteerde klant kunnen niet gewijzigd worden';
+                    $this->view('klant/edit', $data);
                 }
             } else {
-                // Als er een postcode fout is, toon algemene foutmelding
-                if (!empty($data['postcode_err'])) {
-                    $data['general_error'] = 'De contactgegevens van de geselecteerde klant kunnen niet gewijzigd';
+                // Als er postcode validatie errors zijn, toon specifieke foutmelding
+                if (!empty($data['postcode_err']) && $data['postcode_err'] === 'De postcode komt niet uit de regio Maaskantje') {
+                    $data['general_err'] = 'De contactgegevens van de geselecteerde klant kunnen niet gewijzigd worden';
                 }
                 // Load view with errors
                 $this->view('klant/edit', $data);
@@ -192,6 +195,7 @@ class Klanten extends BaseController
                 'mobiel' => $contactData ? $contactData->Mobiel : '',
                 // Error fields
                 'voornaam_err' => '',
+                'tussenvoegsel_err' => '',
                 'achternaam_err' => '',
                 'geboortedatum_err' => '',
                 'straat_err' => '',
@@ -199,11 +203,37 @@ class Klanten extends BaseController
                 'postcode_err' => '',
                 'woonplaats_err' => '',
                 'email_err' => '',
-                'mobiel_err' => ''
+                'mobiel_err' => '',
+                'general_err' => ''
             ];
 
             $this->view('klant/edit', $data);
         }
+    }
+
+    /**
+     * Controleert of een postcode binnen de regio Maaskantje valt
+     * @param string $postcode De postcode om te controleren
+     * @return bool True als de postcode binnen de regio valt, anders false
+     */
+    private function isPostcodeInMaaskantjeRegio($postcode)
+    {
+        // Verwijder spaties en zet om naar hoofdletters voor consistentie
+        $postcode = strtoupper(str_replace(' ', '', $postcode));
+        
+        // Definieer geldige postcodes voor de regio Maaskantje
+        // Dit zijn voorbeelden - in een echte situatie zou dit uit een database komen
+        $geldigePostcodes = [
+            '5271', '5272', '5273', '5274', '5275', // Den Bosch gebied
+            '4901', '4902', '4903', '4904', '4905', // Oosterhout gebied
+            '5161', '5162', '5163', '5164', '5165'  // Waalwijk gebied
+        ];
+        
+        // Haal de eerste 4 cijfers van de postcode
+        $postcodeStart = substr($postcode, 0, 4);
+        
+        // Controleer of de postcode start begint in de lijst staat
+        return in_array($postcodeStart, $geldigePostcodes);
     }
 
 }
