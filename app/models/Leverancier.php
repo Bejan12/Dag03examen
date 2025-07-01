@@ -67,4 +67,11 @@ class Leverancier
         $result = $this->db->single();
         return $result ? $result->LeverancierNummer : null;
     }
+
+    public function getLeverancierByNummer($leverancierNummer)
+    {
+        $this->db->query("SELECT * FROM Leverancier WHERE LeverancierNummer = :levnr LIMIT 1");
+        $this->db->bind(':levnr', $leverancierNummer);
+        return $this->db->single();
+    }
 }

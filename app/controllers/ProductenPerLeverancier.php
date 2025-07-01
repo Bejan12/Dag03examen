@@ -7,9 +7,13 @@ class ProductenPerLeverancier extends BaseController
         $leverancierModel = $this->model('Leverancier');
         $producten = $leverancierModel->getProductenPerLeverancier($leverancierNummer);
 
+        // Nieuw: haal leverancier op via leverancierNummer
+        $leverancier = $leverancierModel->getLeverancierByNummer($leverancierNummer);
+
         $data = [
             'producten' => $producten,
-            'leverancierNummer' => $leverancierNummer
+            'leverancierNummer' => $leverancierNummer,
+            'leverancier' => $leverancier // toegevoegd
         ];
 
         $this->view('productenperleverancier/index', $data);
@@ -23,24 +27,39 @@ class ProductenPerLeverancier extends BaseController
         // Haal het leverancierNummer op via het productId
         $leverancierNummer = $leverancierModel->getLeverancierNummerByProductId($productId);
 
+        $melding = '';
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nieuweDatum = $_POST['houdbaarheidsdatum'];
-            $leverancierModel->updateHoudbaarheidsdatum($productId, $nieuweDatum);
+            $oudeDatum = $product->Houdbaarheidsdatum;
 
-            $data = [
-                'product' => $leverancierModel->getProductById($productId),
-                'melding' => 'De houdbaarbaarheidsdatum is gewijzigd',
-                'leverancierNummer' => $leverancierNummer
-            ];
-            $this->view('productenperleverancier/wijzig', $data);
-            return;
+            $dtOud = new DateTime($oudeDatum);
+            $dtNieuw = new DateTime($nieuweDatum);
+
+            // Alleen verlengen toegestaan, max 7 dagen
+            if ($dtNieuw <= $dtOud) {
+                $melding = 'De houdbaarheidsdatum is niet gewijzigd. De houdbaarheidsdatum mag alleen verlengd worden.';
+            } else {
+                $diff = $dtOud->diff($dtNieuw)->days;
+                if ($diff > 7) {
+                    $melding = 'De houdbaarheidsdatum is niet gewijzigd. De houdbaarheidsdatum mag met maximaal 7 dagen worden verlengd.';
+                } else {
+                    $leverancierModel->updateHoudbaarheidsdatum($productId, $nieuweDatum);
+                    // Redirect naar het overzicht met melding
+                    header('Location: ' . URLROOT . '/productenPerLeverancier/index/' . urlencode($leverancierNummer) . '?melding=' . urlencode('De houdbaarbaarheidsdatum is gewijzigd'));
+                    exit;
+                }
+            }
         }
 
         $data = [
             'product' => $product,
-            'melding' => '',
+            'melding' => $melding,
             'leverancierNummer' => $leverancierNummer
         ];
         $this->view('productenperleverancier/wijzig', $data);
     }
 }
+
+
+

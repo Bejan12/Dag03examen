@@ -3,7 +3,9 @@
 <h3>Wijzig houdbaarheidsdatum product</h3>
 
 <?php if (!empty($data['melding'])): ?>
-    <div class="alert alert-success"><?= $data['melding'] ?></div>
+    <div class="alert alert-danger" role="alert">
+        <?= htmlspecialchars($data['melding']) ?>
+    </div>
 <?php endif; ?>
 
 <form method="post">
@@ -15,8 +17,13 @@
         <label for="houdbaarheidsdatum" class="form-label">Houdbaarheidsdatum</label>
         <input type="date" class="form-control" id="houdbaarheidsdatum" name="houdbaarheidsdatum" value="<?= htmlspecialchars($data['product']->Houdbaarheidsdatum) ?>" required>
     </div>
-    <button type="submit" class="btn btn-primary">Wijzig Houdbaarheidsdatum</button>
-    <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= htmlspecialchars($data['leverancierNummer'] ?? '') ?>" class="btn btn-secondary">Annuleren</a>
+    <div class="d-flex justify-content-between align-items-center">
+        <button type="submit" class="btn btn-secondary">Wijzig Houdbaarheidsdatum</button>
+        <div>
+            <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= htmlspecialchars($data['leverancierNummer'] ?? '') ?>" class="btn btn-primary me-2">Terug</a>
+            <a href="<?= URLROOT ?>" class="btn btn-primary">Home</a>
+        </div>
+    </div>
 </form>
 
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>
