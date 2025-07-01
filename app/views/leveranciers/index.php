@@ -61,9 +61,12 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+<?php elseif (!$data['melding']): ?>
+    <div class="alert alert-info">
+        Er zijn geen leveranciers bekend van het geselecteerde leverancierstype
+    </div>
 <?php endif; ?>
 
-<?php require_once APPROOT . '/views/includes/footer.php'; ?>
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>
 
 
