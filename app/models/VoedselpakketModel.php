@@ -192,7 +192,7 @@ class VoedselpakketModel
                 LEFT JOIN productpervoedselpakket ppv ON vp.Id = ppv.VoedselpakketId AND ppv.IsActief = 1
                 WHERE vp.GezinId = :gezinId AND vp.IsActief = 1
                 GROUP BY vp.Id, vp.PakketNummer, vp.DatumSamenstelling, vp.DatumUitgifte, vp.Status
-                ORDER BY vp.PakketNummer DESC
+                ORDER BY vp.PakketNummer ASC
             ");
 
             $this->db->bind(':gezinId', $gezinId, PDO::PARAM_INT);
