@@ -61,34 +61,26 @@ require_once APPROOT . '/views/includes/header.php';
                 </div>
             </div>
 
-            <!-- GEZIN INFORMATIE CARD - Responsive gezin details -->
+            <!-- GEZIN INFORMATIE CARD - Responsive gezin details (SMALLER BOX) -->
             <?php if (isset($data['gezin']) && $data['gezin']): ?>
                 <div class="row mb-4">
-                    <div class="col-12">
+                    <div class="col-lg-6 col-md-8 col-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="row">
-                                    <!-- Basis informatie - linker helft -->
-                                    <div class="col-md-6">
-                                        <h5>Naam</h5>
-                                        <p><?= htmlspecialchars($data['gezin']->Naam ?? ''); ?></p>
-                                        
-                                        <h5>Omschrijving</h5>
-                                        <p><?= htmlspecialchars($data['gezin']->Omschrijving ?? ''); ?></p>
-                                    </div>
-                                    
-                                    <!-- Samenstelling informatie - rechter helft -->
-                                    <div class="col-md-6">
-                                        <h5>Totaal aantal personen</h5>
-                                        <p><?= (int)($data['gezin']->TotaalAantalPersonen ?? 0); ?></p>
-                                        
-                                        <h5>Samenstelling</h5>
-                                        <p>
-                                            <?= (int)($data['gezin']->AantalVolwassenen ?? 0); ?> volwassenen, 
-                                            <?= (int)($data['gezin']->AantalKinderen ?? 0); ?> kinderen, 
-                                            <?= (int)($data['gezin']->AantalBabys ?? 0); ?> baby's
-                                        </p>
-                                    </div>
+                                <!-- Alle 3 items onder elkaar maar label en waarde naast elkaar -->
+                                <div class="row mb-2">
+                                    <div class="col-4"><strong>Naam:</strong></div>
+                                    <div class="col-8"><?= htmlspecialchars($data['gezin']->Naam ?? ''); ?></div>
+                                </div>
+                                
+                                <div class="row mb-2">
+                                    <div class="col-4"><strong>Omschrijving:</strong></div>
+                                    <div class="col-8"><?= htmlspecialchars($data['gezin']->Omschrijving ?? ''); ?></div>
+                                </div>
+                                
+                                <div class="row mb-0">
+                                    <div class="col-4"><strong>Totaal aantal personen:</strong></div>
+                                    <div class="col-8"><?= (int)($data['gezin']->TotaalAantalPersonen ?? 0); ?></div>
                                 </div>
                             </div>
                         </div>

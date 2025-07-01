@@ -9,7 +9,7 @@
  * - Card layout voor tablet/mobiel
  * - Filter dropdown voor eetwensen
  * - Success/error berichten weergave
- * - JavaScript voor auto-submit filter
+ * - Handmatige submit via knop (GEEN auto-submit meer)
  * 
  * Data verwacht van controller:
  * - $data['gezinnen'] - Array met gezinnen
@@ -52,7 +52,7 @@ require_once APPROOT . '/views/includes/header.php';
             <div class="row mb-4">
                 <!-- Titel sectie - neemt halve breedte op medium+ schermen -->
                 <div class="col-md-6 mb-2 mb-md-0">
-                    <h3 class="text-success">Overzicht gezinnen</h3>
+                    <h3 class="text-success">Overzicht gezinnen met voedselpakketten</h3>
                 </div>
                 
                 <!-- Filter sectie - neemt andere helft, stapelt op kleine schermen -->
@@ -204,22 +204,23 @@ require_once APPROOT . '/views/includes/header.php';
 // Wacht tot DOM volledig geladen is
 document.addEventListener('DOMContentLoaded', function() {
     
-    // AUTO-SUBMIT FUNCTIONALITEIT
-    // Automatisch indienen van form bij eetwens wijziging
+    // GEEN AUTO-SUBMIT MEER!
+    // De gebruiker moet nu handmatig op "Toon gezinnen" klikken
+    
+    // RESET KNOP FUNCTIONALITEIT
+    // Als gebruiker "Selecteer eetwens" kiest, toon alle gezinnen
+    const eetwensForm = document.getElementById('eetwensForm');
     const eetwensSelect = document.getElementById('eetwensSelect');
-    if (eetwensSelect) {
-        eetwensSelect.addEventListener('change', function() {
-            if (this.value === '') {
-                // Als leege selectie, ga naar hoofdpagina
+    
+    if (eetwensForm && eetwensSelect) {
+        eetwensForm.addEventListener('submit', function(e) {
+            // Als geen eetwens geselecteerd, ga naar hoofdpagina
+            if (eetwensSelect.value === '') {
+                e.preventDefault(); // Stop normale submit
                 window.location.href = '<?= URLROOT; ?>voedselpakketten';
-            } else {
-                // Anders submit form voor filtering
-                document.getElementById('eetwensForm').submit();
             }
+            // Anders laat normale submit gebeuren
         });
-        
-        // Focus op dropdown bij pagina load voor betere UX
-        eetwensSelect.focus();
     }
     
     // BEVESTIGING VOOR DELETE ACTIES
@@ -231,6 +232,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // KEYBOARD SHORTCUTS
+    // Enter key in dropdown = submit form
+    if (eetwensSelect) {
+        eetwensSelect.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                eetwensForm.submit();
+            }
+        });
+    }
 });
 </script>
 
