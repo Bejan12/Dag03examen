@@ -1,20 +1,25 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
-<h3>Overzicht Leveranciers</h3>
-
-<div class="row mb-3 justify-content-between align-items-center">
+<div class="row align-items-center mb-3">
+    <div class="col">
+        <h3 class="mb-0">Overzicht Leveranciers</h3>
+    </div>
     <div class="col-auto">
-        <form method="post" class="d-flex align-items-center">
-            <label for="leveranciertype" class="col-form-label me-2">Leverancierstype:</label>
-            <select name="leveranciertype" id="leveranciertype" class="form-select me-2">
-                <option value="">-- Alle types --</option>
-                <?php foreach ($data['types'] as $type): ?>
-                    <option value="<?= $type->LeverancierType ?>" <?= ($data['selectedType'] == $type->LeverancierType) ? 'selected' : '' ?>>
-                        <?= $type->LeverancierType ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <button type="submit" class="btn btn-primary">Toon Leveranciers</button>
+        <form method="post" class="mb-0">
+            <div class="input-group">
+                <span class="input-group-text" id="label-leveranciertype">Leverancierstype:</span>
+                <select name="leveranciertype" id="leveranciertype" class="form-select" aria-label="Leverancierstype" aria-describedby="label-leveranciertype" style="min-width: 180px;">
+                    <option value="">-- Alle types --</option>
+                    <?php foreach ($data['types'] as $type): ?>
+                        <option value="<?= $type->LeverancierType ?>" <?= ($data['selectedType'] == $type->LeverancierType) ? 'selected' : '' ?>>
+                            <?= $type->LeverancierType ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="ms-2">
+                    <button type="submit" class="btn btn-primary">Toon Leveranciers</button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -56,4 +61,5 @@
     </table>
 <?php endif; ?>
 
+<?php require_once APPROOT . '/views/includes/footer.php'; ?>
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>
