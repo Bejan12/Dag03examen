@@ -122,10 +122,6 @@
 
 <script>
 // Postcode filter functionaliteit
-document.getElementById('postcodeFilter').addEventListener('change', function() {
-    filterByPostcode();
-});
-
 document.getElementById('toonKlantenBtn').addEventListener('click', function() {
     filterByPostcode();
 });
@@ -158,7 +154,15 @@ function filterByPostcode() {
 
 // Initieel alle klanten tonen
 document.addEventListener('DOMContentLoaded', function() {
-    filterByPostcode();
+    // Toon alle klanten bij het laden van de pagina
+    const tableRows = document.querySelectorAll('#klantenTable tbody tr.klant-row');
+    const noResultsRow = document.getElementById('noResultsRow');
+    
+    tableRows.forEach(row => {
+        row.style.display = '';
+    });
+    
+    noResultsRow.style.display = 'none';
 });
 </script>
 
