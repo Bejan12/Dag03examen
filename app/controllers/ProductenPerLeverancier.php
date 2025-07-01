@@ -2,6 +2,18 @@
 
 class ProductenPerLeverancier extends BaseController
 {
+    public function __construct()
+    {
+        session_start();
+        if (
+            !isset($_SESSION['user_role']) ||
+            $_SESSION['user_role'] !== 'manager'
+        ) {
+            header('Location: ' . URLROOT . '/login');
+            exit;
+        }
+    }
+
     public function index($leverancierNummer = null)
     {
         $leverancierModel = $this->model('Leverancier');
