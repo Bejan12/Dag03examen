@@ -19,3 +19,5 @@ class Leveranciers extends BaseController
         $this->view('leveranciers/index', $data);
     }
 }
+
+// geen wijzigingen nodig in deze controller voor deze user story

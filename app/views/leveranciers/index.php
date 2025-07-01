@@ -53,7 +53,9 @@
                     <td><?= $l->LeverancierType ?></td>
                     <td><?= isset($l->Product) ? $l->Product : '-' ?></td>
                     <td>
-                        <a href="<?= URLROOT ?>/leveranciers/details/<?= $l->LeverancierNummer ?>" class="btn btn-info btn-sm">Details</a>
+                        <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= $l->LeverancierNummer ?>" class="btn btn-info btn-sm">
+                            Product Details
+                        </a>
                     </td>
                 </tr>
             <?php endforeach; ?>
