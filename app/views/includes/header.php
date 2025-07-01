@@ -41,9 +41,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= URLROOT; ?>/voorraadbeheer">
+                        <a class="nav-link" href="<?= URLROOT; ?>/voorraadbeheer/index">
                             <i class="bi bi-box-seam me-1"></i>
-                            Overzicht Voorraadbeheer
+                            Overzicht Voorraad
                         </a>
                     </li>
                     <li class="nav-item">
