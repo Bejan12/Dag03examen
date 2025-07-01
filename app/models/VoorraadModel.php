@@ -1,7 +1,9 @@
 <?php
 /**
  * Model voor voorraadbeheer
- * Haalt alle voorraadproducten en magazijnen op uit de database
+ * Haalt voorraadproducten, categorieën en magazijnen op uit de database
+ * Voert updates uit op voorraad en magazijn
+ * 
  * @author Bejan Afkar
  */
 class VoorraadModel
@@ -14,58 +16,7 @@ class VoorraadModel
     }
 
     /**
-     * Update het aantal uitgeleverde producten (voorraad)
-     * @param int $productId
-     * @param int $magazijnId
-     * @param int $aantal
-     * @return bool
-     */
-    public function updateVoorraad(int $productId, int $magazijnId, int $aantal): bool
-    {
-        try {
-            $sql = "UPDATE magazijn m
-                    JOIN productpermagazijn pm ON m.Id = pm.MagazijnId
-                    SET m.Aantal = :aantal
-                    WHERE pm.ProductId = :productId
-                      AND m.Id = :magazijnId
-                      AND m.IsActief = 1
-                      AND pm.IsActief = 1";
-            $this->db->query($sql);
-            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
-            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
-            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
-            return $this->db->execute();
-        } catch (PDOException $e) {
-            error_log('Fout bij updaten voorraad: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Haal het magazijnId op bij een productId
-     * @param int $productId
-     * @return int|null
-     */
-    public function getMagazijnIdByProductId(int $productId): ?int
-    {
-        try {
-            $sql = "SELECT pm.MagazijnId 
-                    FROM productpermagazijn pm 
-                    WHERE pm.ProductId = :productId 
-                      AND pm.IsActief = 1 
-                    LIMIT 1";
-            $this->db->query($sql);
-            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
-            $row = $this->db->single();
-            return $row ? (int)$row->MagazijnId : null;
-        } catch (PDOException $e) {
-            error_log('Fout bij ophalen magazijnId: ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Haal alle voorraadproducten op met alle benodigde info
+     * Haal alle voorraadproducten op, eventueel gefilterd op categorie
      * @param int|null $categorieId
      * @return array
      */
@@ -103,22 +54,6 @@ class VoorraadModel
     }
 
     /**
-     * Haal alle categorieën op
-     * @return array
-     */
-    public function getCategorieen(): array
-    {
-        try {
-            $sql = "SELECT Id, Naam FROM categorie WHERE IsActief = 1 ORDER BY Naam ASC";
-            $this->db->query($sql);
-            return $this->db->resultSet();
-        } catch (PDOException $e) {
-            error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
      * Haal details van één product op
      * @param int $id
      * @return object|null
@@ -148,18 +83,78 @@ class VoorraadModel
     }
 
     /**
-     * Haal alle magazijnen op
+     * Haal alle actieve categorieën op
      * @return array
      */
-    public function getAllMagazijnen(): array
+    public function getCategorieen(): array
     {
         try {
-            $sql = "SELECT Id, Locatie, IsActief FROM magazijn WHERE IsActief = 1 ORDER BY Locatie ASC";
+            $sql = "SELECT Id, Naam FROM categorie WHERE IsActief = 1 ORDER BY Naam ASC";
             $this->db->query($sql);
             return $this->db->resultSet();
         } catch (PDOException $e) {
-            error_log('Fout bij ophalen magazijnen: ' . $e->getMessage());
+            error_log('Fout bij ophalen categorieën: ' . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Haal alle actieve magazijnlocaties op
+     * @return array
+     */
+    public function getMagazijnLocaties(): array
+    {
+        try {
+            $sql = "SELECT Id, Locatie FROM magazijn WHERE IsActief = 1 ORDER BY Locatie ASC";
+            $this->db->query($sql);
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            error_log('Fout bij ophalen magazijnlocaties: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Update magazijn locatie en aantal voor een product
+     * @param int $productId
+     * @param string $magazijnLocatie
+     * @param int $aantal
+     * @return bool
+     */
+    public function updateProductMagazijnEnAantal(int $productId, string $magazijnLocatie, int $aantal): bool
+    {
+        try {
+            // Zoek magazijnId op basis van locatie, maak aan indien niet aanwezig
+            $this->db->query("SELECT Id FROM magazijn WHERE Locatie = :locatie AND IsActief = 1 LIMIT 1");
+            $this->db->bind(':locatie', $magazijnLocatie, PDO::PARAM_STR);
+            $magazijn = $this->db->single();
+
+            if ($magazijn) {
+                $magazijnId = $magazijn->Id;
+            } else {
+                // Nieuw magazijn aanmaken
+                $this->db->query("INSERT INTO magazijn (Locatie, IsActief, Aantal, VerpakkingsEenheid) VALUES (:locatie, 1, 0, 'stuks')");
+                $this->db->bind(':locatie', $magazijnLocatie, PDO::PARAM_STR);
+                $this->db->execute();
+                $magazijnId = $this->db->lastInsertId();
+            }
+
+            // Update koppeling product - magazijn
+            $this->db->query("UPDATE productpermagazijn SET MagazijnId = :magazijnId WHERE ProductId = :productId AND IsActief = 1");
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            $this->db->bind(':productId', $productId, PDO::PARAM_INT);
+            $this->db->execute();
+
+            // Update het aantal in magazijn
+            $this->db->query("UPDATE magazijn SET Aantal = :aantal WHERE Id = :magazijnId");
+            $this->db->bind(':aantal', $aantal, PDO::PARAM_INT);
+            $this->db->bind(':magazijnId', $magazijnId, PDO::PARAM_INT);
+            $this->db->execute();
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Fout bij updaten product magazijn en aantal: " . $e->getMessage());
+            return false;
         }
     }
 }

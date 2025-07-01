@@ -4,6 +4,7 @@
  * Toont een overzicht van alle voorraadproducten
  * @author Bejan Afkar
  */
+
 class Voorraadbeheer extends BaseController
 {
     private $voorraadModel;
@@ -53,38 +54,44 @@ class Voorraadbeheer extends BaseController
     public function wijzig($id)
     {
         $product = $this->voorraadModel->getProductDetails($id);
-        // Haal het magazijnId op voor updateVoorraad
-        $magazijnId = null;
-        if ($product && property_exists($product, 'magazijnId')) {
-            $magazijnId = $product->magazijnId;
-        } else {
-            // Fallback ophalen magazijnId
-            $magazijnId = $this->voorraadModel->getMagazijnIdByProductId($id);
-        }
+
+        // Haal alle magazijnlocaties op
+        $magazijnen = $this->voorraadModel->getMagazijnLocaties();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
+            $magazijn = isset($_POST['magazijn']) ? $_POST['magazijn'] : null;
+            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? $_POST['uitleveringsdatum'] : null;
+
             $updateSuccess = false;
-            // Controle: niet meer uitleveren dan op voorraad
+
             $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
-            if ($aantalUitgeleverd !== null && $magazijnId !== null) {
+
+            if ($aantalUitgeleverd !== null && $magazijn !== null) {
                 if ($aantalUitgeleverd > $huidigeVoorraad) {
                     $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
                 } else {
-                    $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
+                    // Update voorraad met nieuw magazijn en uitleveringsdatum
+                    $updateSuccess = $this->voorraadModel->updateVoorraadMetMagazijn($id, $magazijn, $aantalUitgeleverd, $uitleveringsdatum);
                 }
             }
+
             if ($updateSuccess) {
                 $_SESSION['success'] = 'De productgegevens zijn gewijzigd.';
             } else if (!isset($_SESSION['voorraad_error'])) {
                 $_SESSION['error'] = 'Wijzigen mislukt.';
             }
+
             // Haal opnieuw de productdetails op na wijziging
             $product = $this->voorraadModel->getProductDetails($id);
         }
+
         $data = [
             'title' => 'Wijzig Productvoorraad',
-            'product' => $product
+            'product' => $product,
+            'magazijnen' => $magazijnen
         ];
+
         $this->view('voorraadbeheer/wijzig', $data);
     }
 }
