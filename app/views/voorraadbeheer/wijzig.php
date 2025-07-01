@@ -16,6 +16,9 @@
                         }, 3000);
                         </script>
                         <?php unset($_SESSION['success']); ?>
+                    <?php elseif (isset($_SESSION['voorraad_error'])): ?>
+                        <div class="alert alert-danger"> <?= htmlspecialchars($_SESSION['voorraad_error']) ?> </div>
+                        <?php unset($_SESSION['voorraad_error']); ?>
                     <?php elseif (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger">Wijzigen mislukt.</div>
                         <?php unset($_SESSION['error']); ?>

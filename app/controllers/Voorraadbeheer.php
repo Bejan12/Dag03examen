@@ -64,12 +64,18 @@ class Voorraadbeheer extends BaseController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
             $updateSuccess = false;
+            // Controle: niet meer uitleveren dan op voorraad
+            $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
             if ($aantalUitgeleverd !== null && $magazijnId !== null) {
-                $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
+                if ($aantalUitgeleverd > $huidigeVoorraad) {
+                    $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
+                } else {
+                    $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
+                }
             }
             if ($updateSuccess) {
                 $_SESSION['success'] = 'De productgegevens zijn gewijzigd.';
-            } else {
+            } else if (!isset($_SESSION['voorraad_error'])) {
                 $_SESSION['error'] = 'Wijzigen mislukt.';
             }
             // Haal opnieuw de productdetails op na wijziging
