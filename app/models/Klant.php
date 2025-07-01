@@ -212,6 +212,102 @@ class Klant
         }
     }
 
+    public function updateKlant($data)
+    {
+        // Begin transaction
+        $this->db->beginTransaction();
+
+        try {
+            // Update persoonlijke gegevens van de vertegenwoordiger
+            $this->db->query('UPDATE Persoon SET 
+                Voornaam = :voornaam,
+                Tussenvoegsel = :tussenvoegsel,
+                Achternaam = :achternaam,
+                Geboortedatum = :geboortedatum,
+                DatumGewijzigd = SYSDATE(6)
+            WHERE GezinId = :gezinId AND IsVertegenwoordiger = 1');
+
+            $this->db->bind(':voornaam', $data['voornaam']);
+            $this->db->bind(':tussenvoegsel', $data['tussenvoegsel']);
+            $this->db->bind(':achternaam', $data['achternaam']);
+            $this->db->bind(':geboortedatum', $data['geboortedatum']);
+            $this->db->bind(':gezinId', $data['id']);
+
+            $this->db->execute();
+
+            // Update contactgegevens
+            $existingContact = $this->getContactByGezinId($data['id']);
+
+            if ($existingContact) {
+                // Update existing contact
+                $this->db->query('UPDATE Contact SET 
+                    Straat = :straat,
+                    Huisnummer = :huisnummer,
+                    Toevoeging = :toevoeging,
+                    Postcode = :postcode,
+                    Woonplaats = :woonplaats,
+                    Email = :email,
+                    Mobiel = :mobiel,
+                    DatumGewijzigd = SYSDATE(6)
+                WHERE Id = :contactId');
+
+                $this->db->bind(':straat', $data['straat']);
+                $this->db->bind(':huisnummer', $data['huisnummer']);
+                $this->db->bind(':toevoeging', $data['toevoeging']);
+                $this->db->bind(':postcode', $data['postcode']);
+                $this->db->bind(':woonplaats', $data['woonplaats']);
+                $this->db->bind(':email', $data['email']);
+                $this->db->bind(':mobiel', $data['mobiel']);
+                $this->db->bind(':contactId', $existingContact->ContactId);
+
+                $this->db->execute();
+            } else {
+                // Create new contact
+                $this->db->query('INSERT INTO Contact (
+                    Straat, Huisnummer, Toevoeging, Postcode, Woonplaats, 
+                    Email, Mobiel, IsActief, DatumAangemaakt, DatumGewijzigd
+                ) VALUES (
+                    :straat, :huisnummer, :toevoeging, :postcode, :woonplaats,
+                    :email, :mobiel, 1, SYSDATE(6), SYSDATE(6)
+                )');
+
+                $this->db->bind(':straat', $data['straat']);
+                $this->db->bind(':huisnummer', $data['huisnummer']);
+                $this->db->bind(':toevoeging', $data['toevoeging']);
+                $this->db->bind(':postcode', $data['postcode']);
+                $this->db->bind(':woonplaats', $data['woonplaats']);
+                $this->db->bind(':email', $data['email']);
+                $this->db->bind(':mobiel', $data['mobiel']);
+
+                $this->db->execute();
+
+                // Get the new contact ID
+                $contactId = $this->db->lastInsertId();
+
+                // Create ContactPerGezin relation
+                $this->db->query('INSERT INTO ContactPerGezin (
+                    GezinId, ContactId, IsActief, DatumAangemaakt, DatumGewijzigd
+                ) VALUES (
+                    :gezinId, :contactId, 1, SYSDATE(6), SYSDATE(6)
+                )');
+
+                $this->db->bind(':gezinId', $data['id']);
+                $this->db->bind(':contactId', $contactId);
+
+                $this->db->execute();
+            }
+
+            // Commit transaction
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            // Rollback transaction
+            $this->db->rollback();
+            return false;
+        }
+    }
+
     public function getAllGezinIds()
     {
         $this->db->query('SELECT Id FROM Gezin WHERE IsActief = 1 ORDER BY Id');

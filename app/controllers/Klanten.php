@@ -76,6 +76,12 @@ class Klanten extends BaseController
 
             $data = [
                 'id' => $id,
+                // Persoonlijke gegevens (bewerkbaar)
+                'voornaam' => trim($_POST['voornaam']),
+                'tussenvoegsel' => trim($_POST['tussenvoegsel']),
+                'achternaam' => trim($_POST['achternaam']),
+                'geboortedatum' => trim($_POST['geboortedatum']),
+                // Contactgegevens (bewerkbaar)
                 'straat' => trim($_POST['straat']),
                 'huisnummer' => trim($_POST['huisnummer']),
                 'toevoeging' => trim($_POST['toevoeging']),
@@ -85,13 +91,13 @@ class Klanten extends BaseController
                 'mobiel' => trim($_POST['mobiel']),
                 'klant' => $hoofdklant, // Alleen de hoofdklant object
                 'title' => $klantnaam,
-                // Readonly velden toevoegen
-                'voornaam' => $hoofdklant->Voornaam,
-                'tussenvoegsel' => $hoofdklant->Tussenvoegsel,
-                'achternaam' => $hoofdklant->Achternaam,
-                'geboortedatum' => $hoofdklant->Geboortedatum,
+                // Readonly velden
                 'typepersoon' => $hoofdklant->TypePersoon,
                 'vertegenwoordiger' => $hoofdklant->IsVertegenwoordiger ? 'Ja' : 'Nee',
+                // Error fields
+                'voornaam_err' => '',
+                'achternaam_err' => '',
+                'geboortedatum_err' => '',
                 'straat_err' => '',
                 'huisnummer_err' => '',
                 'postcode_err' => '',
@@ -101,6 +107,22 @@ class Klanten extends BaseController
             ];
 
             // Validate data
+            // Persoonlijke gegevens validatie
+            if (empty($data['voornaam'])) {
+                $data['voornaam_err'] = 'Voer een voornaam in';
+            }
+
+            if (empty($data['achternaam'])) {
+                $data['achternaam_err'] = 'Voer een achternaam in';
+            }
+
+            if (empty($data['geboortedatum'])) {
+                $data['geboortedatum_err'] = 'Voer een geboortedatum in';
+            } elseif (!strtotime($data['geboortedatum'])) {
+                $data['geboortedatum_err'] = 'Voer een geldige geboortedatum in';
+            }
+            
+            // Contactgegevens validatie
             if (empty($data['straat'])) {
                 $data['straat_err'] = 'Voer een straatnaam in';
             }
@@ -122,12 +144,13 @@ class Klanten extends BaseController
             }
 
             // Make sure no errors
-            if (empty($data['straat_err']) && empty($data['huisnummer_err']) && 
-                empty($data['postcode_err']) && empty($data['woonplaats_err']) && 
-                empty($data['email_err'])) {
+            if (empty($data['voornaam_err']) && empty($data['achternaam_err']) && 
+                empty($data['geboortedatum_err']) && empty($data['straat_err']) && 
+                empty($data['huisnummer_err']) && empty($data['postcode_err']) && 
+                empty($data['woonplaats_err']) && empty($data['email_err'])) {
                 
-                // Update contact gegevens
-                if ($this->klantModel->updateKlantContact($data)) {
+                // Update alle gegevens
+                if ($this->klantModel->updateKlant($data)) {
                     $data['success'] = 'De klantgegevens zijn gewijzigd';
                     $this->view('klant/edit', $data);
                 } else {
@@ -145,13 +168,15 @@ class Klanten extends BaseController
                 'id' => $id,
                 'klant' => $hoofdklant, // Alleen de hoofdklant object
                 'title' => $klantnaam,
-                // Readonly velden toevoegen
+                // Persoonlijke gegevens (bewerkbaar)
                 'voornaam' => $hoofdklant->Voornaam,
                 'tussenvoegsel' => $hoofdklant->Tussenvoegsel,
                 'achternaam' => $hoofdklant->Achternaam,
                 'geboortedatum' => $hoofdklant->Geboortedatum,
+                // Readonly velden
                 'typepersoon' => $hoofdklant->TypePersoon,
                 'vertegenwoordiger' => $hoofdklant->IsVertegenwoordiger ? 'Ja' : 'Nee',
+                // Contactgegevens
                 'straat' => $contactData ? $contactData->Straat : '',
                 'huisnummer' => $contactData ? $contactData->Huisnummer : '',
                 'toevoeging' => $contactData ? $contactData->Toevoeging : '',
@@ -159,6 +184,10 @@ class Klanten extends BaseController
                 'woonplaats' => $contactData ? $contactData->Woonplaats : '',
                 'email' => $contactData ? $contactData->Email : '',
                 'mobiel' => $contactData ? $contactData->Mobiel : '',
+                // Error fields
+                'voornaam_err' => '',
+                'achternaam_err' => '',
+                'geboortedatum_err' => '',
                 'straat_err' => '',
                 'huisnummer_err' => '',
                 'postcode_err' => '',

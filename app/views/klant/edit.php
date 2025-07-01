@@ -22,11 +22,19 @@
                 </div>
                 <div class="card-body p-3">
                     <form id="editForm" action="<?= URLROOT; ?>/klanten/edit/<?= $data['id']; ?>" method="POST" class="needs-validation" novalidate>
-                        <!-- Readonly velden -->
+                        <!-- Bewerkbare velden -->
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Voornaam</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['voornaam']) ? htmlspecialchars($data['voornaam']) : '~~~~'; ?>" readonly>
+                                <input type="text" 
+                                       name="voornaam" 
+                                       id="voornaam" 
+                                       class="form-control form-control-sm <?= (!empty($data['voornaam_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['voornaam']) ? htmlspecialchars($data['voornaam']) : ''; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['voornaam_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -34,7 +42,11 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Tussenvoegsel</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['tussenvoegsel']) ? htmlspecialchars($data['tussenvoegsel']) : '~~~~'; ?>" readonly>
+                                <input type="text" 
+                                       name="tussenvoegsel" 
+                                       id="tussenvoegsel" 
+                                       class="form-control form-control-sm" 
+                                       value="<?= !empty($data['tussenvoegsel']) ? htmlspecialchars($data['tussenvoegsel']) : ''; ?>">
                             </div>
                         </div>
                         <hr class="my-2">
@@ -42,7 +54,15 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Achternaam</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" value="<?= !empty($data['achternaam']) ? htmlspecialchars($data['achternaam']) : '~~~~'; ?>" readonly>
+                                <input type="text" 
+                                       name="achternaam" 
+                                       id="achternaam" 
+                                       class="form-control form-control-sm <?= (!empty($data['achternaam_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['achternaam']) ? htmlspecialchars($data['achternaam']) : ''; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['achternaam_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -50,11 +70,20 @@
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Geboortedatum</div>
                             <div class="col-8">
-                                <input type="text" class="form-control form-control-sm" placeholder="dd-mm-jjjj" value="<?= !empty($data['geboortedatum']) ? htmlspecialchars(date('d-m-Y', strtotime($data['geboortedatum']))) : '~~~~'; ?>" readonly>
+                                <input type="date" 
+                                       name="geboortedatum" 
+                                       id="geboortedatum" 
+                                       class="form-control form-control-sm <?= (!empty($data['geboortedatum_err'])) ? 'is-invalid' : ''; ?>" 
+                                       value="<?= !empty($data['geboortedatum']) ? htmlspecialchars($data['geboortedatum']) : ''; ?>" 
+                                       required>
+                                <div class="invalid-feedback">
+                                    <?= $data['geboortedatum_err']; ?>
+                                </div>
                             </div>
                         </div>
                         <hr class="my-2">
                         
+                        <!-- Readonly velden -->
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">TypePersoon</div>
                             <div class="col-8">
@@ -70,8 +99,6 @@
                             </div>
                         </div>
                         <hr class="my-2">
-                        
-                        <!-- Bewerkbare velden -->
                         <div class="row mb-2">
                             <div class="col-4 fw-bold">Straatnaam</div>
                             <div class="col-8">
