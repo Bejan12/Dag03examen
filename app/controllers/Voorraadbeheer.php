@@ -97,63 +97,52 @@ class Voorraadbeheer extends BaseController
      */
     public function wijzig($id)
     {
-        // Haal eerst de huidige productdetails op uit het model, dit bevat ook voorraad info en locatie
-        $product = $this->voorraadModel->getProductDetails($id);
-
-        // Probeer magazijnId te achterhalen vanuit het product object (indien aanwezig)
-        $magazijnId = null;
-        if ($product && property_exists($product, 'magazijnId')) {
-            // Gebruik magazijnId uit product indien beschikbaar
-            $magazijnId = $product->magazijnId;
-        } else {
-            // Fallback: vraag magazijnId op via het model aan de hand van productId
-            // Dit is een mogelijke uitbreiding die je in het model zou kunnen maken
-            $magazijnId = $this->voorraadModel->getMagazijnIdByProductId($id);
-        }
+        // Haal volledige productdetails op (inclusief barcode, ontvangstdatum, etc.)
+        $product = $this->voorraadModel->getProductFullDetails($id);
 
         // Check of het formulier is verzonden via POST
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Haal het aantal uitgeleverde producten op uit POST data, default null als niet gezet
-            $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
 
-            // Variabele om bij te houden of de update succesvol was
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $magazijnLocatie = isset($_POST['magazijn']) ? $_POST['magazijn'] : ($product->magazijn ?? null);
+            $aantalUitgeleverd = isset($_POST['aantal_uitgeleverd']) ? (int)$_POST['aantal_uitgeleverd'] : null;
+            $ontvangstdatum = $product->Ontvangstdatum ?? null; // niet wijzigbaar
+            $uitleveringsdatum = isset($_POST['uitleveringsdatum']) ? $_POST['uitleveringsdatum'] : ($product->Uitleveringsdatum ?? null);
+            $barcode = $product->Barcode ?? null; // niet wijzigbaar
+
+            $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
             $updateSuccess = false;
 
-            // Huidige voorraad van het product (int), default 0 als niet aanwezig
-            $huidigeVoorraad = isset($product->aantal) ? (int)$product->aantal : 0;
-
-            // Controle: zorg dat er niet meer wordt uitgeleverd dan er op voorraad is
-            if ($aantalUitgeleverd !== null && $magazijnId !== null) {
+            // User story: als je meer uitlevert dan op voorraad, foutmelding en blijf op pagina
+            if ($aantalUitgeleverd !== null) {
                 if ($aantalUitgeleverd > $huidigeVoorraad) {
-                    // Zet een sessie-foutmelding als er teveel wordt uitgeleverd
                     $_SESSION['voorraad_error'] = 'Er worden meer producten uitgeleverd dan er in voorraad zijn';
+                    // Blijf op de wijzig pagina, geen redirect
                 } else {
-                    // Probeer voorraad in database te updaten via model
-                    // Dit update de magazijn tabel via een JOIN met productpermagazijn, zodat juiste magazijn en product worden aangesproken
-                    $updateSuccess = $this->voorraadModel->updateVoorraad($id, $magazijnId, $aantalUitgeleverd);
+                    // Succesvolle wijziging: update direct
+                    $updateSuccess = $this->voorraadModel->updateProductDetailsAll(
+                        $id,
+                        $magazijnLocatie,
+                        $aantalUitgeleverd,
+                        $ontvangstdatum,
+                        $uitleveringsdatum,
+                        $barcode
+                    );
+                    $_SESSION['success'] = 'De productgegevens zijn gewijzigd';
+                    echo '<meta http-equiv="refresh" content="3;url=' . URLROOT . '/voorraadbeheer/details/' . $id . '">';
                 }
             }
 
-            // Afhandeling na update poging:
-            if ($updateSuccess) {
-                // Succesmelding in sessie
-                $_SESSION['success'] = 'De productgegevens zijn gewijzigd.';
-            } else if (!isset($_SESSION['voorraad_error'])) {
-                // Algemene foutmelding in sessie als geen voorraad_error is gezet
-                $_SESSION['error'] = 'Wijzigen mislukt.';
-            }
-
-            // Haal productdetails opnieuw op om gewijzigde data te tonen (bijvoorbeeld nieuwe voorraad)
-            $product = $this->voorraadModel->getProductDetails($id);
+            // Haal productdetails opnieuw op om gewijzigde data te tonen
+            $product = $this->voorraadModel->getProductFullDetails($id);
         }
 
         // Voorbereiden data voor de view
         $data = [
-            'title' => 'Wijzig Productvoorraad', // Pagina titel
-            'product' => $product                 // Product data (mogelijk bijgewerkt)
+            'title' => 'Wijzig Productvoorraad',
+            'product' => $product
         ];
 
-        // Laad de wijzig view met de data
         $this->view('voorraadbeheer/wijzig', $data);
     }
 }

@@ -4,11 +4,7 @@ class Leveranciers extends BaseController
 {
     public function index()
     {
-<<<<<<< HEAD
-        // Controleer Manager of Medewerker autorisatie
-        requireManagerOrMedewerkerRole();
-        
-=======
+
         // Toegangscontrole: alleen voor manager of medewerker
         session_start();
         if (
@@ -19,7 +15,7 @@ class Leveranciers extends BaseController
             exit;
         }
 
->>>>>>> Feature_Leverancier
+
         $leverancierModel = $this->model('Leverancier');
         $type = isset($_POST['leveranciertype']) ? $_POST['leveranciertype'] : null;
         // Als Donor is geselecteerd, altijd een lege lijst tonen
@@ -28,6 +24,14 @@ class Leveranciers extends BaseController
         } else {
             $leveranciers = $leverancierModel->getLeveranciers($type);
         }
+
+        // Controleer Manager of Medewerker autorisatie
+        requireManagerOrMedewerkerRole();
+        
+        $leverancierModel = $this->model('Leverancier');
+        $type = isset($_POST['leveranciertype']) ? $_POST['leveranciertype'] : null;
+        $leveranciers = $leverancierModel->getLeveranciers($type);
+
         $types = $leverancierModel->getLeverancierTypes();
 
         $data = [

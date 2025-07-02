@@ -24,14 +24,8 @@
                         <?php unset($_SESSION['success']); ?>
                     <?php endif; ?>
 
-                    <!-- ALGEMENE FOUTMELDING BOVENAAN -->
-                    <?php if (isset($_SESSION['error']) || isset($_SESSION['voorraad_error'])): ?>
-                        <div class="alert alert-danger">De productgegevens kunnen niet worden gewijzigd.</div>
-                        <script>
-                            setTimeout(function() {
-                                window.location.href = "<?= URLROOT; ?>/voorraadbeheer/details/<?= $data['product']->Id; ?>";
-                            }, 3000);
-                        </script>
+                    <?php if (isset($_SESSION['voorraad_error'])): ?>
+                        <div class="alert alert-danger">Er worden meer producten uitgeleverd dan er in voorraad zijn.</div>
                     <?php endif; ?>
 
                     <?php if ($data['product']): ?>
@@ -44,12 +38,16 @@
                                 <tr>
                                     <th>Houdbaarheidsdatum</th>
                                     <td>
-                                        <input type="date" class="form-control" value="<?= htmlspecialchars($data['product']->Houdbaarheidsdatum) ?>" readonly max="2030-12-31">
+                                        <?php 
+                                            $houdb = $data['product']->Houdbaarheidsdatum ?? '';
+                                            $houdb_nl = $houdb ? date('d-m-Y', strtotime($houdb)) : '';
+                                        ?>
+                                        <input type="text" class="form-control" value="<?= htmlspecialchars($houdb_nl) ?>" readonly tabindex="-1" style="background:#eee;pointer-events:none;">
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Barcode</th>
-                                    <td><input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->Barcode ?? '') ?>" readonly></td>
+                                    <td><input type="text" class="form-control" value="<?= htmlspecialchars($data['product']->Barcode ?? '') ?>" readonly tabindex="-1" style="background:#eee;pointer-events:none;"></td>
                                 </tr>
                                 <tr>
                                     <th>Magazijn locatie</th>
@@ -68,7 +66,6 @@
                                                 'Heeswijk Dinther'
                                             ];
                                             foreach ($locaties as $locatie):
-                                                // Check of dit de geselecteerde optie is (houd rekening met POST data als die er is)
                                                 $selected = '';
                                                 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['magazijn'])) {
                                                     $selected = ($_POST['magazijn'] === $locatie) ? 'selected' : '';
@@ -84,7 +81,11 @@
                                 <tr>
                                     <th>Ontvangstdatum</th>
                                     <td>
-                                        <input type="date" class="form-control" value="<?= htmlspecialchars($data['product']->Ontvangstdatum ?? '') ?>" readonly max="2030-12-31">
+                                        <?php 
+                                            $ontv = $data['product']->Ontvangstdatum ?? '';
+                                            $ontv_nl = $ontv ? date('d-m-Y', strtotime($ontv)) : '';
+                                        ?>
+                                        <input type="text" class="form-control" value="<?= htmlspecialchars($ontv_nl) ?>" readonly tabindex="-1" style="background:#eee;pointer-events:none;">
                                     </td>
                                 </tr>
                                 <tr>

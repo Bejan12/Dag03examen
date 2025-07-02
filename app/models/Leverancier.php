@@ -13,7 +13,6 @@ class Leverancier
     {
         // Altijd Donor uitsluiten
         if ($type) {
-<<<<<<< HEAD
             $this->db->query("
                 SELECT l.* 
                 FROM Leverancier l 
@@ -28,18 +27,6 @@ class Leverancier
                 INNER JOIN ContactPerLeverancier cpl ON l.Id = cpl.LeverancierId 
                 WHERE cpl.IsActief = 1
             ");
-=======
-            $this->db->query("SELECT l.*, c.Email, c.Mobiel FROM Leverancier l
-                LEFT JOIN contactperleverancier cpl ON cpl.LeverancierId = l.Id
-                LEFT JOIN contact c ON c.Id = cpl.ContactId
-                WHERE l.LeverancierType = :type AND l.LeverancierType != 'Donor'");
-            $this->db->bind(':type', $type);
-        } else {
-            $this->db->query("SELECT l.*, c.Email, c.Mobiel FROM Leverancier l
-                LEFT JOIN contactperleverancier cpl ON cpl.LeverancierId = l.Id
-                LEFT JOIN contact c ON c.Id = cpl.ContactId
-                WHERE l.LeverancierType != 'Donor'");
->>>>>>> Feature_Leverancier
         }
         return $this->db->resultSet();
     }

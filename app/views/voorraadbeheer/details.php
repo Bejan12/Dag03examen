@@ -11,11 +11,30 @@
                     <?php if ($data['product']): ?>                        <table class="table table-bordered">
                             <tr><th>Productnaam</th><td><?= htmlspecialchars($data['product']->productnaam) ?></td></tr>
                             <tr><th>Categorie</th><td><?= htmlspecialchars($data['product']->categorienaam) ?></td></tr>
+                            <tr><th>Barcode</th><td><?= htmlspecialchars($data['product']->Barcode ?? '') ?></td></tr>
                             <tr><th>Eenheid</th><td><?= htmlspecialchars($data['product']->eenheid) ?></td></tr>
                             <tr><th>Aantal</th><td><?= htmlspecialchars($data['product']->aantal) ?></td></tr>
-                            <tr><th>Houdbaarheidsdatum</th><td><?= htmlspecialchars($data['product']->Houdbaarheidsdatum) ?></td></tr>
-                            <tr><th>Ontvangstdatum</th><td><?= htmlspecialchars($data['product']->Ontvangstdatum ?? 'Niet beschikbaar') ?></td></tr>
-                            <tr><th>Uitleveringsdatum</th><td><?= htmlspecialchars($data['product']->Uitleveringsdatum ?? 'Nog niet uitgereikt') ?></td></tr>
+                            <tr><th>Houdbaarheidsdatum</th><td>
+                                <?php 
+                                    $houdb = $data['product']->Houdbaarheidsdatum ?? '';
+                                    $houdb_nl = $houdb ? date('d-m-Y', strtotime($houdb)) : '';
+                                    echo htmlspecialchars($houdb_nl);
+                                ?>
+                            </td></tr>
+                            <tr><th>Ontvangstdatum</th><td>
+                                <?php 
+                                    $ontv = $data['product']->Ontvangstdatum ?? '';
+                                    $ontv_nl = $ontv ? date('d-m-Y', strtotime($ontv)) : 'Niet beschikbaar';
+                                    echo htmlspecialchars($ontv_nl);
+                                ?>
+                            </td></tr>
+                            <tr><th>Uitleveringsdatum</th><td>
+                                <?php 
+                                    $uitl = $data['product']->Uitleveringsdatum ?? '';
+                                    $uitl_nl = $uitl ? date('d-m-Y', strtotime($uitl)) : 'Nog niet uitgereikt';
+                                    echo htmlspecialchars($uitl_nl);
+                                ?>
+                            </td></tr>
                             <tr><th>Magazijn</th><td><?= htmlspecialchars($data['product']->magazijn) ?></td></tr>
                             <tr><th>Status</th><td><?= htmlspecialchars($data['product']->Status) ?></td></tr>
                             <tr><th>Omschrijving</th><td><?= htmlspecialchars($data['product']->Omschrijving) ?></td></tr>
