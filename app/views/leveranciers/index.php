@@ -24,11 +24,15 @@
     </div>
 </div>
 
-<?php if ($data['melding']): ?>
+<?php if ($data['selectedType'] === 'Donor'): ?>
+    <div class="alert alert-warning">
+        Er zijn geen leveranciers bekend van het geselecteerde leverancierstype
+    </div>
+<?php elseif ($data['melding']): ?>
     <div class="alert alert-warning"><?= $data['melding'] ?></div>
 <?php endif; ?>
 
-<?php if (count($data['leveranciers']) > 0): ?>
+<?php if ($data['selectedType'] !== 'Donor' && count($data['leveranciers']) > 0): ?>
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -38,8 +42,7 @@
                 <th>Mobiel</th>
                 <th>Leveranciernummer</th>
                 <th>Leveranciertype</th>
-                <th>Product</th>
-                <th>Details</th>
+                <th>Productdetails</th>
             </tr>
         </thead>
         <tbody>
@@ -47,13 +50,13 @@
                 <tr>
                     <td><?= $l->Naam ?></td>
                     <td><?= $l->ContactPersoon ?></td>
-                    <td><?= isset($l->Email) ? $l->Email : '-' ?></td>
-                    <td><?= isset($l->Mobiel) ? $l->Mobiel : '-' ?></td>
+                    <td><?= $l->Email ?></td>
+                    <td><?= $l->Mobiel ?></td>
                     <td><?= $l->LeverancierNummer ?></td>
                     <td><?= $l->LeverancierType ?></td>
-                    <td><?= isset($l->Product) ? $l->Product : '-' ?></td>
                     <td>
-                        <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= $l->LeverancierNummer ?>" class="btn btn-info btn-sm">
+                        <?= isset($l->Product) ? $l->Product : '-' ?>
+                        <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= $l->LeverancierNummer ?>" class="btn btn-info btn-sm ms-2">
                             Product Details
                         </a>
                     </td>
@@ -61,9 +64,12 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+<?php elseif ($data['selectedType'] !== 'Donor' && !$data['melding']): ?>
+    <div class="alert alert-info">
+        Er zijn geen leveranciers bekend van het geselecteerde leverancierstype
+    </div>
 <?php endif; ?>
 
-<?php require_once APPROOT . '/views/includes/footer.php'; ?>
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>
 
 
