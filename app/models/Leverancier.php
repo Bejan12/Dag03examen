@@ -13,10 +13,16 @@ class Leverancier
     {
         // Altijd Donor uitsluiten
         if ($type) {
-            $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType = :type AND LeverancierType != 'Donor'");
+            $this->db->query("SELECT l.*, c.Email, c.Mobiel FROM Leverancier l
+                LEFT JOIN contactperleverancier cpl ON cpl.LeverancierId = l.Id
+                LEFT JOIN contact c ON c.Id = cpl.ContactId
+                WHERE l.LeverancierType = :type AND l.LeverancierType != 'Donor'");
             $this->db->bind(':type', $type);
         } else {
-            $this->db->query("SELECT * FROM Leverancier WHERE LeverancierType != 'Donor'");
+            $this->db->query("SELECT l.*, c.Email, c.Mobiel FROM Leverancier l
+                LEFT JOIN contactperleverancier cpl ON cpl.LeverancierId = l.Id
+                LEFT JOIN contact c ON c.Id = cpl.ContactId
+                WHERE l.LeverancierType != 'Donor'");
         }
         return $this->db->resultSet();
     }

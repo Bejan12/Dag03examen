@@ -42,8 +42,7 @@
                 <th>Mobiel</th>
                 <th>Leveranciernummer</th>
                 <th>Leveranciertype</th>
-                <th>Product</th>
-                <th>Details</th>
+                <th>Productdetails</th>
             </tr>
         </thead>
         <tbody>
@@ -55,9 +54,9 @@
                     <td><?= $l->Mobiel ?></td>
                     <td><?= $l->LeverancierNummer ?></td>
                     <td><?= $l->LeverancierType ?></td>
-                    <td><?= isset($l->Product) ? $l->Product : '-' ?></td>
                     <td>
-                        <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= $l->LeverancierNummer ?>" class="btn btn-info btn-sm">
+                        <?= isset($l->Product) ? $l->Product : '-' ?>
+                        <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= $l->LeverancierNummer ?>" class="btn btn-info btn-sm ms-2">
                             Product Details
                         </a>
                     </td>
