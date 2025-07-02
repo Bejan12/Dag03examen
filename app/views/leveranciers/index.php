@@ -50,8 +50,8 @@
                 <tr>
                     <td><?= $l->Naam ?></td>
                     <td><?= $l->ContactPersoon ?></td>
-                    <td><?= $l->Email ?></td>
-                    <td><?= $l->Mobiel ?></td>
+                    <td><?= !empty($l->Email) ? htmlspecialchars($l->Email) : '~~/~~' ?></td>
+                    <td><?= !empty($l->Mobiel) ? htmlspecialchars($l->Mobiel) : '~~/~~' ?></td>
                     <td><?= $l->LeverancierNummer ?></td>
                     <td><?= $l->LeverancierType ?></td>
                     <td>
@@ -71,5 +71,6 @@
 <?php endif; ?>
 
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>
+
 
 

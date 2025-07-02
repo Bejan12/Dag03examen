@@ -4,14 +4,8 @@ class ProductenPerLeverancier extends BaseController
 {
     public function __construct()
     {
-        session_start();
-        if (
-            !isset($_SESSION['user_role']) ||
-            $_SESSION['user_role'] !== 'manager'
-        ) {
-            header('Location: ' . URLROOT . '/login');
-            exit;
-        }
+        // Alleen controleren of gebruiker ingelogd is
+        requireLogin();
     }
 
     public function index($leverancierNummer = null)

@@ -11,20 +11,22 @@ class Leverancier
 
     public function getLeveranciers($type = null)
     {
-        // Altijd Donor uitsluiten
+        // Altijd Donor uitsluiten en contact informatie ophalen
         if ($type) {
             $this->db->query("
-                SELECT l.* 
+                SELECT l.*, c.Email, c.Mobiel 
                 FROM Leverancier l 
                 INNER JOIN ContactPerLeverancier cpl ON l.Id = cpl.LeverancierId 
+                LEFT JOIN Contact c ON cpl.ContactId = c.Id AND c.IsActief = 1
                 WHERE l.LeverancierType = :type AND cpl.IsActief = 1
             ");
             $this->db->bind(':type', $type);
         } else {
             $this->db->query("
-                SELECT l.* 
+                SELECT l.*, c.Email, c.Mobiel 
                 FROM Leverancier l 
                 INNER JOIN ContactPerLeverancier cpl ON l.Id = cpl.LeverancierId 
+                LEFT JOIN Contact c ON cpl.ContactId = c.Id AND c.IsActief = 1
                 WHERE cpl.IsActief = 1
             ");
         }
