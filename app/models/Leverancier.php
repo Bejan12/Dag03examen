@@ -42,7 +42,14 @@ class Leverancier
     public function getProductenPerLeverancier($leverancierNummer)
     {
         $this->db->query(
-            "SELECT p.Id as ProductId, p.Naam, p.Houdbaarheidsdatum, ppl.LeverancierId, l.LeverancierNummer
+            "SELECT 
+                p.Id as ProductId, 
+                p.Naam, 
+                p.Houdbaarheidsdatum, 
+                p.Barcode, 
+                p.SoortAllergie, 
+                ppl.LeverancierId, 
+                l.LeverancierNummer
              FROM Product p
              JOIN ProductPerLeverancier ppl ON ppl.ProductId = p.Id
              JOIN Leverancier l ON l.Id = ppl.LeverancierId

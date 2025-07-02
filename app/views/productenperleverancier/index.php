@@ -44,7 +44,7 @@ if ($melding):
             <tr>
                 <td><?= htmlspecialchars($p->Naam ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                 <td>
-                    <?= htmlspecialchars(($p->Soort ?? '') .   ($p->Allergie ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars($p->SoortAllergie ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </td>
                 <td><?= htmlspecialchars($p->Barcode ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                 <td><?= htmlspecialchars($p->Houdbaarheidsdatum ?? '', ENT_QUOTES, 'UTF-8') ?></td>
