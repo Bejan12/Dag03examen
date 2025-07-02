@@ -51,8 +51,8 @@
                 <tr>
                     <td><?= $l->Naam ?></td>
                     <td><?= $l->ContactPersoon ?></td>
-                    <td><?= isset($l->Email) ? $l->Email : '-' ?></td>
-                    <td><?= isset($l->Mobiel) ? $l->Mobiel : '-' ?></td>
+                    <td><?= $l->Email ?></td>
+                    <td><?= $l->Mobiel ?></td>
                     <td><?= $l->LeverancierNummer ?></td>
                     <td><?= $l->LeverancierType ?></td>
                     <td><?= isset($l->Product) ? $l->Product : '-' ?></td>
