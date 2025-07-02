@@ -1,0 +1,86 @@
+/* Responsive utility classes and table improvements */
+.page-space {
+    margin-top: 48px;
+    margin-bottom: 48px;
+}
+
+/* Responsive tables: always scrollable on small screens */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table th, table td {
+    vertical-align: middle !important;
+    word-break: break-word;
+}
+
+/* Responsive font sizes for headings and table text */
+h1, h2, h3, h4, h5, h6 {
+    word-break: break-word;
+}
+
+@media (max-width: 992px) {
+    .table th, .table td {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.3rem;
+    }
+    .btn, .form-control, .form-select {
+        font-size: 0.98rem;
+    }
+    .card-header h2, .card-header h3, .card-header h4 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container, .container-fluid {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    .table th, .table td {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.2rem;
+    }
+    .btn, .form-control, .form-select {
+        font-size: 0.95rem;
+    }
+    .card-header h2, .card-header h3, .card-header h4 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Responsive buttons: full width on mobile */
+@media (max-width: 576px) {
+    .btn, .btn-group {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    .d-flex.justify-content-between, .d-flex.justify-content-end {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+}
+
+/* Responsive card padding */
+.card-body, .card-header {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+}
+@media (max-width: 576px) {
+    .card-body, .card-header {
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+    }
+}
+
+/* Responsive alert text */
+.alert {
+    font-size: 1rem;
+    word-break: break-word;
+}
+
+/* Responsive form labels */
+.form-label {
+    font-size: 1rem;
+}
