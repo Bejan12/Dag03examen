@@ -116,7 +116,7 @@
                             <div class="row g-3">
                                 <!-- Klanten Beheer -->
                                 <div class="col-md-6">
-                                    <a href="<?= URLROOT; ?>klanten" class="btn btn-outline-primary btn-lg w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <a href="<?= URLROOT; ?>/klanten" class="btn btn-outline-primary btn-lg w-100 h-100 d-flex align-items-center justify-content-center">
                                         <div class="text-center">
                                             <i class="bi bi-people fs-1 d-block mb-2"></i>
                                             <strong>Klanten Beheer</strong>
@@ -128,7 +128,7 @@
                                 <?php if ($data['user_role'] === 'Manager'): ?>
                                     <!-- Voedselpakketten -->
                                     <div class="col-md-6">
-                                        <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-outline-success btn-lg w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <a href="<?= URLROOT; ?>/voedselpakketten" class="btn btn-outline-success btn-lg w-100 h-100 d-flex align-items-center justify-content-center">
                                             <div class="text-center">
                                                 <i class="bi bi-box-seam fs-1 d-block mb-2"></i>
                                                 <strong>Voedselpakketten</strong>
@@ -141,7 +141,7 @@
                                 <?php if ($data['user_role'] === 'Manager' || $data['user_role'] === 'Medewerker'): ?>
                                     <!-- Leveranciers -->
                                     <div class="col-md-6">
-                                        <a href="<?= URLROOT; ?>leveranciers" class="btn btn-outline-info btn-lg w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <a href="<?= URLROOT; ?>/leveranciers" class="btn btn-outline-info btn-lg w-100 h-100 d-flex align-items-center justify-content-center">
                                             <div class="text-center">
                                                 <i class="bi bi-truck fs-1 d-block mb-2"></i>
                                                 <strong>Leveranciers</strong>

@@ -21,7 +21,7 @@
         <button type="submit" class="btn btn-secondary">Wijzig Houdbaarheidsdatum</button>
         <div>
             <a href="<?= URLROOT ?>/productenPerLeverancier/index/<?= htmlspecialchars($data['leverancierNummer'] ?? '') ?>" class="btn btn-primary me-2">Terug</a>
-            <a href="<?= URLROOT ?>" class="btn btn-primary">Home</a>
+            <a href="<?= URLROOT ?>/homepages/index" class="btn btn-primary">Home</a>
         </div>
     </div>
 </form>

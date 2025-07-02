@@ -116,7 +116,7 @@ require_once APPROOT . '/views/includes/header.php';
                         <!-- STATUS WIJZIG FORMULIER -->
                         <!-- Toon alleen formulier als nog geen success bericht -->
                         <?php if (!isset($data['success_message']) || empty($data['success_message'])): ?>
-                        <form method="POST" action="<?= URLROOT; ?>voedselpakketten/updateStatus" id="statusForm">
+                        <form method="POST" action="<?= URLROOT; ?>/voedselpakketten/updateStatus" id="statusForm">
                             
                             <!-- HIDDEN FIELDS - Beveiliging en identificatie -->
                             <!-- CSRF token voor beveiliging tegen cross-site request forgery -->
@@ -153,11 +153,11 @@ require_once APPROOT . '/views/includes/header.php';
                                 </button>
                                 
                                 <!-- Terug naar details knop -->
-                                <a href="<?= URLROOT; ?>voedselpakketten/details/<?= (int)$data['voedselpakket']->GezinId; ?>" 
+                                <a href="<?= URLROOT; ?>/voedselpakketten/details/<?= (int)$data['voedselpakket']->GezinId; ?>" 
                                    class="btn btn-secondary">Terug</a>
                                 
                                 <!-- Home knop -->
-                                <a href="<?= URLROOT; ?>homepages/index" class="btn btn-secondary">Home</a>
+                                <a href="<?= URLROOT; ?>/homepages/index" class="btn btn-secondary">Home</a>
                             </div>
                         </form>
                         
@@ -176,7 +176,7 @@ require_once APPROOT . '/views/includes/header.php';
                         
                         <!-- Terug naar overzicht knop -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                            <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-secondary">Terug naar overzicht</a>
+                            <a href="<?= URLROOT; ?>/voedselpakketten" class="btn btn-secondary">Terug naar overzicht</a>
                         </div>
                     <?php endif; ?>
                     
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <?php if (isset($data['redirect_url']) && !empty($data['redirect_url'])): ?>
                 window.location.href = '<?= $data['redirect_url']; ?>';
             <?php else: ?>
-                window.location.href = '<?= URLROOT; ?>voedselpakketten/overzicht';
+                window.location.href = '<?= URLROOT; ?>/voedselpakketten';
             <?php endif; ?>
         }, 3000); // 3 seconden delay
     }

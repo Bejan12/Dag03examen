@@ -60,7 +60,7 @@ if ($melding):
 
 <div class="d-flex justify-content-end mt-4">
     <a href="<?= URLROOT ?>/leveranciers" class="btn btn-primary me-2">Terug</a>
-    <a href="<?= URLROOT ?>" class="btn btn-primary">Home</a>
+    <a href="<?= URLROOT ?>/homepages/index" class="btn btn-primary">Home</a>
 </div>
 
 <?php require_once APPROOT . '/views/includes/footer.php'; ?>

@@ -58,7 +58,7 @@ require_once APPROOT . '/views/includes/header.php';
                 <!-- Filter sectie - neemt andere helft, stapelt op kleine schermen -->
                 <div class="col-md-6">
                     <!-- Form voor eetwens filtering -->
-                    <form method="GET" action="<?= URLROOT; ?>voedselpakketten/filterByEetwens" 
+                    <form method="GET" action="<?= URLROOT; ?>/voedselpakketten/filterByEetwens" 
                           class="d-flex flex-column flex-md-row justify-content-md-end" id="eetwensForm">
                         
                         <!-- Dropdown voor eetwens selectie -->
@@ -119,7 +119,7 @@ require_once APPROOT . '/views/includes/header.php';
                                     
                                     <!-- Details link naar specifiek gezin -->
                                     <td>
-                                        <a href="<?= URLROOT; ?>voedselpakketten/details/<?= (int)$gezin->Id; ?>" 
+                                        <a href="<?= URLROOT; ?>/voedselpakketten/details/<?= (int)$gezin->Id; ?>" 
                                            class="btn btn-sm btn-primary">Details</a>
                                     </td>
                                 </tr>
@@ -170,7 +170,7 @@ require_once APPROOT . '/views/includes/header.php';
                                     
                                     <!-- Actie sectie - 1/3 van de breedte, rechts uitgelijnd -->
                                     <div class="col-4 text-end">
-                                        <a href="<?= URLROOT; ?>voedselpakketten/details/<?= (int)$gezin->Id; ?>" 
+                                        <a href="<?= URLROOT; ?>/voedselpakketten/details/<?= (int)$gezin->Id; ?>" 
                                            class="btn btn-primary btn-sm">Details</a>
                                     </div>
                                 </div>
@@ -192,7 +192,7 @@ require_once APPROOT . '/views/includes/header.php';
             <!-- HOME KNOP SECTIE -->
             <!-- Gecentreerd op mobiel, links uitgelijnd op desktop -->
             <div class="mt-3 text-center text-md-start">
-                <a href="<?= URLROOT; ?>homepages/index" class="btn btn-secondary">Home</a>
+                <a href="<?= URLROOT; ?>/homepages/index" class="btn btn-secondary">Home</a>
             </div>
 
         </div>
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Als geen eetwens geselecteerd, ga naar hoofdpagina
             if (eetwensSelect.value === '') {
                 e.preventDefault(); // Stop normale submit
-                window.location.href = '<?= URLROOT; ?>voedselpakketten';
+                window.location.href = '<?= URLROOT; ?>/voedselpakketten';
             }
             // Anders laat normale submit gebeuren
         });

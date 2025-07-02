@@ -56,8 +56,8 @@ require_once APPROOT . '/views/includes/header.php';
                 
                 <!-- Navigatie knoppen - stapelen op mobiel -->
                 <div class="col-md-4 text-md-end mt-2 mt-md-0">
-                    <a href="<?= URLROOT; ?>voedselpakketten/overzicht" class="btn btn-secondary me-2">Terug</a>
-                    <a href="<?= URLROOT; ?>homepages/index" class="btn btn-secondary">Home</a>
+                    <a href="<?= URLROOT; ?>/voedselpakketten" class="btn btn-secondary me-2">Terug</a>
+                    <a href="<?= URLROOT; ?>/homepages/index" class="btn btn-secondary">Home</a>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@ require_once APPROOT . '/views/includes/header.php';
                                     
                                     <!-- Wijzig status link -->
                                     <td>
-                                        <a href="<?= URLROOT; ?>voedselpakketten/wijzigStatus/<?= (int)$pakket->Id; ?>" 
+                                        <a href="<?= URLROOT; ?>/voedselpakketten/wijzigStatus/<?= (int)$pakket->Id; ?>" 
                                            class="btn btn-sm btn-warning" title="Wijzig status">
                                             <i class="bi bi-pencil"></i>
                                         </a>
@@ -220,7 +220,7 @@ require_once APPROOT . '/views/includes/header.php';
                                     
                                     <!-- Actie sectie - 1/3 breedte -->
                                     <div class="col-4 text-end">
-                                        <a href="<?= URLROOT; ?>voedselpakketten/wijzigStatus/<?= (int)$pakket->Id; ?>" 
+                                        <a href="<?= URLROOT; ?>/voedselpakketten/wijzigStatus/<?= (int)$pakket->Id; ?>" 
                                            class="btn btn-warning btn-sm">
                                             <i class="bi bi-pencil"></i><br>
                                             <small>Wijzig</small>
