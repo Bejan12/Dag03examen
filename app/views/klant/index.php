@@ -1,118 +1,120 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
 
-<div class="container-fluid mt-4">
-    <div class="row">
+<div class="container mt-5">
+    <div class="row mt-3">
         <div class="col-12">
-            <h2 class="mb-4 text-success">Overzicht Klanten</h2>
-
-            <!-- Filter sectie volgens wireframe -->
-            <div class="row mb-4 justify-content-end">
-                <div class="col-md-3 col-lg-2">
-                    <label for="postcodeFilter" class="form-label">Selecteer Postcode</label>
-                    <select class="form-select form-select-sm" id="postcodeFilter">
-                        <option value="">Alle postcodes</option>
-                        <?php 
-                        $postcodes = [];
-                        if (!empty($data['klanten'])) {
-                            foreach ($data['klanten'] as $klant) {
-                                if (!empty($klant->Postcode) && !in_array($klant->Postcode, $postcodes)) {
-                                    $postcodes[] = $klant->Postcode;
+            <!-- HEADER SECTIE - Responsive header met titel en filter -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <h3 class="text-success"><i class="bi bi-people me-2"></i>Overzicht Klanten</h3>
+                </div>
+                <div class="col-md-6">
+                    <form class="d-flex flex-column flex-md-row justify-content-md-end gap-2" method="get" action="">
+                        <select class="form-select me-md-2 mb-2 mb-md-0" id="postcodeFilter" style="min-width:180px;max-width:250px;">
+                            <option value="">Alle postcodes</option>
+                            <?php 
+                            $postcodes = [];
+                            if (!empty($data['klanten'])) {
+                                foreach ($data['klanten'] as $klant) {
+                                    if (!empty($klant->Postcode) && !in_array($klant->Postcode, $postcodes)) {
+                                        $postcodes[] = $klant->Postcode;
+                                    }
+                                }
+                                sort($postcodes);
+                                foreach ($postcodes as $postcode) {
+                                    echo '<option value="' . htmlspecialchars($postcode) . '">' . htmlspecialchars($postcode) . '</option>';
                                 }
                             }
-                            sort($postcodes);
-                            foreach ($postcodes as $postcode) {
-                                echo '<option value="' . htmlspecialchars($postcode) . '">' . htmlspecialchars($postcode) . '</option>';
-                            }
-                        }
-                        ?>
-                        <!-- Dummy postcode voor testing unhappy scenario -->
-                        <option value="5271ZH">5271ZH</option>
-                    </select>
-                </div>
-                <div class="col-auto d-flex align-items-end">
-                    <button class="btn btn-primary btn-sm" id="toonKlantenBtn">Toon Klanten</button>
+                            ?>
+                            <!-- Dummy postcode voor testing unhappy scenario -->
+                            <option value="5271ZH">5271ZH</option>
+                        </select>
+                        <button class="btn btn-success" type="button" id="toonKlantenBtn">Toon Klanten</button>
+                    </form>
                 </div>
             </div>
 
             <!-- Klanten Tabel volgens wireframe -->
             <?php if (empty($data['klanten'])): ?>
-                <div class="alert alert-info">
+                <div class="alert alert-info text-center">
                     <i class="bi bi-info-circle me-2"></i>
                     Er zijn nog geen klanten geregistreerd.
                 </div>
             <?php else: ?>
-                <!-- Desktop Tabel (normaal) -->
-                <div class="table-responsive d-none d-md-block" id="klantenTableContainer">
-                    <table class="table table-striped table-bordered table-sm" id="klantenTable">
-                        <thead class="table-light">
+                <!-- DESKTOP TABEL VIEW -->
+                <div class="table-responsive d-none d-lg-block">
+                    <table class="table table-striped align-middle text-center mb-0" id="klantenTable">
+                        <thead class="table-primary">
                             <tr>
-                                <th>Naam Gezin</th>
-                                <th>Vertegenwoordiger</th>
-                                <th>E-mailadres</th>
-                                <th>Mobiel</th>
-                                <th>Adres</th>
-                                <th>Woonplaats</th>
-                                <th class="text-center">Klant Details</th>
+                                <th scope="col">Naam Gezin</th>
+                                <th scope="col">Vertegenwoordiger</th>
+                                <th scope="col">E-mailadres</th>
+                                <th scope="col">Mobiel</th>
+                                <th scope="col">Adres</th>
+                                <th scope="col">Woonplaats</th>
+                                <th scope="col">Details</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Error row voor unhappy scenario -->
-                            <tr id="noResultsRow" style="display: none;">
-                                <td colspan="7" class="text-center p-2 text-warning" style="background-color: #fff3cd;">
-                                    <small>Er zijn geen klanten bekend die de geselecteerde postcode hebben</small>
-                                </td>
-                            </tr>
-
-                            <?php foreach ($data['klanten'] as $klant): ?>
-                                <tr data-postcode="<?= htmlspecialchars($klant->Postcode ?? ''); ?>" class="klant-row">
-                                    <td><?= htmlspecialchars($klant->GezinNaam); ?></td>
-                                    <td>
-                                        <?php if (!empty($klant->Voornaam)): ?>
-                                            <?= htmlspecialchars($klant->Voornaam); ?>
-                                            <?= !empty($klant->Tussenvoegsel) ? ' ' . htmlspecialchars($klant->Tussenvoegsel) : ''; ?>
-                                            <?= ' ' . htmlspecialchars($klant->Achternaam); ?>
-                                        <?php else: ?>
-                                            ~~/~~
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($klant->Email)): ?>
-                                            <?= htmlspecialchars($klant->Email); ?>
-                                        <?php else: ?>
-                                            ~~/~~
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($klant->Mobiel)): ?>
-                                            <?= htmlspecialchars($klant->Mobiel); ?>
-                                        <?php else: ?>
-                                            ~~/~~
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($klant->Straat)): ?>
-                                            <?= htmlspecialchars($klant->Straat); ?> 
-                                            <?= htmlspecialchars($klant->Huisnummer); ?>
-                                            <?= !empty($klant->Toevoeging) ? htmlspecialchars($klant->Toevoeging) : ''; ?>
-                                        <?php else: ?>
-                                            ~~/~~
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($klant->Woonplaats)): ?>
-                                            <?= htmlspecialchars($klant->Woonplaats); ?>
-                                        <?php else: ?>
-                                            ~~/~~
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="<?= URLROOT; ?>/klanten/details/<?= $klant->GezinId; ?>" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </td>
+                            <?php if (!empty($data['klanten'])): ?>
+                                <!-- Error row voor unhappy scenario -->
+                                <tr id="noResultsRow" style="display: none;">
+                                    <td colspan="7" class="text-center text-warning bg-light fs-5">Er zijn geen klanten bekend die de geselecteerde postcode hebben</td>
                                 </tr>
-                            <?php endforeach; ?>
+
+                                <?php foreach ($data['klanten'] as $klant): ?>
+                                    <tr data-postcode="<?= htmlspecialchars($klant->Postcode ?? ''); ?>" class="klant-row">
+                                        <td class="fw-semibold text-start"><i class="bi bi-house me-1"></i><?= htmlspecialchars($klant->GezinNaam); ?></td>
+                                        <td>
+                                            <?php if (!empty($klant->Voornaam)): ?>
+                                                <?= htmlspecialchars($klant->Voornaam); ?>
+                                                <?= !empty($klant->Tussenvoegsel) ? ' ' . htmlspecialchars($klant->Tussenvoegsel) : ''; ?>
+                                                <?= ' ' . htmlspecialchars($klant->Achternaam); ?>
+                                            <?php else: ?>
+                                                ~~/~~
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($klant->Email)): ?>
+                                                <?= htmlspecialchars($klant->Email); ?>
+                                            <?php else: ?>
+                                                ~~/~~
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($klant->Mobiel)): ?>
+                                                <?= htmlspecialchars($klant->Mobiel); ?>
+                                            <?php else: ?>
+                                                ~~/~~
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($klant->Straat)): ?>
+                                                <?= htmlspecialchars($klant->Straat); ?> 
+                                                <?= htmlspecialchars($klant->Huisnummer); ?>
+                                                <?= !empty($klant->Toevoeging) ? htmlspecialchars($klant->Toevoeging) : ''; ?>
+                                            <?php else: ?>
+                                                ~~/~~
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!empty($klant->Woonplaats)): ?>
+                                                <?= htmlspecialchars($klant->Woonplaats); ?>
+                                            <?php else: ?>
+                                                ~~/~~
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?= URLROOT; ?>/klanten/details/<?= $klant->GezinId; ?>" 
+                                               class="btn btn-info btn-sm">
+                                                <i class="bi bi-search"></i> Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr><td colspan="7" class="text-center text-muted">Geen klanten gevonden.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -269,7 +271,7 @@ function filterByPostcode() {
     const selectedPostcode = document.getElementById('postcodeFilter').value;
     
     // Filter desktop tabel rijen
-    const tableRows = document.querySelectorAll('#klantenTable tbody tr.klant-row');
+    const tableRows = document.querySelectorAll('.table tbody tr.klant-row');
     const noResultsRow = document.getElementById('noResultsRow');
     
     // Filter mobiele cards
@@ -320,7 +322,7 @@ function filterByPostcode() {
 // Initieel alle klanten tonen
 document.addEventListener('DOMContentLoaded', function() {
     // Toon alle tabel rijen bij het laden van de pagina
-    const tableRows = document.querySelectorAll('#klantenTable tbody tr.klant-row');
+    const tableRows = document.querySelectorAll('.table tbody tr.klant-row');
     const noResultsRow = document.getElementById('noResultsRow');
     
     tableRows.forEach(row => {
